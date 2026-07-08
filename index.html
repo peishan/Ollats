@@ -8,18 +8,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --void:#0b0710;
-    --panel:#170f1e;
-    --panel-2:#20141d;
-    --rune-gold:#c9a24a;
-    --rune-gold-dim:#8a7239;
-    --blood:#7a1128;
-    --blood-bright:#b3213c;
-    --violet:#6b2fa3;
-    --violet-glow:#9b5ce0;
-    --parchment:#e8dfc7;
-    --parchment-dim:#a89a86;
-    --hp:#8a1f2d;
+    --void:#0b0710; --panel:#170f1e; --panel-2:#20141d;
+    --rune-gold:#c9a24a; --rune-gold-dim:#8a7239;
+    --blood:#7a1128; --blood-bright:#b3213c;
+    --violet:#6b2fa3; --violet-glow:#9b5ce0;
+    --parchment:#e8dfc7; --parchment-dim:#a89a86;
+    --hp-good:#7d9c3f; --hp-mid:#c9a24a; --hp-low:#b3213c;
     --xp:#7d9c3f;
   }
   *{box-sizing:border-box;}
@@ -29,274 +23,150 @@
       radial-gradient(ellipse at 20% 0%, rgba(107,47,163,0.18), transparent 55%),
       radial-gradient(ellipse at 85% 15%, rgba(122,17,40,0.22), transparent 50%),
       linear-gradient(180deg, #0b0710 0%, #100a15 40%, #0b0710 100%);
-    color:var(--parchment);
-    font-family:'EB Garamond', serif;
-    min-height:100vh;
-    padding:0 0 60px;
-    -webkit-font-smoothing:antialiased;
+    color:var(--parchment); font-family:'EB Garamond', serif;
+    min-height:100vh; padding:0 0 60px; -webkit-font-smoothing:antialiased;
   }
-  .wrap{max-width:640px;margin:0 auto;padding:22px 16px;}
+  .wrap{max-width:640px;margin:0 auto;padding:18px 14px;}
 
-  /* ---------- Header ---------- */
-  header{text-align:center;margin-bottom:22px;position:relative;}
-  .eyebrow{
-    font-family:'JetBrains Mono',monospace;
-    font-size:11px;letter-spacing:.28em;
-    color:var(--rune-gold-dim);text-transform:uppercase;
-    margin-bottom:6px;
-  }
-  h1{
-    font-family:'Cinzel Decorative', serif;
-    font-size:clamp(28px,7vw,40px);
-    margin:0;
-    background:linear-gradient(180deg,#f3e3ad,#c9a24a 55%,#8a6a24);
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-    text-shadow:0 0 30px rgba(201,162,74,0.25);
-    letter-spacing:.02em;
-  }
-  .subtitle{
-    font-family:'Cinzel',serif;font-size:13px;letter-spacing:.14em;
-    color:var(--parchment-dim);margin-top:6px;text-transform:uppercase;
-  }
-  .divider{
-    height:1px;margin:16px auto 0;width:70%;
-    background:linear-gradient(90deg,transparent,var(--rune-gold-dim),transparent);
-  }
+  header{text-align:center;margin-bottom:16px;}
+  .eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;color:var(--rune-gold-dim);text-transform:uppercase;margin-bottom:6px;}
+  h1{font-family:'Cinzel Decorative', serif;font-size:clamp(26px,7vw,36px);margin:0;background:linear-gradient(180deg,#f3e3ad,#c9a24a 55%,#8a6a24);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 30px rgba(201,162,74,0.25);}
+  .subtitle{font-family:'Cinzel',serif;font-size:12.5px;letter-spacing:.12em;color:var(--parchment-dim);margin-top:6px;text-transform:uppercase;}
+  .divider{height:1px;margin:14px auto 0;width:70%;background:linear-gradient(90deg,transparent,var(--rune-gold-dim),transparent);}
 
-  /* ---------- Panels ---------- */
-  .panel{
-    background:linear-gradient(180deg,var(--panel),var(--panel-2));
-    border:1px solid rgba(201,162,74,0.18);
-    border-radius:10px;
-    padding:16px;
-    margin-bottom:16px;
-    box-shadow:0 8px 24px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.02);
-  }
-  .panel-title{
-    font-family:'Cinzel',serif;font-size:12px;letter-spacing:.18em;
-    text-transform:uppercase;color:var(--rune-gold);margin:0 0 12px;
-    display:flex;align-items:center;justify-content:space-between;
-  }
+  .panel{background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid rgba(201,162,74,0.18);border-radius:10px;padding:16px;margin-bottom:14px;box-shadow:0 8px 24px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.02);}
+  .panel-title{font-family:'Cinzel',serif;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--rune-gold);margin:0 0 12px;display:flex;align-items:center;justify-content:space-between;}
 
-  /* ---------- Party roster ---------- */
-  #party-list{display:flex;flex-direction:column;gap:8px;}
-  .adv-row{
-    display:flex;align-items:center;gap:10px;
-    padding:9px 10px;border-radius:7px;
-    background:rgba(0,0,0,0.22);
-    border:1px solid rgba(255,255,255,0.04);
-    transition:box-shadow .2s, border-color .2s;
-  }
-  .adv-row.active{
-    border-color:var(--rune-gold);
-    box-shadow:0 0 0 1px rgba(201,162,74,0.25), 0 0 18px rgba(201,162,74,0.12);
-  }
-  .adv-row.is-you{
-    background:rgba(107,47,163,0.14);
-    border-color:var(--violet-glow);
-  }
-  .you-star{
-    background:none;border:none;cursor:pointer;padding:0 2px 0 0;
-    font-size:13px;color:var(--rune-gold-dim);line-height:1;vertical-align:middle;
-  }
-  .you-star:hover{color:var(--rune-gold);}
-  .you-tag{
-    font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.08em;
-    background:rgba(155,92,224,0.25);color:#d8bdf5;border:1px solid rgba(155,92,224,0.5);
-    padding:1px 6px;border-radius:10px;margin-left:4px;
-  }
-  .adv-badge{
-    width:34px;height:34px;flex:none;border-radius:50%;
-    display:flex;align-items:center;justify-content:center;
-    font-family:'Cinzel',serif;font-weight:700;font-size:14px;
-    background:conic-gradient(from 220deg,var(--violet),var(--blood) 50%,var(--violet));
-    color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.5);
-  }
-  .adv-main{flex:1;min-width:0;}
-  .adv-name{font-family:'Cinzel',serif;font-size:14.5px;font-weight:600;color:var(--parchment);display:flex;align-items:center;gap:6px;}
-  .lvl-tag{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--rune-gold);}
-  .bar-track{height:6px;border-radius:4px;background:rgba(255,255,255,0.06);overflow:hidden;margin-top:5px;}
-  .bar-fill{height:100%;border-radius:4px;transition:width .5s ease;}
+  /* Player status (always visible) */
+  .player-card{display:flex;gap:12px;align-items:center;}
+  .player-badge{width:52px;height:52px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cinzel Decorative',serif;font-weight:700;font-size:18px;background:conic-gradient(from 220deg,var(--violet),var(--blood) 50%,var(--violet));color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.5);}
+  .player-main{flex:1;min-width:0;}
+  .player-name-row{display:flex;align-items:center;gap:8px;font-family:'Cinzel',serif;font-size:16px;color:var(--parchment);}
+  .lvl-tag{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--rune-gold);}
+  .cond-tag{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.05em;padding:2px 7px;border-radius:10px;text-transform:uppercase;}
+  .cond-Healthy{background:rgba(125,156,63,0.18);color:#a9c97a;border:1px solid rgba(125,156,63,0.4);}
+  .cond-Wounded{background:rgba(201,162,74,0.15);color:var(--rune-gold);border:1px solid rgba(201,162,74,0.4);}
+  .cond-Critical{background:rgba(179,33,60,0.2);color:#f0a4b4;border:1px solid rgba(179,33,60,0.5);animation:pulseRed 1.4s infinite;}
+  @keyframes pulseRed{0%,100%{opacity:1;}50%{opacity:.55;}}
+  .bar-row{display:flex;align-items:center;gap:6px;margin-top:6px;}
+  .bar-label{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--parchment-dim);width:26px;flex:none;}
+  .bar-track{flex:1;height:7px;border-radius:4px;background:rgba(255,255,255,0.06);overflow:hidden;}
+  .bar-fill{height:100%;border-radius:4px;transition:width .4s ease;}
   .bar-fill.xp{background:linear-gradient(90deg,#4d6b26,var(--xp));}
-  .adv-stats{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--parchment-dim);white-space:nowrap;}
-  .rm-btn{background:none;border:none;color:var(--parchment-dim);font-size:16px;cursor:pointer;padding:2px 6px;line-height:1;}
-  .rm-btn:hover{color:var(--blood-bright);}
+  .bar-fill.hp{background:linear-gradient(90deg,#7a1128,var(--hp-good));}
+  .bar-num{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--parchment-dim);width:56px;flex:none;text-align:right;}
+  .zen-row{margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--rune-gold);display:flex;justify-content:space-between;}
+  .rest-btn{margin-top:10px;width:100%;font-family:'Cinzel',serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;background:rgba(125,156,63,0.12);border:1px solid rgba(125,156,63,0.4);color:#a9c97a;padding:8px;border-radius:7px;cursor:pointer;}
+  .critical-banner{display:none;margin-top:10px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#f0a4b4;background:rgba(179,33,60,0.14);border:1px solid rgba(179,33,60,0.4);border-radius:7px;padding:8px;}
+  .critical-banner.show{display:block;}
 
-  #add-row{display:flex;gap:8px;margin-top:10px;}
-  #add-name{
-    flex:1;background:rgba(0,0,0,0.3);border:1px solid rgba(201,162,74,0.25);
-    border-radius:6px;color:var(--parchment);padding:8px 10px;
-    font-family:'EB Garamond',serif;font-size:14px;
-  }
-  #add-name:focus{outline:none;border-color:var(--rune-gold);}
-  .btn-small{
-    font-family:'Cinzel',serif;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
-    background:rgba(201,162,74,0.12);border:1px solid var(--rune-gold-dim);
-    color:var(--rune-gold);padding:8px 12px;border-radius:6px;cursor:pointer;
-  }
-  .btn-small:hover{background:rgba(201,162,74,0.22);}
+  /* Tabs */
+  .tabbar{display:flex;gap:6px;margin-bottom:14px;}
+  .tab-btn{flex:1;font-family:'Cinzel',serif;font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.08);color:var(--parchment-dim);padding:9px 4px;border-radius:7px;cursor:pointer;text-align:center;}
+  .tab-btn.active{border-color:var(--rune-gold);color:var(--rune-gold);background:rgba(201,162,74,0.1);}
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;}
 
-  /* ---------- Portal / Rift ---------- */
-  .portal-zone{text-align:center;padding:8px 0 4px;}
-  .rift{
-    width:150px;height:150px;margin:0 auto 14px;position:relative;
-    border-radius:50%;
-    background:
-      radial-gradient(circle at 50% 50%, rgba(155,92,224,0.35), rgba(11,7,16,0.9) 60%),
-      conic-gradient(from 0deg, var(--violet), var(--blood) 25%, var(--violet) 50%, var(--rune-gold-dim) 75%, var(--violet));
-    box-shadow:0 0 40px rgba(155,92,224,0.35), inset 0 0 30px rgba(0,0,0,0.6);
-    display:flex;align-items:center;justify-content:center;
-    cursor:pointer;
-    border:2px solid rgba(201,162,74,0.3);
-  }
-  .rift::before{
-    content:"";position:absolute;inset:10px;border-radius:50%;
-    border:1px dashed rgba(232,223,199,0.35);
-    animation:spin 14s linear infinite;
-  }
-  .rift.spinning::before{animation:spin 0.6s linear infinite;}
-  .rift.spinning{animation:pulse .6s ease infinite;}
-  @keyframes spin{to{transform:rotate(360deg);}}
-  @keyframes pulse{0%,100%{box-shadow:0 0 40px rgba(155,92,224,0.35);}50%{box-shadow:0 0 65px rgba(155,92,224,0.65);}}
-  .rift-glyph{font-family:'Cinzel Decorative',serif;font-size:34px;color:var(--parchment);text-shadow:0 0 12px rgba(201,162,74,0.6);}
-  .rift-cta{
-    font-family:'Cinzel',serif;font-size:12px;letter-spacing:.16em;text-transform:uppercase;
-    color:var(--rune-gold-dim);margin-top:2px;
-  }
-  .turn-note{
-    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--parchment-dim);
-    text-align:center;margin-top:8px;
-  }
-  .turn-note b{color:var(--rune-gold);}
+  /* Zone grid */
+  .mini-card{background:rgba(0,0,0,0.22);border-radius:8px;padding:11px;margin-bottom:10px;}
+  .mini-card:last-child{margin-bottom:0;}
+  .mini-card-head{display:flex;justify-content:space-between;align-items:center;}
+  .mini-card-name{font-family:'Cinzel',serif;font-size:13.5px;color:var(--parchment);}
+  .mini-card-tag{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--rune-gold-dim);}
+  .mini-card-desc{font-size:12px;color:var(--parchment-dim);font-style:italic;margin:4px 0 8px;line-height:1.4;}
+  .zone-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .zone-card{background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:11px;cursor:pointer;transition:border-color .15s;}
+  .zone-card:hover{border-color:var(--rune-gold-dim);}
+  .zone-card.special{border-color:rgba(179,33,60,0.5);background:linear-gradient(180deg,rgba(122,17,40,0.15),rgba(0,0,0,0.25));grid-column:1 / -1;}
+  .zone-card-name{font-family:'Cinzel',serif;font-size:13.5px;color:var(--parchment);}
+  .zone-card-tier{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--rune-gold-dim);margin-top:3px;}
+  .zone-card-desc{font-size:12px;color:var(--parchment-dim);font-style:italic;margin-top:4px;line-height:1.4;}
 
-  /* ---------- Encounter card ---------- */
-  .encounter-card{display:none;}
-  .encounter-card.show{display:block;animation:reveal .4s ease;}
+  /* Zone room / quest overlay */
+  .room{display:none;margin-top:14px;}
+  .room.show{display:block;animation:reveal .3s ease;}
   @keyframes reveal{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
-  .tier-tag{
-    display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;
-    letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:4px;
-    margin-bottom:8px;
-  }
+  .room-zone{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--parchment-dim);letter-spacing:.05em;}
+  .room-boss{font-family:'Cinzel',serif;font-size:19px;font-weight:700;color:var(--parchment);margin:4px 0 6px;}
+  .room-flavor{font-style:italic;color:var(--parchment-dim);font-size:14px;line-height:1.5;margin-bottom:10px;}
+  .cameo{font-family:'JetBrains Mono',monospace;font-size:11.5px;padding:7px 10px;border-radius:6px;margin-bottom:10px;}
+  .cameo.ally{background:rgba(125,156,63,0.12);color:#a9c97a;border:1px solid rgba(125,156,63,0.35);}
+  .cameo.rival{background:rgba(201,162,74,0.1);color:var(--rune-gold);border:1px solid rgba(201,162,74,0.3);}
+  .tier-tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:4px;margin-bottom:8px;}
   .tier-Minion{background:rgba(125,156,63,0.18);color:#a9c97a;border:1px solid rgba(125,156,63,0.4);}
   .tier-Elite{background:rgba(201,162,74,0.15);color:var(--rune-gold);border:1px solid rgba(201,162,74,0.4);}
   .tier-Boss{background:rgba(179,33,60,0.18);color:#e0708a;border:1px solid rgba(179,33,60,0.45);}
   .tier-WorldBoss{background:rgba(107,47,163,0.25);color:#c9a2f0;border:1px solid rgba(155,92,224,0.55);}
   .tier-Ancient{background:rgba(201,162,74,0.1);color:#f0d98c;border:1px solid rgba(240,217,140,0.5);}
 
-  .type-badge{
-    font-family:'Cinzel',serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
-    margin-bottom:8px;display:flex;align-items:center;gap:6px;
-  }
-  .type-Adventure{color:#9fc4e0;}
-  .type-BountyQuest{color:var(--rune-gold);}
-  .type-WorldBoss{color:#c9a2f0;}
-  .type-AncientBoss{color:#f0d98c;}
-  .type-GuildEvent{color:#f0d98c;}
+  .choice-row{display:flex;flex-direction:column;gap:8px;}
+  .choice-btn{text-align:left;background:rgba(0,0,0,0.22);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px 12px;cursor:pointer;}
+  .choice-btn:hover{border-color:var(--violet-glow);}
+  .choice-label{font-family:'Cinzel',serif;font-size:13.5px;color:var(--parchment);}
+  .choice-desc{font-size:12px;color:var(--parchment-dim);font-style:italic;margin-top:2px;}
+  .choice-stat{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--rune-gold-dim);margin-top:3px;}
 
-  .cal-row{
-    display:flex;align-items:center;gap:10px;padding:8px 4px;
-    border-bottom:1px solid rgba(255,255,255,0.05);
-  }
-  .cal-row:last-child{border-bottom:none;}
-  .cal-time{
-    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--rune-gold-dim);
-    width:52px;flex:none;
-  }
-  .cal-name{
-    font-family:'Cinzel',serif;font-size:13.5px;color:var(--parchment);flex:1;
-  }
-  .cal-join{
-    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.05em;text-transform:uppercase;
-    background:rgba(155,92,224,0.15);border:1px solid var(--violet-glow);color:#d8bdf5;
-    padding:6px 12px;border-radius:14px;cursor:pointer;flex:none;
-  }
-  .cal-join:hover{background:rgba(155,92,224,0.28);}
-  .cal-week{display:none;margin-top:10px;flex-direction:column;gap:6px;}
-  .cal-week.show{display:flex;animation:reveal .3s ease;}
-  .cal-day-block{
-    background:rgba(0,0,0,0.2);border-radius:6px;padding:8px 10px;
-    border-left:3px solid rgba(255,255,255,0.1);
-  }
-  .cal-day-block.cal-day-today{border-left-color:var(--rune-gold);background:rgba(201,162,74,0.08);}
-  .cal-day-name{font-family:'Cinzel',serif;font-size:12px;color:var(--rune-gold);letter-spacing:.05em;text-transform:uppercase;}
-  .cal-day-evs{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--parchment-dim);margin-top:3px;line-height:1.5;}
-
-  .zone-name{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--parchment-dim);letter-spacing:.05em;}
-  .boss-name{font-family:'Cinzel',serif;font-size:20px;font-weight:700;color:var(--parchment);margin:4px 0 8px;}
-  .flavor{font-style:italic;color:var(--parchment-dim);font-size:14.5px;line-height:1.5;margin-bottom:12px;}
-  .dc-row{
-    display:flex;justify-content:space-between;align-items:center;
-    font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--parchment-dim);
-    border-top:1px solid rgba(255,255,255,0.06);padding-top:10px;margin-bottom:12px;
-  }
-  .dc-row b{color:var(--rune-gold);}
-
-  .roll-area{text-align:center;}
-  .btn-roll{
-    font-family:'Cinzel Decorative',serif;font-size:15px;letter-spacing:.05em;
-    background:linear-gradient(180deg,#4a2266,#2c1440);
-    border:1px solid var(--violet-glow);color:#f3e9ff;
-    padding:12px 26px;border-radius:8px;cursor:pointer;
-    box-shadow:0 4px 14px rgba(107,47,163,0.4);
-    width:100%;
-  }
-  .btn-roll:hover{box-shadow:0 4px 20px rgba(155,92,224,0.6);}
-  .btn-roll:disabled{opacity:0.5;cursor:default;}
-
-  .result-box{margin-top:14px;padding:12px;border-radius:8px;text-align:center;display:none;}
+  .result-box{margin-top:12px;padding:12px;border-radius:8px;text-align:center;display:none;}
   .result-box.show{display:block;animation:reveal .3s ease;}
   .result-box.win{background:rgba(125,156,63,0.14);border:1px solid rgba(125,156,63,0.4);}
   .result-box.lose{background:rgba(122,17,40,0.18);border:1px solid rgba(179,33,60,0.45);}
-  .roll-num{font-family:'JetBrains Mono',monospace;font-size:28px;color:var(--parchment);margin-bottom:2px;}
-  .result-verb{font-family:'Cinzel',serif;font-size:15px;text-transform:uppercase;letter-spacing:.08em;}
-  .result-detail{font-size:14px;color:var(--parchment-dim);margin-top:4px;}
-  .drink-pill{
-    display:inline-flex;align-items:center;gap:6px;margin-top:8px;
-    font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--blood-bright);
-    background:rgba(179,33,60,0.12);border:1px solid rgba(179,33,60,0.4);
-    padding:6px 12px;border-radius:20px;
-  }
-  .steal-row{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
-  .steal-btn{
-    font-family:'JetBrains Mono',monospace;font-size:11px;
-    background:rgba(201,162,74,0.1);border:1px solid var(--rune-gold-dim);
-    color:var(--rune-gold);padding:5px 10px;border-radius:14px;cursor:pointer;
-  }
-  .btn-continue{
-    margin-top:14px;width:100%;font-family:'Cinzel',serif;font-size:13px;letter-spacing:.1em;
-    text-transform:uppercase;background:rgba(201,162,74,0.1);border:1px solid var(--rune-gold-dim);
-    color:var(--rune-gold);padding:10px;border-radius:8px;cursor:pointer;
-  }
+  .roll-num{font-family:'JetBrains Mono',monospace;font-size:24px;color:var(--parchment);margin-bottom:2px;}
+  .result-verb{font-family:'Cinzel',serif;font-size:14.5px;text-transform:uppercase;letter-spacing:.07em;}
+  .result-detail{font-size:13.5px;color:var(--parchment-dim);margin-top:4px;}
+  .pill{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:12.5px;padding:6px 12px;border-radius:20px;}
+  .pill.hp{color:var(--blood-bright);background:rgba(179,33,60,0.12);border:1px solid rgba(179,33,60,0.4);}
+  .pill.toll{color:var(--blood-bright);background:rgba(179,33,60,0.12);border:1px solid rgba(179,33,60,0.4);margin-left:6px;}
+  .room-actions{display:flex;gap:8px;margin-top:12px;}
+  .btn-ghost{flex:1;font-family:'Cinzel',serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;background:rgba(201,162,74,0.1);border:1px solid var(--rune-gold-dim);color:var(--rune-gold);padding:9px;border-radius:7px;cursor:pointer;}
+  .btn-leave{flex:1;font-family:'Cinzel',serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.1);color:var(--parchment-dim);padding:9px;border-radius:7px;cursor:pointer;}
 
-  /* ---------- Rest stop banner ---------- */
-  .rest-banner{
-    display:none;text-align:center;padding:14px;border-radius:8px;
-    background:linear-gradient(180deg,rgba(74,110,150,0.15),rgba(74,110,150,0.05));
-    border:1px solid rgba(120,170,210,0.35);margin-bottom:16px;
-  }
-  .rest-banner.show{display:block;animation:reveal .4s ease;}
-  .rest-banner .t{font-family:'Cinzel',serif;color:#9fd0ec;font-size:14px;letter-spacing:.06em;text-transform:uppercase;}
-  .rest-banner .d{font-size:13.5px;color:var(--parchment-dim);margin-top:4px;font-style:italic;}
+  /* Calendar */
+  .cal-row{display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid rgba(255,255,255,0.05);}
+  .cal-row:last-child{border-bottom:none;}
+  .cal-time{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--rune-gold-dim);width:52px;flex:none;}
+  .cal-name{font-family:'Cinzel',serif;font-size:13.5px;color:var(--parchment);flex:1;}
+  .cal-join{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.05em;text-transform:uppercase;background:rgba(155,92,224,0.15);border:1px solid var(--violet-glow);color:#d8bdf5;padding:6px 12px;border-radius:14px;cursor:pointer;flex:none;}
+  .cal-week{display:none;margin-top:10px;flex-direction:column;gap:6px;}
+  .cal-week.show{display:flex;}
+  .cal-day-block{background:rgba(0,0,0,0.2);border-radius:6px;padding:8px 10px;border-left:3px solid rgba(255,255,255,0.1);}
+  .cal-day-block.cal-day-today{border-left-color:var(--rune-gold);background:rgba(201,162,74,0.08);}
+  .cal-day-name{font-family:'Cinzel',serif;font-size:12px;color:var(--rune-gold);text-transform:uppercase;}
+  .cal-day-evs{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--parchment-dim);margin-top:3px;line-height:1.5;}
 
-  /* ---------- Settings ---------- */
+  /* Tavern & Hans */
+  .npc-row{display:flex;gap:12px;align-items:flex-start;margin-bottom:6px;}
+  .npc-portrait{width:44px;height:44px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;background:radial-gradient(circle,rgba(201,162,74,0.25),rgba(0,0,0,0.3));border:1px solid rgba(201,162,74,0.3);}
+  .npc-name{font-family:'Cinzel',serif;font-size:14.5px;color:var(--rune-gold);}
+  .npc-role{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--parchment-dim);}
+  .speech{margin-top:10px;background:rgba(0,0,0,0.25);border-left:3px solid var(--rune-gold-dim);border-radius:0 8px 8px 0;padding:10px 12px;font-style:italic;font-size:13.5px;color:var(--parchment);display:none;}
+  .speech.show{display:block;animation:reveal .25s ease;}
+  .item-card{background:rgba(0,0,0,0.22);border-radius:8px;padding:12px;margin-top:10px;}
+  .item-name{font-family:'Cinzel',serif;font-size:14px;color:var(--parchment);}
+  .item-plus{font-family:'JetBrains Mono',monospace;color:var(--rune-gold);}
+  .item-bar{height:5px;border-radius:3px;background:rgba(255,255,255,0.06);margin-top:6px;overflow:hidden;}
+  .item-bar-fill{height:100%;background:linear-gradient(90deg,#6b2fa3,var(--violet-glow));border-radius:3px;}
+  .item-meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--parchment-dim);margin-top:6px;display:flex;justify-content:space-between;}
+  .btn-enhance{width:100%;margin-top:8px;font-family:'Cinzel',serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;background:rgba(155,92,224,0.15);border:1px solid var(--violet-glow);color:#d8bdf5;padding:8px;border-radius:7px;cursor:pointer;}
+  .btn-enhance:disabled{opacity:.4;cursor:default;}
+
+  /* Settings */
   .settings-grid{display:flex;gap:8px;flex-wrap:wrap;}
-  .unit-btn{
-    flex:1;min-width:90px;font-family:'JetBrains Mono',monospace;font-size:12px;
-    background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.08);
-    color:var(--parchment-dim);padding:9px;border-radius:6px;cursor:pointer;text-align:center;
-  }
+  .unit-btn{flex:1;min-width:90px;font-family:'JetBrains Mono',monospace;font-size:12px;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.08);color:var(--parchment-dim);padding:9px;border-radius:6px;cursor:pointer;text-align:center;}
   .unit-btn.active{border-color:var(--rune-gold);color:var(--rune-gold);background:rgba(201,162,74,0.1);}
-  .reset-link{
-    display:block;text-align:center;margin-top:14px;font-family:'JetBrains Mono',monospace;
-    font-size:11px;color:var(--parchment-dim);text-decoration:underline;cursor:pointer;background:none;border:none;
-  }
-  .footnote{
-    text-align:center;font-size:11.5px;color:var(--parchment-dim);opacity:.75;
-    margin-top:18px;line-height:1.6;padding:0 10px;
-  }
-  .log{max-height:120px;overflow-y:auto;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--parchment-dim);display:flex;flex-direction:column-reverse;gap:4px;}
+  .cast-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+  .cast-tag{font-family:'JetBrains Mono',monospace;font-size:11px;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.08);color:var(--parchment-dim);padding:4px 8px;border-radius:12px;display:flex;align-items:center;gap:5px;}
+  .cast-tag button{background:none;border:none;color:var(--blood-bright);cursor:pointer;font-size:12px;padding:0;}
+  .add-row{display:flex;gap:8px;margin-top:10px;}
+  .add-row input{flex:1;background:rgba(0,0,0,0.3);border:1px solid rgba(201,162,74,0.25);border-radius:6px;color:var(--parchment);padding:8px 10px;font-family:'EB Garamond',serif;font-size:14px;}
+  .btn-small{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:rgba(201,162,74,0.12);border:1px solid var(--rune-gold-dim);color:var(--rune-gold);padding:8px 12px;border-radius:6px;cursor:pointer;}
+  .snap-row{display:flex;gap:8px;margin-top:12px;}
+  .snap-row button{flex:1;}
+  .reset-link{display:block;text-align:center;margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--parchment-dim);text-decoration:underline;cursor:pointer;background:none;border:none;}
+  .save-note{text-align:center;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--parchment-dim);margin-top:8px;opacity:.8;}
+
+  .log{max-height:150px;overflow-y:auto;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--parchment-dim);display:flex;flex-direction:column-reverse;gap:4px;}
   .log div{border-left:2px solid rgba(201,162,74,0.25);padding-left:8px;}
+  .footnote{text-align:center;font-size:11.5px;color:var(--parchment-dim);opacity:.75;margin-top:16px;line-height:1.6;padding:0 10px;}
 </style>
 </head>
 <body>
@@ -305,104 +175,190 @@
   <header>
     <div class="eyebrow">MU · DARK EPOCH</div>
     <h1>The Rift Tavern</h1>
-    <div class="subtitle">Guild: Legends — Level Up. Cross The Rift. Pay The Toll.</div>
+    <div class="subtitle">Guild: Legends — Solo Campaign</div>
     <div class="divider"></div>
   </header>
 
-  <!-- PARTY -->
+  <!-- PLAYER STATUS (always visible) -->
   <div class="panel">
-    <div class="panel-title">Legends Roster <span id="round-count" style="color:var(--parchment-dim);font-family:'JetBrains Mono',monospace;letter-spacing:0;">Round 1</span></div>
-    <div id="party-list"></div>
-    <div id="add-row">
-      <input id="add-name" placeholder="Add adventurer (e.g. JMARTIN)" maxlength="16">
-      <button class="btn-small" onclick="addAdventurer()">Recruit</button>
+    <div class="player-card">
+      <div class="player-badge" id="player-badge">OL</div>
+      <div class="player-main">
+        <div class="player-name-row">
+          <span id="player-name">OLLAT</span>
+          <span class="lvl-tag" id="player-lvl">LV 1</span>
+          <span class="cond-tag cond-Healthy" id="player-cond">Healthy</span>
+        </div>
+        <div class="bar-row"><span class="bar-label">HP</span><div class="bar-track"><div class="bar-fill hp" id="hp-fill" style="width:100%"></div></div><span class="bar-num" id="hp-num">20/20</span></div>
+        <div class="bar-row"><span class="bar-label">XP</span><div class="bar-track"><div class="bar-fill xp" id="xp-fill" style="width:0%"></div></div><span class="bar-num" id="xp-num">0/30</span></div>
+      </div>
     </div>
+    <div class="zen-row"><span>💰 Zen</span><span id="zen-num">100</span></div>
+    <button class="rest-btn" onclick="restPlayer()">🛌 Rest (free, full heal)</button>
+    <div class="critical-banner" id="critical-banner">You're too hurt to venture out. Rest above before your next fight.</div>
   </div>
 
-  <!-- REST BANNER -->
-  <div class="rest-banner" id="rest-banner">
-    <div class="t">⛺ The Bartender's Mercy</div>
-    <div class="d">The whole party rests at the tavern. Drink some water, adventurers. The Rift reopens next round.</div>
+  <!-- TABS -->
+  <div class="tabbar">
+    <button class="tab-btn active" data-tab="zones" onclick="switchTab('zones')">Zones</button>
+    <button class="tab-btn" data-tab="calendar" onclick="switchTab('calendar')">Calendar</button>
+    <button class="tab-btn" data-tab="tavern" onclick="switchTab('tavern')">Tavern</button>
+    <button class="tab-btn" data-tab="more" onclick="switchTab('more')">Log/Settings</button>
   </div>
 
-  <!-- PORTAL -->
-  <div class="panel">
-    <div class="panel-title">The Rift</div>
-    <div class="portal-zone">
-      <div class="turn-note" id="turn-note">It is <b>—</b>'s turn to step through.</div>
-      <div class="rift" id="rift" onclick="openRift()">
-        <div class="rift-glyph" id="rift-glyph">☠</div>
+  <!-- ZONES TAB -->
+  <div class="tab-panel active" id="tab-zones">
+    <div class="panel">
+      <div class="panel-title">Daily Activities</div>
+      <div class="mini-card">
+        <div class="mini-card-head">
+          <span class="mini-card-name">📜 Bounty Quest</span>
+          <span class="mini-card-tag" id="bounty-remaining">Remaining: 3</span>
+        </div>
+        <div class="mini-card-desc">A quick, guaranteed job off the board. No fight, no risk — straight from the real game's Event menu.</div>
+        <button class="btn-small" id="bounty-btn" onclick="takeBounty()">Take Bounty</button>
       </div>
-      <div class="rift-cta" id="rift-cta">Tap to enter the Rift</div>
+      <div class="mini-card">
+        <div class="mini-card-head">
+          <span class="mini-card-name">⚙ Auto-Combat</span>
+          <span class="mini-card-tag" id="autocombat-elapsed">0m idle</span>
+        </div>
+        <div class="mini-card-desc">Progress banks passively while you're away, up to 4 hours. Collect it here — matches the real AFK leveling feature.</div>
+        <button class="btn-small" id="autocombat-btn" onclick="collectAutoCombat()">Collect</button>
+      </div>
     </div>
-
-    <div class="encounter-card" id="encounter-card">
-      <div class="type-badge" id="type-badge">⚔ Adventure</div>
-      <div class="tier-tag" id="tier-tag">Tier</div>
-      <div class="zone-name" id="zone-name">Zone</div>
-      <div class="boss-name" id="boss-name">Boss Name</div>
-      <div class="flavor" id="boss-flavor">Flavor text...</div>
-      <div class="dc-row" id="dc-row">
-        <span>Challenge Rating: <b id="dc-val">10</b></span>
-        <span id="bonus-wrap">Your Roll Bonus: <b id="bonus-val">+0</b></span>
-      </div>
-      <div class="roll-area">
-        <button class="btn-roll" id="roll-btn" onclick="rollEncounter()">🎲 Roll For It</button>
-      </div>
+    <div class="panel">
+      <div class="panel-title">Explore</div>
+      <div class="zone-grid" id="zone-grid"></div>
+    </div>
+    <div class="panel room" id="room">
+      <div class="tier-tag" id="room-tier">Tier</div>
+      <div class="room-zone" id="room-zone">Zone</div>
+      <div class="room-boss" id="room-boss">Boss Name</div>
+      <div id="room-cameo"></div>
+      <div class="room-flavor" id="room-flavor">Flavor text...</div>
+      <div class="choice-row" id="choice-row"></div>
       <div class="result-box" id="result-box">
         <div class="roll-num" id="roll-num">--</div>
         <div class="result-verb" id="result-verb">—</div>
         <div class="result-detail" id="result-detail">—</div>
-        <div id="drink-pill-wrap"></div>
-        <div class="steal-row" id="steal-row"></div>
-        <button class="btn-continue" onclick="closeEncounter()">Continue →</button>
+        <div id="pill-wrap"></div>
+        <div class="room-actions">
+          <button class="btn-ghost" onclick="exploreAgain()">Explore Again</button>
+          <button class="btn-leave" onclick="leaveZone()">Leave Zone</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- GUILD CALENDAR -->
-  <div class="panel">
-    <div class="panel-title">Guild Calendar <span id="calendar-today-label" style="color:var(--parchment-dim);font-family:'JetBrains Mono',monospace;letter-spacing:0;">Today</span></div>
-    <div id="calendar-today-list"></div>
-    <button class="reset-link" onclick="toggleWeek()" style="margin-top:10px;">Show full week ▾</button>
-    <div class="cal-week" id="calendar-week"></div>
+  <!-- CALENDAR TAB -->
+  <div class="tab-panel" id="tab-calendar">
+    <div class="panel">
+      <div class="panel-title">Guild Calendar <span id="calendar-today-label" style="color:var(--parchment-dim);font-family:'JetBrains Mono',monospace;letter-spacing:0;">Today</span></div>
+      <div id="calendar-today-list"></div>
+      <button class="reset-link" onclick="toggleWeek()">Show full week ▾</button>
+      <div class="cal-week" id="calendar-week"></div>
+    </div>
   </div>
 
-  <!-- SETTINGS -->
-  <div class="panel">
-    <div class="panel-title">Toll Settings</div>
-    <div class="settings-grid" id="unit-grid"></div>
-    <button class="reset-link" onclick="resetGame()">Reset the entire campaign</button>
+  <!-- TAVERN TAB -->
+  <div class="tab-panel" id="tab-tavern">
+    <div class="panel">
+      <div class="panel-title">The Tavern</div>
+      <div class="npc-row">
+        <div class="npc-portrait">🧙‍♀️</div>
+        <div>
+          <div class="npc-name">Rielmann</div>
+          <div class="npc-role">Guide · gives tips, helps with quests</div>
+        </div>
+      </div>
+      <button class="btn-small" onclick="talkToRielmann()">Talk to Rielmann</button>
+      <div class="speech" id="rielmann-speech"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Adventurer Hans</div>
+      <div class="npc-row">
+        <div class="npc-portrait">🔨</div>
+        <div>
+          <div class="npc-name">Hans</div>
+          <div class="npc-role">Blacksmith · enhances your gear</div>
+        </div>
+      </div>
+      <div class="item-card">
+        <div class="item-name">⚔ <span id="weapon-name">Rusty Blade</span> <span class="item-plus" id="weapon-plus">+0</span></div>
+        <div class="item-bar"><div class="item-bar-fill" id="weapon-bar" style="width:0%"></div></div>
+        <div class="item-meta"><span id="weapon-cost">Cost: 40 Zen</span><span id="weapon-chance">Success: 85%</span></div>
+        <button class="btn-enhance" id="weapon-btn" onclick="enhance('weapon')">Enhance Weapon</button>
+      </div>
+      <div class="item-card">
+        <div class="item-name">🛡 <span id="armor-name">Cloth Vest</span> <span class="item-plus" id="armor-plus">+0</span></div>
+        <div class="item-bar"><div class="item-bar-fill" id="armor-bar" style="width:0%"></div></div>
+        <div class="item-meta"><span id="armor-cost">Cost: 40 Zen</span><span id="armor-chance">Success: 85%</span></div>
+        <button class="btn-enhance" id="armor-btn" onclick="enhance('armor')">Enhance Armor</button>
+      </div>
+      <div class="speech" id="hans-speech"></div>
+    </div>
   </div>
 
-  <!-- LOG -->
-  <div class="panel">
-    <div class="panel-title">Chronicle</div>
-    <div class="log" id="log"></div>
+  <!-- LOG/SETTINGS TAB -->
+  <div class="tab-panel" id="tab-more">
+    <div class="panel">
+      <div class="panel-title">Toll Settings</div>
+      <div class="settings-grid" id="unit-grid"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">NPC Cast (random cameos)</div>
+      <div class="cast-tags" id="cast-tags"></div>
+      <div class="add-row">
+        <input id="cast-input" placeholder="Add a name" maxlength="16">
+        <button class="btn-small" onclick="addCast()">Add</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Snapshot</div>
+      <div class="snap-row">
+        <button class="btn-small" onclick="exportSnapshot()">⬇ Export JSON</button>
+        <button class="btn-small" onclick="document.getElementById('import-file').click()">⬆ Import JSON</button>
+      </div>
+      <input type="file" id="import-file" accept="application/json" style="display:none" onchange="importSnapshot(this.files[0])">
+      <div class="save-note">Auto-saves to this device after every action. Export a snapshot if you're switching devices, clearing your browser, or using a browser that reloads tabs in the background.</div>
+      <button class="reset-link" onclick="resetGame()">Reset the entire campaign</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Chronicle</div>
+      <div class="log" id="log"></div>
+    </div>
   </div>
 
   <div class="footnote">
-    Drink amounts are small by design — pace yourself, swap in water freely, and sit any round out whenever you want. No adventurer is required to finish every toll. Play safe, level responsibly.
+    Drink amounts are small by design — pace yourself, swap in water freely, and rest anytime. This is meant to be relaxing, not another chore.<br><br>
+    Some names lean on the real game's own slightly-translated phrasing (Corps, Garnets, "Ruler's Butler") — kept as flavor rather than smoothed out, since that's part of its charm. Mechanics behind those menus are my best approximation, not a 1:1 port.
   </div>
 </div>
 
 <script>
-/* ---------------- DATA ---------------- */
-const DEFAULT_PARTY = ["JMARTIN","KOKI","OLLAT","GADO","SAYURI","TOYANG","ALZ","002","JMEB","MARCUS"];
+/* ===================== DATA ===================== */
+const NPC_DEFAULT_CAST = ["JMARTIN","KOKI","GADO","SAYURI","TOYANG","ALZ","002","JMEB","MARCUS"];
 
 const ZONES = [
-  {name:"Land of Demons", weight:1, tierBias:"WorldBoss"},
-  {name:"Lorencia Ruins", weight:3},
-  {name:"Devias Ice Fields", weight:3},
-  {name:"Noria Woodlands", weight:3},
-  {name:"Atlans Deep", weight:2},
-  {name:"Icarus Sky Tower", weight:2},
-  {name:"Kalima Rift", weight:2},
-  {name:"Kanturu Wastes", weight:2},
-  {name:"Raklion Sanctuary", weight:2},
-  {name:"Swamp of Calmness", weight:3},
-  {name:"Aida Temple", weight:2},
-  {name:"Crywolf Fortress", weight:2},
+  {key:"lorencia", name:"Lorencia Ruins", tierPool:["Minion","Minion","Elite"], desc:"The fallen capital. Easy pickings for a warm-up."},
+  {key:"noria", name:"Noria Woodlands", tierPool:["Minion","Elite"], desc:"Quiet groves, restless spirits."},
+  {key:"swamp", name:"Swamp of Calmness", tierPool:["Minion","Elite"], desc:"Ironic name. Watch your footing."},
+  {key:"elemental", name:"Elemental Altar", tierPool:["Minion","Elite"], desc:"A quieter grind — crafting materials over combat glory. Straight from the real Event menu."},
+  {key:"icaria", name:"Icaria", tierPool:["Elite","Boss"], desc:"Feather-strewn ruins above the clouds. Collect Illusionary Feathers, dodge the guardians."},
+  {key:"devias", name:"Devias Ice Fields", tierPool:["Elite","Boss"], desc:"Frostbite country. Bring your nerve."},
+  {key:"atlans", name:"Atlans Deep", tierPool:["Elite","Boss"], desc:"Something ancient sleeps beneath the tide."},
+  {key:"icarus", name:"Icarus Sky Tower", tierPool:["Elite","Boss"], desc:"The wind up here holds grudges."},
+  {key:"kalima", name:"Kalima Rift", tierPool:["Elite","Boss"], desc:"A tear in the world. Don't linger."},
+  {key:"kanturu", name:"Kanturu Wastes", tierPool:["Elite","Boss"], desc:"Sand swallows the careless."},
+  {key:"aida", name:"Aida Temple", tierPool:["Elite","Boss"], desc:"Cursed halls, older gods."},
+  {key:"crywolf", name:"Crywolf Fortress", tierPool:["Elite","Boss"], desc:"The wolf legion never truly sleeps."},
+  {key:"raklion", name:"Raklion Sanctuary", tierPool:["Boss"], desc:"Dragon country. Only for the geared-up."},
+  {key:"demons", name:"Land of Demons", tierPool:["Boss","WorldBoss"], desc:"The deepest room in the realm. Best XP anywhere — and the sharpest teeth. Don't walk in wounded.", special:true},
 ];
 
 const BOSSES = {
@@ -419,48 +375,38 @@ const BOSSES = {
     {name:"Frost Queen Sylvane", flavor:"Rules the ice fields with a stare that lowers the room temperature."},
     {name:"Sand Wyrm Karesh", flavor:"Surfaces once, eats twice."},
     {name:"Nightmare Wraith", flavor:"You've fought this one in your dreams. It remembers."},
+    {name:"Illusionary Feather Wraith", flavor:"Guards Icaria's relics. Molts when startled — mind the feathers."},
+    {name:"Elemental Core Guardian", flavor:"Animated crystal, humming with raw element. Not thrilled to be mined."},
   ],
   Boss:[
     {name:"Red Dragon Selupan", flavor:"Raklion's guardian. Breathes fire, holds grudges longer."},
     {name:"Hydra Queen Nyx", flavor:"Cut one head, two opinions grow back."},
     {name:"Balrog Chief Utan", flavor:"Crywolf's iron general. Has never once said 'good game.'"},
-    {name:"Gorgon of Aida", flavor:"Do not maintain eye contact. Do finish your drink."},
-    {name:"Illusion Knight Zaikan", flavor:"There may be three of him. There is only one tab."},
+    {name:"Gorgon of Aida", flavor:"Do not maintain eye contact."},
+    {name:"Illusion Knight Zaikan", flavor:"There may be three of him. There is only one exit."},
   ],
   WorldBoss:[
-    {name:"KUNDUN, The Fallen God", flavor:"The Land of Demons bows to no adventurer. Tonight, the whole guild answers for it — everyone rolls."},
+    {name:"KUNDUN, The Fallen God", flavor:"The Land of Demons bows to no adventurer. Tonight, you answer for it alone."},
   ],
   Ancient:[
-    {name:"EROHIM, The First Light", flavor:"Older than Kundun, older than the continent. Legend says it only wakes when a guild gets cocky. Everyone rolls, and nobody skips this one."},
+    {name:"EROHIM, The First Light", flavor:"Older than Kundun, older than the continent."},
   ],
 };
 
-const BOUNTY_FLAVORS = [
-  "A tavern notice, nailed up crooked: DEAD OR ALIVE.",
-  "The bounty board creaks. Someone's posted a fresh contract.",
-  "A hooded courier slides a scroll across the bar. It's a job.",
-  "The guild ledger flags a target with a fat reward attached.",
-];
-
 const TIER_CONFIG = {
-  Minion:   {dc:8,  xp:10, drink:1},
-  Elite:    {dc:12, xp:20, drink:2},
-  Boss:     {dc:16, xp:35, drink:3},
-  WorldBoss:{dc:20, xp:60, drink:4},
-  Ancient:  {dc:23, xp:100, drink:4},
+  Minion:   {dc:8,  xp:10, zen:6,  hp:2, drink:1},
+  Elite:    {dc:12, xp:20, zen:12, hp:4, drink:2},
+  Boss:     {dc:16, xp:35, zen:20, hp:7, drink:3},
+  WorldBoss:{dc:20, xp:60, zen:32, hp:10,drink:4},
+  Ancient:  {dc:23, xp:100,zen:50, hp:12,drink:4},
 };
 
-// Weighted odds for what kind of encounter the Rift produces
-const ENCOUNTER_TYPES = [
-  {key:"Adventure",   weight:58, label:"⚔ Adventure",     assist:false},
-  {key:"BountyQuest", weight:27, label:"📜 Bounty Quest",  assist:false},
-  {key:"WorldBoss",   weight:10, label:"👑 World Boss",    assist:true},
-  {key:"AncientBoss", weight:5,  label:"🜏 Ancient Boss",  assist:true},
+const CHOICES = [
+  {key:"aggressive", label:"⚔ Fight Head-On", desc:"Full force, no half-measures.", bonusMod:3, hpMult:1.6, xpMult:1.25, advantage:true, stat:"Higher reward, higher injury risk"},
+  {key:"tactical",   label:"🗡 Fight Smart",   desc:"Read the enemy, strike the opening.", bonusMod:1, hpMult:1.0, xpMult:1.0, stat:"Balanced risk and reward"},
+  {key:"cautious",   label:"🛡 Play It Safe",  desc:"Guaranteed small gains, minimal risk.", guaranteed:true, stat:"No roll, no injury, modest reward"},
 ];
-const NORMAL_ZONES = ZONES.filter(z => z.name !== "Land of Demons");
 
-// ---- Guild Calendar: mirrors the real event schedule (best read of the schedule screen —
-// tell me if a day/time is off and I'll fix it) ----
 const WEEKDAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 const GUILD_SCHEDULE = {
   Monday:    [{time:"12:00", name:"Guild BOSS"}, {time:"20:30", name:"Square of Devil"}, {time:"20:45", name:"Lost Continent"}, {time:"Evening", name:"Treasure Convoy"}],
@@ -472,13 +418,13 @@ const GUILD_SCHEDULE = {
   Sunday:    [{time:"12:00", name:"Guild BOSS"}, {time:"20:45", name:"Lost Continent"}, {time:"Evening", name:"Divine Demon Homefield"}],
 };
 const CALENDAR_EVENT_DEFS = {
-  "Guild BOSS":             {tier:"WorldBoss", zoneName:"Land of Demons — Guild Raid", boss:{name:"KUNDUN, The Fallen God", flavor:"The whole guild storms in together. You lead the strike."}},
+  "Guild BOSS":             {tier:"WorldBoss", zoneName:"Land of Demons — Guild Raid", boss:{name:"KUNDUN, The Fallen God", flavor:"The whole guild cheers you on. You lead the strike."}},
   "Lost Continent":         {tier:"Boss",      zoneName:"Lost Continent — Faction Assembly", boss:{name:"Rival Corps Vanguard", flavor:"Allied guilds from your faction link up to push back rival corps."}},
   "Square of Devil":        {tier:"Elite",     zoneName:"Square of Devil", boss:{name:"Devil's Honor Guard", flavor:"A closed arena test of raw guild strength."}},
   "Conquest Battle":        {tier:"Boss",      zoneName:"Conquest Battlefield", boss:{name:"Enemy Guild Vanguard", flavor:"Territory's on the line. So is bragging rights."}},
   "Demon Ruler Raid":       {tier:"Boss",      zoneName:"Demon Ruler's Domain", boss:{name:"The Demon Ruler", flavor:"He doesn't negotiate. He collects taxes in blood."}},
   "Battle of Gods":         {tier:"Boss",      zoneName:"Battle of Gods Arena", boss:{name:"A Rival Champion", flavor:"Divinity's up for debate tonight."}},
-  "Treasure Convoy":        {tier:"Elite",     zoneName:"Treasure Convoy Route", boss:{name:"Convoy Guard Escort", flavor:"Less a boss fight, more a heist — intercept the wagons before the escort regroups."}},
+  "Treasure Convoy":        {tier:"Elite",     zoneName:"Treasure Convoy Route", boss:{name:"Convoy Guard Escort", flavor:"Less a boss fight, more a heist."}},
   "Divine Demon Homefield": {tier:"Ancient",   zoneName:"Divine Demon Homefield", boss:{name:"The Divine Demon", flavor:"Sunday's reckoning. The whole realm is watching."}},
 };
 
@@ -488,64 +434,449 @@ const UNITS = [
   {key:"point", label:"Points (soft mode)"},
 ];
 
-/* ---------------- STATE ---------------- */
+const RIELMANN_TIPS = [
+  "Fights go easier with better gear — see Hans about your weapon before diving into Kalima Rift.",
+  "Playing it safe is never wrong. If your HP's low, don't be too proud to take the guaranteed win.",
+  "Land of Demons hits hardest but pays the best XP anywhere. Don't walk in wounded.",
+  "Fighting head-on doubles your risk, but the payoff matches it. Know your HP before you commit.",
+  "I've seen a few of the Legends limp back from Devias more than once. Ice fields aren't kind to the reckless.",
+  "Rest is free here. Use it. There's no prize for suffering through low HP.",
+  "Every level makes you tougher — your max HP grows each time you level up.",
+  "The Guild Calendar events pay the best Zen. Don't sleep on Guild BOSS at noon.",
+  "Armor doesn't stop hits, it just softens them. Get some enhancement in before Raklion.",
+  "Take a breath. This is supposed to help you unwind, not stress you out.",
+  "A cameo from a friendly face gives you a small bonus that round — worth waiting for if you're on the fence.",
+  "Treasure Convoy is low-risk. Good pick if you just want a quiet win.",
+];
+
+const HANS_LINES = [
+  "Hold still. This might sting your wallet more than your arm.",
+  "Good steel, better hands. Let's see what we can do.",
+  "No shame in a swing and a miss. Gold's not going anywhere either way.",
+  "I don't destroy gear here — that's not the kind of shop I run.",
+];
+
+/* ===================== STATE ===================== */
 let state = {
-  party: [],       // {name, level, xp}
+  you: { name:"OLLAT", level:1, xp:0, hp:20, maxHp:20, zen:100, weaponEnh:0, armorEnh:0 },
+  npcCast: NPC_DEFAULT_CAST.slice(),
   unit: "sip",
-  current: null,   // active encounter
-  you: null,       // name of the adventurer that is "you"
-  encounterCount: 0,
+  quest: null,
+  logEntries: [],
+  bounty: { remaining: 3, resetDate: null },
+  autoCombat: { lastCollect: Date.now() },
 };
 
 function xpToNext(level){ return level * 30; }
 
 function load(){
   try{
-    const saved = JSON.parse(localStorage.getItem("darkEpochTavern"));
-    if(saved && saved.party && saved.party.length){ state = Object.assign(state, saved); return; }
+    const saved = JSON.parse(localStorage.getItem("darkEpochTavernV2"));
+    if(saved && saved.you){ state = Object.assign(state, saved); return; }
   }catch(e){}
-  state.party = DEFAULT_PARTY.map(n => ({name:n, level:1, xp:0}));
-  state.you = "OLLAT";
 }
 function save(){
-  localStorage.setItem("darkEpochTavern", JSON.stringify(state));
+  localStorage.setItem("darkEpochTavernV2", JSON.stringify(state));
 }
 
-/* ---------------- RENDER ---------------- */
-function you(){
-  if(!state.you) return null;
-  return state.party.find(p=>p.name===state.you) || null;
+/* ===================== RENDER: PLAYER ===================== */
+function condition(){
+  const pct = state.you.hp / state.you.maxHp;
+  if(state.you.hp <= 0) return "Critical";
+  if(pct < 0.4) return "Wounded";
+  return "Healthy";
 }
 
-function renderParty(){
-  const list = document.getElementById("party-list");
-  list.innerHTML = "";
-  state.party.forEach((p, i) => {
-    const need = xpToNext(p.level);
-    const pct = Math.min(100, Math.round((p.xp/need)*100));
-    const row = document.createElement("div");
-    row.className = "adv-row" + (state.you === p.name ? " is-you" : "");
-    row.innerHTML = `
-      <div class="adv-badge">${p.name.slice(0,2).toUpperCase()}</div>
-      <div class="adv-main">
-        <div class="adv-name">
-          <button class="you-star" onclick="toggleYou('${p.name}')" title="Mark as you">${state.you === p.name ? "★" : "☆"}</button>
-          ${p.name} <span class="lvl-tag">LV ${p.level}</span>${state.you === p.name ? '<span class="you-tag">YOU</span>' : ""}
-        </div>
-        <div class="bar-track"><div class="bar-fill xp" style="width:${pct}%"></div></div>
-      </div>
-      <div class="adv-stats">${p.xp}/${need} xp</div>
-      <button class="rm-btn" onclick="removeAdventurer(${i})" title="Remove">×</button>
+function renderPlayer(){
+  const y = state.you;
+  document.getElementById("player-badge").textContent = y.name.slice(0,2).toUpperCase();
+  document.getElementById("player-name").textContent = y.name;
+  document.getElementById("player-lvl").textContent = "LV " + y.level;
+
+  const cond = condition();
+  const condEl = document.getElementById("player-cond");
+  condEl.textContent = cond;
+  condEl.className = "cond-tag cond-" + cond;
+
+  const hpPct = Math.max(0, Math.round((y.hp / y.maxHp) * 100));
+  document.getElementById("hp-fill").style.width = hpPct + "%";
+  document.getElementById("hp-num").textContent = `${y.hp}/${y.maxHp}`;
+
+  const need = xpToNext(y.level);
+  const xpPct = Math.min(100, Math.round((y.xp / need) * 100));
+  document.getElementById("xp-fill").style.width = xpPct + "%";
+  document.getElementById("xp-num").textContent = `${y.xp}/${need}`;
+
+  document.getElementById("zen-num").textContent = y.zen;
+
+  document.getElementById("critical-banner").classList.toggle("show", y.hp <= 0);
+
+  renderEquipment();
+}
+
+function grantXP(amount){
+  const y = state.you;
+  y.xp += amount;
+  let leveled = false;
+  while(y.xp >= xpToNext(y.level)){
+    y.xp -= xpToNext(y.level);
+    y.level++;
+    y.maxHp += 4;
+    y.hp = y.maxHp; // level-up fully heals
+    leveled = true;
+  }
+  return leveled;
+}
+
+function restPlayer(){
+  state.you.hp = state.you.maxHp;
+  save();
+  renderPlayer();
+  log("🛌 You rest. Full HP restored.");
+}
+
+/* ===================== TABS ===================== */
+function switchTab(name){
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
+  document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+  document.getElementById("tab-" + name).classList.add("active");
+}
+
+/* ===================== ZONES ===================== */
+function renderZoneGrid(){
+  const grid = document.getElementById("zone-grid");
+  grid.innerHTML = "";
+  ZONES.forEach(z => {
+    const card = document.createElement("div");
+    card.className = "zone-card" + (z.special ? " special" : "");
+    card.onclick = () => enterZone(z.key);
+    card.innerHTML = `
+      <div class="zone-card-name">⟟ ${z.name}</div>
+      <div class="zone-card-tier">${z.tierPool.join(" / ")}</div>
+      <div class="zone-card-desc">${z.desc}</div>
     `;
+    grid.appendChild(card);
+  });
+}
+
+function randomFrom(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function roll1to20(){ return 1 + Math.floor(Math.random()*20); }
+
+function rollCameo(){
+  const r = Math.random();
+  if(!state.npcCast.length) return null;
+  if(r < 0.25) return {type:"ally", name: randomFrom(state.npcCast)};
+  if(r < 0.5) return {type:"rival", name: randomFrom(state.npcCast)};
+  return null;
+}
+
+function enterZone(key){
+  if(state.you.hp <= 0){ alert("You're too hurt to venture out. Rest first."); return; }
+  const zone = ZONES.find(z => z.key === key);
+  startQuest({kind:"zone", zone});
+}
+
+function exploreAgain(){
+  if(state.you.hp <= 0){ alert("You're too hurt to keep exploring. Rest first."); return; }
+  const q = state.quest;
+  if(!q) return;
+  if(q.source.kind === "zone") startQuest(q.source);
+  else leaveZone();
+}
+
+function leaveZone(){
+  document.getElementById("room").classList.remove("show");
+  document.getElementById("result-box").classList.remove("show");
+  state.quest = null;
+  save();
+}
+
+function startQuest(source){
+  let tier, boss, zoneName, guildMorale = false;
+  if(source.kind === "zone"){
+    tier = randomFrom(source.zone.tierPool);
+    boss = randomFrom(BOSSES[tier]);
+    zoneName = source.zone.name;
+  } else {
+    const def = CALENDAR_EVENT_DEFS[source.name];
+    tier = def.tier; boss = def.boss; zoneName = def.zoneName; guildMorale = true;
+  }
+  const cfg = TIER_CONFIG[tier];
+  const cameo = rollCameo();
+
+  state.quest = {source, tier, boss, zoneName, cfg, guildMorale, cameo};
+  renderQuest();
+  document.getElementById("room").scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+function renderQuest(){
+  const q = state.quest;
+  document.getElementById("room-tier").textContent = q.tier === "WorldBoss" ? "World Boss" : q.tier;
+  document.getElementById("room-tier").className = "tier-tag tier-" + q.tier;
+  document.getElementById("room-zone").textContent = "⟟ " + q.zoneName.toUpperCase();
+  document.getElementById("room-boss").textContent = q.boss.name;
+  document.getElementById("room-flavor").textContent = q.boss.flavor;
+
+  const cameoEl = document.getElementById("room-cameo");
+  if(q.cameo){
+    cameoEl.innerHTML = q.cameo.type === "ally"
+      ? `<div class="cameo ally">🤝 ${q.cameo.name} fights alongside you this round (+2 bonus).</div>`
+      : `<div class="cameo rival">👀 ${q.cameo.name} is already here, hunting the same mark.</div>`;
+  } else {
+    cameoEl.innerHTML = "";
+  }
+
+  const row = document.getElementById("choice-row");
+  row.innerHTML = "";
+  CHOICES.forEach(c => {
+    const btn = document.createElement("button");
+    btn.className = "choice-btn";
+    btn.onclick = () => resolveChoice(c.key);
+    btn.innerHTML = `<div class="choice-label">${c.label}</div><div class="choice-desc">${c.desc}</div><div class="choice-stat">${c.stat}</div>`;
+    row.appendChild(btn);
+  });
+
+  document.getElementById("result-box").classList.remove("show");
+  document.getElementById("room").classList.add("show");
+}
+
+function resolveChoice(key){
+  const q = state.quest;
+  const choice = CHOICES.find(c => c.key === key);
+  const y = state.you;
+  const weaponBonus = Math.floor(y.weaponEnh / 2);
+  const armorMitigation = Math.floor(y.armorEnh / 2);
+  const levelBonus = Math.floor(y.level / 2);
+  const morale = q.guildMorale ? 2 : 0;
+  const allyBonus = (q.cameo && q.cameo.type === "ally") ? 2 : 0;
+
+  document.getElementById("choice-row").innerHTML = "";
+  const box = document.getElementById("result-box");
+  const pillWrap = document.getElementById("pill-wrap");
+  pillWrap.innerHTML = "";
+  box.classList.add("show");
+
+  if(choice.guaranteed){
+    const xp = Math.round(q.cfg.xp * 0.4);
+    const zen = Math.round(q.cfg.zen * 0.4);
+    const leveled = grantXP(xp);
+    y.zen += zen;
+    document.getElementById("roll-num").textContent = "—";
+    box.className = "result-box win show";
+    document.getElementById("result-verb").textContent = "Careful Success";
+    document.getElementById("result-detail").textContent =
+      `You keep your distance from ${q.boss.name} and still walk away with ${xp} XP and ${zen} Zen. No risk taken.` + (leveled ? ` LEVEL UP → ${y.level}!` : "");
+    log(`🛡 ${y.name} played it safe in ${q.zoneName} — +${xp} XP, +${zen} Zen.`);
+    save(); renderPlayer();
+    return;
+  }
+
+  const bonus = levelBonus + weaponBonus + choice.bonusMod + morale + allyBonus;
+  const d20 = choice.advantage ? Math.max(roll1to20(), roll1to20()) : roll1to20();
+  const total = d20 + bonus;
+  const success = total >= q.cfg.dc;
+
+  document.getElementById("roll-num").textContent = `${d20} + ${bonus} = ${total}`;
+
+  if(success){
+    const xp = Math.round(q.cfg.xp * (choice.xpMult || 1));
+    const zen = Math.round(q.cfg.zen * (choice.xpMult || 1));
+    const leveled = grantXP(xp);
+    y.zen += zen;
+    box.className = "result-box win show";
+    document.getElementById("result-verb").textContent = "Victory";
+    document.getElementById("result-detail").textContent =
+      `${total} vs DC ${q.cfg.dc} — ${q.boss.name} falls. +${xp} XP, +${zen} Zen.` + (leveled ? ` LEVEL UP → ${y.level}!` : "");
+    log(`⚔ ${y.name} rolled ${total} vs DC ${q.cfg.dc} — victory over ${q.boss.name} (${q.zoneName}).`);
+  } else {
+    const hpLossBase = Math.round(q.cfg.hp * (choice.hpMult || 1));
+    const hpLoss = Math.max(hpLossBase - armorMitigation, 1);
+    y.hp = Math.max(y.hp - hpLoss, 0);
+    box.className = "result-box lose show";
+    document.getElementById("result-verb").textContent = "Injured";
+    document.getElementById("result-detail").textContent =
+      `${total} vs DC ${q.cfg.dc} — ${q.boss.name} gets the better of you.`;
+    pillWrap.innerHTML = `<div class="pill hp">🩸 −${hpLoss} HP</div><div class="pill toll">🍷 ${q.cfg.drink} ${unitLabel(q.cfg.drink)}</div>`;
+    log(`💀 ${y.name} rolled ${total} vs DC ${q.cfg.dc} — injured by ${q.boss.name}, −${hpLoss} HP.`);
+  }
+
+  save();
+  renderPlayer();
+}
+
+function unitLabel(n){
+  const map = {sip:"sip", shot:"shot", point:"point"};
+  const base = map[state.unit] || "sip";
+  return (n===1) ? base : base + "s";
+}
+
+/* ===================== GUILD CALENDAR ===================== */
+function todayName(){ return WEEKDAYS[new Date().getDay()]; }
+
+function renderCalendar(){
+  const today = todayName();
+  document.getElementById("calendar-today-label").textContent = today;
+
+  const list = document.getElementById("calendar-today-list");
+  list.innerHTML = "";
+  (GUILD_SCHEDULE[today] || []).forEach(ev => {
+    const row = document.createElement("div");
+    row.className = "cal-row";
+    row.innerHTML = `<span class="cal-time">${ev.time}</span><span class="cal-name">${ev.name}</span><button class="cal-join" onclick="joinGuildEvent('${ev.name}')">Join</button>`;
     list.appendChild(row);
   });
-  document.getElementById("round-count").textContent = "Encounters: " + (state.encounterCount||0);
-  const player = you();
-  document.getElementById("turn-note").innerHTML = player
-    ? `⭐ Playing as <b>${player.name}</b> — Level ${player.level}. The rest of Legends has your back.`
-    : `Tap ☆ next to your name below to mark yourself.`;
+
+  const week = document.getElementById("calendar-week");
+  week.innerHTML = "";
+  ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"].forEach(day => {
+    const block = document.createElement("div");
+    block.className = "cal-day-block" + (day === today ? " cal-day-today" : "");
+    const evs = (GUILD_SCHEDULE[day] || []).map(e => `${e.time} ${e.name}`).join(" · ");
+    block.innerHTML = `<div class="cal-day-name">${day}</div><div class="cal-day-evs">${evs}</div>`;
+    week.appendChild(block);
+  });
 }
 
+function toggleWeek(){
+  document.getElementById("calendar-week").classList.toggle("show");
+}
+
+function joinGuildEvent(name){
+  if(state.you.hp <= 0){ alert("You're too hurt to venture out. Rest first."); return; }
+  switchTab("zones");
+  startQuest({kind:"calendar", name});
+}
+
+/* ===================== TAVERN / HANS ===================== */
+function talkToRielmann(){
+  const el = document.getElementById("rielmann-speech");
+  el.textContent = "\u201C" + randomFrom(RIELMANN_TIPS) + "\u201D";
+  el.classList.add("show");
+}
+
+function hansSpeak(){
+  const el = document.getElementById("hans-speech");
+  el.textContent = "\u201C" + randomFrom(HANS_LINES) + "\u201D";
+  el.classList.add("show");
+}
+
+const WEAPON_NAMES = ["Rusty Blade","Tempered Blade","Runic Blade","Ancient Blade"];
+const ARMOR_NAMES = ["Cloth Vest","Leather Armor","Plate Mail","Ancient Plate"];
+const MAX_ENH = 9;
+
+function tierName(names, enh){
+  const idx = enh < 3 ? 0 : enh < 6 ? 1 : enh < 9 ? 2 : 3;
+  return names[idx];
+}
+function enhanceCost(level){ return (level + 1) * 40; }
+function enhanceChance(level){ return Math.max(0.85 - level * 0.07, 0.2); }
+
+function renderEquipment(){
+  const y = state.you;
+  ["weapon","armor"].forEach(kind => {
+    const names = kind === "weapon" ? WEAPON_NAMES : ARMOR_NAMES;
+    const enh = kind === "weapon" ? y.weaponEnh : y.armorEnh;
+    document.getElementById(kind + "-name").textContent = tierName(names, enh);
+    document.getElementById(kind + "-plus").textContent = "+" + enh;
+    document.getElementById(kind + "-bar").style.width = Math.round((enh / MAX_ENH) * 100) + "%";
+    const btn = document.getElementById(kind + "-btn");
+    if(enh >= MAX_ENH){
+      document.getElementById(kind + "-cost").textContent = "Maxed out";
+      document.getElementById(kind + "-chance").textContent = "";
+      btn.disabled = true;
+      btn.textContent = "Fully Enhanced";
+    } else {
+      const cost = enhanceCost(enh);
+      document.getElementById(kind + "-cost").textContent = `Cost: ${cost} Zen`;
+      document.getElementById(kind + "-chance").textContent = `Success: ${Math.round(enhanceChance(enh)*100)}%`;
+      btn.disabled = y.zen < cost;
+      btn.textContent = "Enhance " + (kind === "weapon" ? "Weapon" : "Armor");
+    }
+  });
+}
+
+function enhance(kind){
+  const y = state.you;
+  const enh = kind === "weapon" ? y.weaponEnh : y.armorEnh;
+  if(enh >= MAX_ENH) return;
+  const cost = enhanceCost(enh);
+  if(y.zen < cost) return;
+  y.zen -= cost;
+  const success = Math.random() < enhanceChance(enh);
+  if(success){
+    if(kind === "weapon") y.weaponEnh++; else y.armorEnh++;
+    hansSpeak();
+    log(`🔨 Hans enhances your ${kind} to +${kind === "weapon" ? y.weaponEnh : y.armorEnh}.`);
+  } else {
+    hansSpeak();
+    log(`🔨 The ${kind} enhancement fails. Your gear is untouched — Hans doesn't break things here.`);
+  }
+  save();
+  renderPlayer();
+}
+
+/* ===================== BOUNTY QUEST (real Event menu feature) ===================== */
+function todayStr(){
+  const d = new Date();
+  return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+}
+
+function ensureBountyReset(){
+  if(state.bounty.resetDate !== todayStr()){
+    state.bounty.remaining = 3;
+    state.bounty.resetDate = todayStr();
+  }
+}
+
+function renderBounty(){
+  ensureBountyReset();
+  document.getElementById("bounty-remaining").textContent = "Remaining: " + state.bounty.remaining;
+  document.getElementById("bounty-btn").disabled = state.bounty.remaining <= 0;
+  document.getElementById("bounty-btn").textContent = state.bounty.remaining > 0 ? "Take Bounty" : "Board Empty — Back Tomorrow";
+}
+
+function takeBounty(){
+  ensureBountyReset();
+  if(state.bounty.remaining <= 0) return;
+  state.bounty.remaining--;
+  const xp = 8, zen = 15;
+  const leveled = grantXP(xp);
+  state.you.zen += zen;
+  log(`📜 Bounty turned in — +${xp} XP, +${zen} Zen.` + (leveled ? " LEVEL UP!" : ""));
+  save();
+  renderPlayer();
+  renderBounty();
+}
+
+/* ===================== AUTO-COMBAT (real AFK leveling feature) ===================== */
+const AUTOCOMBAT_CAP_MS = 4 * 60 * 60 * 1000; // caps at 4 hours, like the real feature
+const AUTOCOMBAT_XP_PER_MIN = 0.5;
+const AUTOCOMBAT_ZEN_PER_MIN = 0.4;
+
+function renderAutoCombat(){
+  const elapsed = Math.min(Date.now() - state.autoCombat.lastCollect, AUTOCOMBAT_CAP_MS);
+  const mins = Math.floor(elapsed / 60000);
+  const h = Math.floor(mins / 60), m = mins % 60;
+  document.getElementById("autocombat-elapsed").textContent = (h > 0 ? `${h}h ${m}m` : `${m}m`) + " idle";
+  document.getElementById("autocombat-btn").disabled = mins < 1;
+}
+
+function collectAutoCombat(){
+  const elapsed = Math.min(Date.now() - state.autoCombat.lastCollect, AUTOCOMBAT_CAP_MS);
+  const mins = Math.floor(elapsed / 60000);
+  if(mins < 1) return;
+  const xp = Math.round(mins * AUTOCOMBAT_XP_PER_MIN);
+  const zen = Math.round(mins * AUTOCOMBAT_ZEN_PER_MIN);
+  const leveled = grantXP(xp);
+  state.you.zen += zen;
+  state.autoCombat.lastCollect = Date.now();
+  log(`⚙ Auto-Combat collected — +${xp} XP, +${zen} Zen from ${mins}m idle.` + (leveled ? " LEVEL UP!" : ""));
+  save();
+  renderPlayer();
+  renderAutoCombat();
+}
+
+/* ===================== SETTINGS ===================== */
 function renderUnits(){
   const grid = document.getElementById("unit-grid");
   grid.innerHTML = "";
@@ -558,309 +889,126 @@ function renderUnits(){
   });
 }
 
-function log(msg){
-  const el = document.getElementById("log");
-  const div = document.createElement("div");
-  div.textContent = msg;
-  el.prepend(div);
-}
-
-/* ---------------- GAME LOGIC ---------------- */
-function pickWeighted(arr){
-  const total = arr.reduce((s,z)=>s+(z.weight||1),0);
-  let r = Math.random()*total;
-  for(const z of arr){ r -= (z.weight||1); if(r<=0) return z; }
-  return arr[arr.length-1];
-}
-
-function rollTier(){
-  const r = Math.random();
-  if(r < 0.45) return "Minion";
-  if(r < 0.78) return "Elite";
-  return "Boss";
-}
-
-function rollBountyTier(){
-  return Math.random() < 0.55 ? "Elite" : "Boss";
-}
-
-function pickEncounterType(){
-  const total = ENCOUNTER_TYPES.reduce((s,t)=>s+t.weight,0);
-  let r = Math.random()*total;
-  for(const t of ENCOUNTER_TYPES){ r -= t.weight; if(r<=0) return t; }
-  return ENCOUNTER_TYPES[0];
-}
-
-function openRift(){
-  if(!state.party.length){ alert("Recruit at least one adventurer first."); return; }
-  const rift = document.getElementById("rift");
-  const glyph = document.getElementById("rift-glyph");
-  const cta = document.getElementById("rift-cta");
-  rift.classList.add("spinning");
-  cta.textContent = "The Rift tears open...";
-  document.getElementById("encounter-card").classList.remove("show");
-  document.getElementById("result-box").classList.remove("show");
-
-  let ticks = 0;
-  const glyphs = ["☠","⚔","🜏","☾","✦","♆"];
-  const spin = setInterval(()=>{
-    glyph.textContent = glyphs[Math.floor(Math.random()*glyphs.length)];
-    ticks++;
-    if(ticks > 9){
-      clearInterval(spin);
-      rift.classList.remove("spinning");
-      glyph.textContent = "☠";
-      cta.textContent = "Tap to enter the Rift";
-      revealEncounter();
-    }
-  }, 90);
-}
-
-function revealEncounter(){
-  const player = you();
-  if(!player){ alert("Tap ☆ next to your name in the roster first — you need to be marked as you before stepping into the Rift."); return; }
-
-  const type = pickEncounterType();
-  const bonus = Math.floor(player.level/2);
-
-  let zone, tier, boss, flavorPrefix = "";
-
-  if(type.key === "Adventure"){
-    zone = pickWeighted(NORMAL_ZONES);
-    tier = rollTier();
-    boss = randomFrom(BOSSES[tier]);
-  } else if(type.key === "BountyQuest"){
-    zone = pickWeighted(NORMAL_ZONES);
-    tier = rollBountyTier();
-    boss = randomFrom(BOSSES[tier]);
-    flavorPrefix = randomFrom(BOUNTY_FLAVORS) + " ";
-  } else if(type.key === "WorldBoss"){
-    zone = {name:"Land of Demons"};
-    tier = "WorldBoss";
-    boss = BOSSES.WorldBoss[0];
-  } else { // AncientBoss
-    zone = {name:"The Ancient Ruins, Land of Demons"};
-    tier = "Ancient";
-    boss = BOSSES.Ancient[0];
-  }
-
-  const cfg = TIER_CONFIG[tier];
-  const assistCount = type.assist ? Math.min(state.party.length - 1, 3) : 0;
-
-  state.current = {
-    type: type.key, assist: type.assist, zone, tier, boss, cfg, bonus, assistCount,
-    flavorText: flavorPrefix + boss.flavor + (type.key === "BountyQuest" ? " Bounty reward: double XP. Failed contracts still cost you." : "")
-  };
-  paintEncounterCard(type.label, type.key);
-}
-
-function joinGuildEvent(name){
-  const def = CALENDAR_EVENT_DEFS[name];
-  if(!def) return;
-  const player = you();
-  if(!player){ alert("Tap ☆ next to your name in the roster first — you need to be marked as you before joining a guild event."); return; }
-
-  const bonus = Math.floor(player.level/2);
-  const assistCount = Math.min(state.party.length - 1, 3);
-  const cfg = TIER_CONFIG[def.tier];
-
-  state.current = {
-    type: "GuildEvent", assist: true, zone: {name: def.zoneName}, tier: def.tier, boss: def.boss,
-    cfg, bonus, assistCount, flavorText: def.boss.flavor
-  };
-  paintEncounterCard("📅 " + name, "GuildEvent");
-  document.getElementById("encounter-card").scrollIntoView({behavior:"smooth", block:"center"});
-}
-
-function paintEncounterCard(label, typeKey){
-  const c = state.current;
-  document.getElementById("type-badge").textContent = label;
-  document.getElementById("type-badge").className = "type-badge type-" + typeKey;
-  document.getElementById("tier-tag").textContent = (c.tier === "WorldBoss") ? "World Boss" : c.tier;
-  document.getElementById("tier-tag").className = "tier-tag tier-" + c.tier;
-  document.getElementById("zone-name").textContent = "⟟ " + c.zone.name.toUpperCase();
-  document.getElementById("boss-name").textContent = c.boss.name;
-  document.getElementById("boss-flavor").textContent = c.flavorText;
-  document.getElementById("dc-val").textContent = c.cfg.dc;
-
-  const totalBonus = c.bonus + (c.assistCount||0);
-  document.getElementById("bonus-val").textContent = c.assistCount
-    ? `+${totalBonus} (${c.bonus} you, +${c.assistCount} guild)`
-    : "+" + totalBonus;
-
-  document.getElementById("roll-btn").disabled = false;
-  document.getElementById("roll-btn").textContent = c.assist ? "🎲 Lead The Charge" : "🎲 Roll For It";
-  document.getElementById("encounter-card").classList.add("show");
-  document.getElementById("result-box").classList.remove("show");
-}
-
-function randomFrom(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
-
-function grantXP(player, amount){
-  player.xp += amount;
-  let leveled = false;
-  while(player.xp >= xpToNext(player.level)){
-    player.xp -= xpToNext(player.level);
-    player.level++;
-    leveled = true;
-  }
-  return leveled;
-}
-
-function rollEncounter(){
-  const c = state.current;
-  if(!c) return;
-  const player = you();
-  if(!player) return;
-  document.getElementById("roll-btn").disabled = true;
-
-  const totalBonus = c.bonus + (c.assistCount||0);
-  const d20 = 1 + Math.floor(Math.random()*20);
-  const total = d20 + totalBonus;
-  const success = total >= c.cfg.dc;
-  const xpAward = c.type === "BountyQuest" ? c.cfg.xp * 2 : c.cfg.xp;
-
-  document.getElementById("roll-num").textContent = `${d20} + ${totalBonus} = ${total}`;
-  const box = document.getElementById("result-box");
-  const pillWrap = document.getElementById("drink-pill-wrap");
-  const stealRow = document.getElementById("steal-row");
-  stealRow.innerHTML = "";
-  pillWrap.innerHTML = "";
-  box.classList.add("show");
-
-  if(success){
-    box.className = "result-box win show";
-    document.getElementById("result-verb").textContent = c.type === "BountyQuest" ? "Contract Fulfilled" : "Victory";
-    const leveled = grantXP(player, xpAward);
-    document.getElementById("result-detail").textContent =
-      `${player.name} defeats ${c.boss.name} and gains ${xpAward} XP.` + (leveled ? ` LEVEL UP → ${player.level}!` : "");
-    log(`⚔ ${player.name} rolled ${total} vs DC ${c.cfg.dc} — victory over ${c.boss.name} (${c.zone.name}).`);
-
-    if(c.assist && state.party.length > 1){
-      pillWrap.innerHTML = `<div class="drink-pill">🏆 Victory — tap a guildmate for a 1 ${unitLabel(1)} toast</div>`;
-      state.party.forEach(p=>{
-        if(p.name !== player.name){
-          const b = document.createElement("button");
-          b.className = "steal-btn";
-          b.textContent = p.name;
-          b.onclick = ()=>{ log(`🏆 ${p.name} toasts 1 ${unitLabel(1)} to the win.`); stealRow.innerHTML = `<span style="color:var(--rune-gold-dim);font-family:'JetBrains Mono',monospace;font-size:11px;">Toast collected.</span>`; };
-          stealRow.appendChild(b);
-        }
-      });
-    }
-  } else {
-    box.className = "result-box lose show";
-    document.getElementById("result-verb").textContent = c.type === "BountyQuest" ? "Contract Failed" : "Overwhelmed";
-    document.getElementById("result-detail").textContent = c.type === "BountyQuest"
-      ? `${c.boss.name} slips away. Cost of doing bounty business.`
-      : `${c.boss.name} gets the better of you this time.`;
-    pillWrap.innerHTML = `<div class="drink-pill">🍷 Toll: ${c.cfg.drink} ${unitLabel(c.cfg.drink)}</div>`;
-    log(`💀 ${player.name} rolled ${total} vs DC ${c.cfg.dc} — overwhelmed by ${c.boss.name}, pays ${c.cfg.drink} ${unitLabel(c.cfg.drink)}.`);
-  }
-
-  save();
-  renderParty();
-}
-
-function unitLabel(n){
-  const map = {sip:"sip", shot:"shot", point:"point"};
-  const base = map[state.unit] || "sip";
-  return (n===1) ? base : base + "s";
-}
-
-function closeEncounter(){
-  document.getElementById("encounter-card").classList.remove("show");
-  document.getElementById("result-box").classList.remove("show");
-  state.encounterCount = (state.encounterCount||0) + 1;
-  if(state.encounterCount % 5 === 0){
-    const banner = document.getElementById("rest-banner");
-    banner.classList.add("show");
-    log("⛺ The Bartender's Mercy — water break.");
-    setTimeout(()=>banner.classList.remove("show"), 6000);
-  }
-  save();
-  renderParty();
-}
-
-/* ---------------- GUILD CALENDAR ---------------- */
-function todayName(){ return WEEKDAYS[new Date().getDay()]; }
-
-function renderCalendar(){
-  const today = todayName();
-  document.getElementById("calendar-today-label").textContent = today;
-
-  const list = document.getElementById("calendar-today-list");
-  list.innerHTML = "";
-  (GUILD_SCHEDULE[today] || []).forEach(ev=>{
-    const row = document.createElement("div");
-    row.className = "cal-row";
-    row.innerHTML = `<span class="cal-time">${ev.time}</span><span class="cal-name">${ev.name}</span><button class="cal-join" onclick="joinGuildEvent('${ev.name}')">Join</button>`;
-    list.appendChild(row);
-  });
-
-  const week = document.getElementById("calendar-week");
-  week.innerHTML = "";
-  ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"].forEach(day=>{
-    const block = document.createElement("div");
-    block.className = "cal-day-block" + (day === today ? " cal-day-today" : "");
-    const evs = (GUILD_SCHEDULE[day] || []).map(e=>`${e.time} ${e.name}`).join(" · ");
-    block.innerHTML = `<div class="cal-day-name">${day}</div><div class="cal-day-evs">${evs}</div>`;
-    week.appendChild(block);
+function renderCast(){
+  const wrap = document.getElementById("cast-tags");
+  wrap.innerHTML = "";
+  state.npcCast.forEach((name, i) => {
+    const tag = document.createElement("div");
+    tag.className = "cast-tag";
+    tag.innerHTML = `${name} <button onclick="removeCast(${i})">×</button>`;
+    wrap.appendChild(tag);
   });
 }
 
-function toggleWeek(){
-  document.getElementById("calendar-week").classList.toggle("show");
-}
-
-/* ---------------- ROSTER MGMT ---------------- */
-function toggleYou(name){
-  state.you = (state.you === name) ? null : name;
-  save();
-  renderParty();
-  if(state.you) log(`⭐ ${name} is marked as you.`);
-}
-
-function addAdventurer(){
-  const input = document.getElementById("add-name");
+function addCast(){
+  const input = document.getElementById("cast-input");
   const name = input.value.trim().toUpperCase();
-  if(!name) return;
-  if(state.party.some(p=>p.name===name)){ input.value=""; return; }
-  state.party.push({name, level:1, xp:0});
+  if(!name || state.npcCast.includes(name)) { input.value = ""; return; }
+  state.npcCast.push(name);
   input.value = "";
   save();
-  renderParty();
-  log(`✦ ${name} joins the party.`);
+  renderCast();
 }
 
-function removeAdventurer(i){
-  const removed = state.party[i];
-  state.party.splice(i,1);
-  if(removed && state.you === removed.name) state.you = null;
+function removeCast(i){
+  state.npcCast.splice(i, 1);
   save();
-  renderParty();
-  if(removed) log(`✦ ${removed.name} leaves the tavern.`);
+  renderCast();
 }
 
+/* ===================== SNAPSHOT ===================== */
+function exportSnapshot(){
+  const data = JSON.stringify(state, null, 2);
+  const blob = new Blob([data], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  const stamp = new Date().toISOString().slice(0,10);
+  a.href = url;
+  a.download = `dark-epoch-tavern-save-${stamp}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  log("⬇ Snapshot exported.");
+}
+
+function importSnapshot(file){
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try{
+      const data = JSON.parse(e.target.result);
+      if(!data.you) throw new Error("missing player data");
+      state = Object.assign({}, state, data);
+      save();
+      renderAll();
+      log("⬆ Snapshot imported.");
+      alert("Snapshot loaded.");
+    }catch(err){
+      alert("That doesn't look like a valid snapshot file.");
+    }
+  };
+  reader.readAsText(file);
+  document.getElementById("import-file").value = "";
+}
+
+/* ===================== LOG ===================== */
+function log(msg){
+  state.logEntries = state.logEntries || [];
+  state.logEntries.unshift(msg);
+  state.logEntries = state.logEntries.slice(0, 40);
+  save();
+  renderLog();
+}
+function renderLog(){
+  const el = document.getElementById("log");
+  el.innerHTML = "";
+  (state.logEntries || []).forEach(msg => {
+    const div = document.createElement("div");
+    div.textContent = msg;
+    el.appendChild(div);
+  });
+}
+
+/* ===================== RESET ===================== */
 function resetGame(){
-  if(!confirm("Reset the entire campaign? All levels and XP will be lost.")) return;
-  localStorage.removeItem("darkEpochTavern");
-  state = {party: DEFAULT_PARTY.map(n=>({name:n,level:1,xp:0})), unit:"sip", current:null, you:"OLLAT", encounterCount:0};
-  document.getElementById("log").innerHTML = "";
-  document.getElementById("encounter-card").classList.remove("show");
+  if(!confirm("Reset the entire campaign? All levels, gear, and Zen will be lost.")) return;
+  localStorage.removeItem("darkEpochTavernV2");
+  state = {
+    you: { name:"OLLAT", level:1, xp:0, hp:20, maxHp:20, zen:100, weaponEnh:0, armorEnh:0 },
+    npcCast: NPC_DEFAULT_CAST.slice(),
+    unit: "sip",
+    quest: null,
+    logEntries: [],
+    bounty: { remaining: 3, resetDate: null },
+    autoCombat: { lastCollect: Date.now() },
+  };
   save();
-  renderParty();
-  renderUnits();
-  renderCalendar();
+  renderAll();
   log("🌑 A new campaign begins in the Rift Tavern.");
 }
 
-/* ---------------- INIT ---------------- */
+/* ===================== INIT ===================== */
+function renderAll(){
+  renderPlayer();
+  renderZoneGrid();
+  renderCalendar();
+  renderUnits();
+  renderCast();
+  renderLog();
+  renderBounty();
+  renderAutoCombat();
+  document.getElementById("room").classList.remove("show");
+  if(state.quest){
+    document.getElementById("room").classList.add("show");
+    renderQuest();
+  }
+}
+
 load();
-renderParty();
-renderUnits();
-renderCalendar();
-document.getElementById("add-name").addEventListener("keydown", e=>{ if(e.key==="Enter") addAdventurer(); });
+renderAll();
+document.getElementById("cast-input").addEventListener("keydown", e => { if(e.key === "Enter") addCast(); });
+setInterval(renderAutoCombat, 30000);
 </script>
 </body>
 </html>
