@@ -78,6 +78,10 @@
   .zone-card{background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:11px;cursor:pointer;transition:border-color .15s;}
   .zone-card:hover{border-color:var(--rune-gold-dim);}
   .zone-card.special{border-color:rgba(179,33,60,0.5);background:linear-gradient(180deg,rgba(122,17,40,0.15),rgba(0,0,0,0.25));grid-column:1 / -1;}
+  .zone-card.locked{opacity:0.5;cursor:default;}
+  .zone-card.locked:hover{border-color:rgba(255,255,255,0.07);}
+  .zone-card.locked .zone-card-name{color:var(--parchment-dim);}
+  .zone-card.locked .zone-card-tier{color:var(--blood-bright);}
   .zone-card-name{font-family:'Cinzel',serif;font-size:13.5px;color:var(--parchment);}
   .zone-card-tier{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--rune-gold-dim);margin-top:3px;}
   .zone-card-desc{font-size:12px;color:var(--parchment-dim);font-style:italic;margin-top:4px;line-height:1.4;}
@@ -345,20 +349,20 @@
 const NPC_DEFAULT_CAST = ["JMARTIN","KOKI","GADO","SAYURI","TOYANG","ALZ","002","JMEB","MARCUS"];
 
 const ZONES = [
-  {key:"lorencia", name:"Lorencia Ruins", tierPool:["Minion","Minion","Elite"], desc:"The fallen capital. Easy pickings for a warm-up."},
-  {key:"noria", name:"Noria Woodlands", tierPool:["Minion","Elite"], desc:"Quiet groves, restless spirits."},
-  {key:"swamp", name:"Swamp of Calmness", tierPool:["Minion","Elite"], desc:"Ironic name. Watch your footing."},
-  {key:"elemental", name:"Elemental Altar", tierPool:["Minion","Elite"], desc:"A quieter grind — crafting materials over combat glory. Straight from the real Event menu."},
-  {key:"icaria", name:"Icaria", tierPool:["Elite","Boss"], desc:"Feather-strewn ruins above the clouds. Collect Illusionary Feathers, dodge the guardians."},
-  {key:"devias", name:"Devias Ice Fields", tierPool:["Elite","Boss"], desc:"Frostbite country. Bring your nerve."},
-  {key:"atlans", name:"Atlans Deep", tierPool:["Elite","Boss"], desc:"Something ancient sleeps beneath the tide."},
-  {key:"icarus", name:"Icarus Sky Tower", tierPool:["Elite","Boss"], desc:"The wind up here holds grudges."},
-  {key:"kalima", name:"Kalima Rift", tierPool:["Elite","Boss"], desc:"A tear in the world. Don't linger."},
-  {key:"kanturu", name:"Kanturu Wastes", tierPool:["Elite","Boss"], desc:"Sand swallows the careless."},
-  {key:"aida", name:"Aida Temple", tierPool:["Elite","Boss"], desc:"Cursed halls, older gods."},
-  {key:"crywolf", name:"Crywolf Fortress", tierPool:["Elite","Boss"], desc:"The wolf legion never truly sleeps."},
-  {key:"raklion", name:"Raklion Sanctuary", tierPool:["Boss"], desc:"Dragon country. Only for the geared-up."},
-  {key:"demons", name:"Land of Demons", tierPool:["Boss","WorldBoss"], desc:"The deepest room in the realm. Best XP anywhere — and the sharpest teeth. Don't walk in wounded.", special:true},
+  {key:"lorencia", name:"Lorencia Ruins", tierPool:["Minion","Minion","Elite"], desc:"The fallen capital. Easy pickings for a warm-up.", levelReq:1},
+  {key:"noria", name:"Noria Woodlands", tierPool:["Minion","Elite"], desc:"Quiet groves, restless spirits.", levelReq:1},
+  {key:"swamp", name:"Swamp of Calmness", tierPool:["Minion","Elite"], desc:"Ironic name. Watch your footing.", levelReq:2},
+  {key:"elemental", name:"Elemental Altar", tierPool:["Minion","Elite"], desc:"A quieter grind — crafting materials over combat glory. Straight from the real Event menu.", levelReq:2},
+  {key:"icaria", name:"Icaria", tierPool:["Elite","Boss"], desc:"Feather-strewn ruins above the clouds. Collect Illusionary Feathers, dodge the guardians.", levelReq:4},
+  {key:"devias", name:"Devias Ice Fields", tierPool:["Elite","Boss"], desc:"Frostbite country. Bring your nerve.", levelReq:4},
+  {key:"atlans", name:"Atlans Deep", tierPool:["Elite","Boss"], desc:"Something ancient sleeps beneath the tide.", levelReq:5},
+  {key:"icarus", name:"Icarus Sky Tower", tierPool:["Elite","Boss"], desc:"The wind up here holds grudges.", levelReq:5},
+  {key:"kalima", name:"Kalima Rift", tierPool:["Elite","Boss"], desc:"A tear in the world. Don't linger.", levelReq:6},
+  {key:"kanturu", name:"Kanturu Wastes", tierPool:["Elite","Boss"], desc:"Sand swallows the careless.", levelReq:6},
+  {key:"aida", name:"Aida Temple", tierPool:["Elite","Boss"], desc:"Cursed halls, older gods.", levelReq:7},
+  {key:"crywolf", name:"Crywolf Fortress", tierPool:["Elite","Boss"], desc:"The wolf legion never truly sleeps.", levelReq:7},
+  {key:"raklion", name:"Raklion Sanctuary", tierPool:["Boss"], desc:"Dragon country. Only for the geared-up.", levelReq:9},
+  {key:"demons", name:"Land of Demons", tierPool:["Boss","WorldBoss"], desc:"The deepest room in the realm. Best XP anywhere — and the sharpest teeth. Always open, no level gate — this is your pure XP grind spot.", special:true},
 ];
 
 const BOSSES = {
@@ -409,13 +413,13 @@ const CHOICES = [
 
 const WEEKDAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 const GUILD_SCHEDULE = {
-  Monday:    [{time:"12:00", name:"Guild BOSS"}, {time:"20:30", name:"Square of Devil"}, {time:"20:45", name:"Lost Continent"}, {time:"Evening", name:"Treasure Convoy"}],
-  Tuesday:   [{time:"12:00", name:"Guild BOSS"}, {time:"20:30", name:"Battle of Gods"}, {time:"20:45", name:"Lost Continent"}],
-  Wednesday: [{time:"12:00", name:"Guild BOSS"}, {time:"20:00", name:"Conquest Battle"}, {time:"20:30", name:"Square of Devil"}, {time:"20:45", name:"Lost Continent"}, {time:"Evening", name:"Treasure Convoy"}],
-  Thursday:  [{time:"12:00", name:"Guild BOSS"}, {time:"20:30", name:"Demon Ruler Raid"}, {time:"20:45", name:"Lost Continent"}],
-  Friday:    [{time:"12:00", name:"Guild BOSS"}, {time:"20:30", name:"Square of Devil"}, {time:"20:45", name:"Lost Continent"}, {time:"Evening", name:"Treasure Convoy"}],
-  Saturday:  [{time:"12:00", name:"Guild BOSS"}, {time:"20:00", name:"Conquest Battle"}, {time:"20:45", name:"Lost Continent"}],
-  Sunday:    [{time:"12:00", name:"Guild BOSS"}, {time:"20:45", name:"Lost Continent"}, {time:"Evening", name:"Divine Demon Homefield"}],
+  Monday:    [{time:"12:00", name:"Guild BOSS"}, {time:"20:30", name:"Square of Devil"}, {time:"19:45", name:"Lost Continent"}, {time:"Evening", name:"Treasure Convoy"}],
+  Tuesday:   [{time:"12:00", name:"Guild BOSS"}, {time:"20:30", name:"Battle of Gods"}, {time:"19:45", name:"Lost Continent"}],
+  Wednesday: [{time:"12:00", name:"Guild BOSS"}, {time:"20:00", name:"Conquest Battle"}, {time:"20:30", name:"Square of Devil"}, {time:"19:45", name:"Lost Continent"}, {time:"Evening", name:"Treasure Convoy"}],
+  Thursday:  [{time:"12:00", name:"Guild BOSS"}, {time:"20:30", name:"Demon Ruler Raid"}, {time:"19:45", name:"Lost Continent"}],
+  Friday:    [{time:"12:00", name:"Guild BOSS"}, {time:"20:30", name:"Square of Devil"}, {time:"19:45", name:"Lost Continent"}, {time:"Evening", name:"Treasure Convoy"}],
+  Saturday:  [{time:"12:00", name:"Guild BOSS"}, {time:"20:00", name:"Conquest Battle"}, {time:"19:45", name:"Lost Continent"}],
+  Sunday:    [{time:"12:00", name:"Guild BOSS"}, {time:"19:45", name:"Lost Continent"}, {time:"Evening", name:"Divine Demon Homefield"}],
 };
 const CALENDAR_EVENT_DEFS = {
   "Guild BOSS":             {tier:"WorldBoss", zoneName:"Land of Demons — Guild Raid", boss:{name:"KUNDUN, The Fallen God", flavor:"The whole guild cheers you on. You lead the strike."}},
@@ -511,6 +515,8 @@ function renderPlayer(){
 
   document.getElementById("critical-banner").classList.toggle("show", y.hp <= 0);
 
+  renderZoneGrid();
+
   renderEquipment();
 }
 
@@ -543,18 +549,29 @@ function switchTab(name){
 }
 
 /* ===================== ZONES ===================== */
+function isZoneLocked(z){
+  return !!z.levelReq && state.you.level < z.levelReq;
+}
+
 function renderZoneGrid(){
   const grid = document.getElementById("zone-grid");
   grid.innerHTML = "";
   ZONES.forEach(z => {
+    const locked = isZoneLocked(z);
     const card = document.createElement("div");
-    card.className = "zone-card" + (z.special ? " special" : "");
+    card.className = "zone-card" + (z.special ? " special" : "") + (locked ? " locked" : "");
     card.onclick = () => enterZone(z.key);
-    card.innerHTML = `
+    card.innerHTML = locked
+      ? `
+      <div class="zone-card-name">🔒 ${z.name}</div>
+      <div class="zone-card-tier">Requires Level ${z.levelReq}</div>
+      <div class="zone-card-desc">${z.desc}</div>
+      `
+      : `
       <div class="zone-card-name">⟟ ${z.name}</div>
       <div class="zone-card-tier">${z.tierPool.join(" / ")}</div>
       <div class="zone-card-desc">${z.desc}</div>
-    `;
+      `;
     grid.appendChild(card);
   });
 }
@@ -571,8 +588,9 @@ function rollCameo(){
 }
 
 function enterZone(key){
-  if(state.you.hp <= 0){ alert("You're too hurt to venture out. Rest first."); return; }
   const zone = ZONES.find(z => z.key === key);
+  if(isZoneLocked(zone)){ alert(`${zone.name} is locked until Level ${zone.levelReq}. Land of Demons is always open if you want XP right now.`); return; }
+  if(state.you.hp <= 0){ alert("You're too hurt to venture out. Rest first."); return; }
   startQuest({kind:"zone", zone});
 }
 
