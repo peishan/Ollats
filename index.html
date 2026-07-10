@@ -93,6 +93,12 @@
   .room-zone{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--parchment-dim);letter-spacing:.05em;}
   .room-boss{font-family:'Cinzel',serif;font-size:19px;font-weight:700;color:var(--parchment);margin:4px 0 6px;}
   .room-flavor{font-style:italic;color:var(--parchment-dim);font-size:14px;line-height:1.5;margin-bottom:10px;}
+  .boss-hp-wrap{display:none;margin-bottom:12px;}
+  .boss-hp-wrap.show{display:block;}
+  .boss-hp-label{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--parchment-dim);margin-bottom:4px;}
+  .strike-line{margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--parchment);min-height:16px;}
+  .strike-line.hit{color:#a9c97a;}
+  .strike-line.miss{color:var(--blood-bright);}
   .cameo{font-family:'JetBrains Mono',monospace;font-size:11.5px;padding:7px 10px;border-radius:6px;margin-bottom:10px;}
   .cameo.ally{background:rgba(125,156,63,0.12);color:#a9c97a;border:1px solid rgba(125,156,63,0.35);}
   .cameo.rival{background:rgba(201,162,74,0.1);color:var(--rune-gold);border:1px solid rgba(201,162,74,0.3);}
@@ -217,10 +223,26 @@
       <div class="mini-card">
         <div class="mini-card-head">
           <span class="mini-card-name">📜 Bounty Quest</span>
-          <span class="mini-card-tag" id="bounty-remaining">Remaining: 3</span>
+          <span class="mini-card-tag" id="bounty-remaining">Remaining: 30</span>
         </div>
         <div class="mini-card-desc">A quick, guaranteed job off the board. No fight, no risk — straight from the real game's Event menu.</div>
         <button class="btn-small" id="bounty-btn" onclick="takeBounty()">Take Bounty</button>
+      </div>
+      <div class="mini-card">
+        <div class="mini-card-head">
+          <span class="mini-card-name">🏛 Ancient Battlefield</span>
+          <span class="mini-card-tag" id="ancient-remaining">Remaining: 3</span>
+        </div>
+        <div class="mini-card-desc">A multi-hit boss fight — chip its HP down attack by attack, straight from the real Event menu.</div>
+        <button class="btn-small" id="ancient-btn" onclick="startDailyBoss('Ancient Battlefield')">Fight</button>
+      </div>
+      <div class="mini-card">
+        <div class="mini-card-head">
+          <span class="mini-card-name">👤 Solo Boss</span>
+          <span class="mini-card-tag" id="solo-remaining">Remaining: 2</span>
+        </div>
+        <div class="mini-card-desc">No party, no guild morale — just you against a boss HP bar.</div>
+        <button class="btn-small" id="solo-btn" onclick="startDailyBoss('Solo Boss')">Fight</button>
       </div>
       <div class="mini-card">
         <div class="mini-card-head">
@@ -241,7 +263,13 @@
       <div class="room-boss" id="room-boss">Boss Name</div>
       <div id="room-cameo"></div>
       <div class="room-flavor" id="room-flavor">Flavor text...</div>
+      <div class="boss-hp-wrap" id="boss-hp-wrap">
+        <div class="boss-hp-label"><span>Boss HP</span><span id="boss-hp-num">100%</span></div>
+        <div class="bar-track"><div class="bar-fill hp" id="boss-hp-fill" style="width:100%"></div></div>
+        <div class="strike-line" id="strike-line"></div>
+      </div>
       <div class="choice-row" id="choice-row"></div>
+      <button class="reset-link" id="retreat-btn" onclick="retreatFight()" style="display:none;">Retreat (no reward, no penalty)</button>
       <div class="result-box" id="result-box">
         <div class="roll-num" id="roll-num">--</div>
         <div class="result-verb" id="result-verb">—</div>
@@ -352,17 +380,17 @@ const ZONES = [
   {key:"lorencia", name:"Lorencia Ruins", tierPool:["Minion","Minion","Elite"], desc:"The fallen capital. Easy pickings for a warm-up.", levelReq:1},
   {key:"noria", name:"Noria Woodlands", tierPool:["Minion","Elite"], desc:"Quiet groves, restless spirits.", levelReq:1},
   {key:"swamp", name:"Swamp of Calmness", tierPool:["Minion","Elite"], desc:"Ironic name. Watch your footing.", levelReq:2},
-  {key:"elemental", name:"Elemental Altar", tierPool:["Minion","Elite"], desc:"A quieter grind — crafting materials over combat glory. Straight from the real Event menu.", levelReq:2},
-  {key:"icaria", name:"Icaria", tierPool:["Elite","Boss"], desc:"Feather-strewn ruins above the clouds. Collect Illusionary Feathers, dodge the guardians.", levelReq:4},
+  {key:"elemental", name:"Elemental Altar", tierPool:["Minion","Elite"], desc:"Wave after wave pushes for the crystal at the center — hold the line and keep them off it.", levelReq:2},
+  {key:"icaria", name:"Icaria", tierPool:["Elite","Boss"], desc:"A running fight to keep hordes from reaching the entrance. Collect Illusionary Feathers along the way.", levelReq:4},
   {key:"devias", name:"Devias Ice Fields", tierPool:["Elite","Boss"], desc:"Frostbite country. Bring your nerve.", levelReq:4},
   {key:"atlans", name:"Atlans Deep", tierPool:["Elite","Boss"], desc:"Something ancient sleeps beneath the tide.", levelReq:5},
   {key:"icarus", name:"Icarus Sky Tower", tierPool:["Elite","Boss"], desc:"The wind up here holds grudges.", levelReq:5},
-  {key:"kalima", name:"Kalima Rift", tierPool:["Elite","Boss"], desc:"A tear in the world. Don't linger.", levelReq:6},
+  {key:"kalima", name:"Kalima Rift", tierPool:["Elite","Boss"], desc:"A tear in the world. Don't linger — every boss here is a real multi-hit fight, not a single roll.", levelReq:6},
   {key:"kanturu", name:"Kanturu Wastes", tierPool:["Elite","Boss"], desc:"Sand swallows the careless.", levelReq:6},
   {key:"aida", name:"Aida Temple", tierPool:["Elite","Boss"], desc:"Cursed halls, older gods.", levelReq:7},
   {key:"crywolf", name:"Crywolf Fortress", tierPool:["Elite","Boss"], desc:"The wolf legion never truly sleeps.", levelReq:7},
   {key:"raklion", name:"Raklion Sanctuary", tierPool:["Boss"], desc:"Dragon country. Only for the geared-up.", levelReq:9},
-  {key:"demons", name:"Land of Demons", tierPool:["Boss","WorldBoss"], desc:"The deepest room in the realm. Best XP anywhere — and the sharpest teeth. Always open, no level gate — this is your pure XP grind spot.", special:true},
+  {key:"demons", name:"Land of Demons", tierPool:["Minion","Minion","Minion","Elite"], desc:"No boss here — just hordes of monsters, one wave after another, for the better part of an hour. Best sustained XP anywhere, always open, no level gate.", special:true, rewardMult:1.6},
 ];
 
 const BOSSES = {
@@ -410,6 +438,11 @@ const CHOICES = [
   {key:"tactical",   label:"🗡 Fight Smart",   desc:"Read the enemy, strike the opening.", bonusMod:1, hpMult:1.0, xpMult:1.0, stat:"Balanced risk and reward"},
   {key:"cautious",   label:"🛡 Play It Safe",  desc:"Guaranteed small gains, minimal risk.", guaranteed:true, stat:"No roll, no injury, modest reward"},
 ];
+const MULTIHIT_STAT_TEXT = {
+  aggressive: "Bigger hit if it lands, worse miss if it doesn't",
+  tactical: "Balanced hit chance and damage",
+  cautious: "Guaranteed small chip damage, zero risk",
+};
 
 const WEEKDAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 const GUILD_SCHEDULE = {
@@ -430,6 +463,15 @@ const CALENDAR_EVENT_DEFS = {
   "Battle of Gods":         {tier:"Boss",      zoneName:"Battle of Gods Arena", boss:{name:"A Rival Champion", flavor:"Divinity's up for debate tonight."}},
   "Treasure Convoy":        {tier:"Elite",     zoneName:"Treasure Convoy Route", boss:{name:"Convoy Guard Escort", flavor:"Less a boss fight, more a heist."}},
   "Divine Demon Homefield": {tier:"Ancient",   zoneName:"Divine Demon Homefield", boss:{name:"The Divine Demon", flavor:"Sunday's reckoning. The whole realm is watching."}},
+};
+
+// Real Event-menu daily bosses — these get the multi-hit HP-bar fight treatment,
+// same as World Boss and Kalima (see resolveAttack / multiHit logic below).
+const DAILY_BOSS_DEFS = {
+  "Ancient Battlefield": {tier:"Boss", hpMult:1.4, rewardMult:1.3, dailyLimit:3, dailyKey:"ancient",
+    boss:{name:"Ancient Battlefield Guardian", flavor:"A relic warden from a war nobody remembers. Slow. Does not stop."}},
+  "Solo Boss": {tier:"Boss", hpMult:1.0, rewardMult:1.0, dailyLimit:2, dailyKey:"solo",
+    boss:{name:"Wandering Solo Boss", flavor:"No entourage, no mercy. Just you and it."}},
 };
 
 const UNITS = [
@@ -467,8 +509,12 @@ let state = {
   unit: "sip",
   quest: null,
   logEntries: [],
-  bounty: { remaining: 3, resetDate: null },
+  bounty: { remaining: 30, resetDate: null },
   autoCombat: { lastCollect: Date.now() },
+  dailyBossAttempts: {
+    ancient: { remaining: 3, resetDate: null },
+    solo: { remaining: 2, resetDate: null },
+  },
 };
 
 function xpToNext(level){ return level * 30; }
@@ -587,9 +633,20 @@ function rollCameo(){
   return null;
 }
 
+// For boss fights: a random number of Legends guildmates show up and fight alongside you,
+// each chipping in their own damage every round regardless of your own rolls.
+function rollGuildJoin(){
+  if(!state.npcCast.length) return [];
+  const count = Math.floor(Math.random() * 4); // 0-3 guildmates
+  if(count === 0) return [];
+  const shuffled = state.npcCast.slice().sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, Math.min(count, shuffled.length));
+}
+
 function enterZone(key){
   const zone = ZONES.find(z => z.key === key);
   if(isZoneLocked(zone)){ alert(`${zone.name} is locked until Level ${zone.levelReq}. Land of Demons is always open if you want XP right now.`); return; }
+  if(state.quest && !state.quest.resolved){ alert("Finish or retreat from your current fight first."); document.getElementById("room").scrollIntoView({behavior:"smooth"}); return; }
   if(state.you.hp <= 0){ alert("You're too hurt to venture out. Rest first."); return; }
   startQuest({kind:"zone", zone});
 }
@@ -598,33 +655,91 @@ function exploreAgain(){
   if(state.you.hp <= 0){ alert("You're too hurt to keep exploring. Rest first."); return; }
   const q = state.quest;
   if(!q) return;
-  if(q.source.kind === "zone") startQuest(q.source);
-  else leaveZone();
+  if(q.source.kind === "dailyBoss"){
+    const def = DAILY_BOSS_DEFS[q.source.name];
+    const track = state.dailyBossAttempts[def.dailyKey];
+    ensureDailyReset(track, def.dailyLimit);
+    if(track.remaining <= 0){ alert(`No attempts left for ${q.source.name} today. Resets tomorrow.`); leaveZone(); return; }
+  }
+  startQuest(q.source);
 }
 
 function leaveZone(){
   document.getElementById("room").classList.remove("show");
   document.getElementById("result-box").classList.remove("show");
+  document.getElementById("boss-hp-wrap").classList.remove("show");
+  document.getElementById("retreat-btn").style.display = "none";
   state.quest = null;
   save();
 }
 
+function retreatFight(){
+  const q = state.quest;
+  if(q) log(`🏳 ${state.you.name} retreats from ${q.boss.name}, no reward taken.`);
+  leaveZone();
+}
+
+function isMultiHit(source, tier){
+  if(tier === "WorldBoss") return true;
+  if(source.kind === "zone" && source.zone.key === "kalima") return true;
+  if(source.kind === "dailyBoss") return true;
+  return false;
+}
+
 function startQuest(source){
-  let tier, boss, zoneName, guildMorale = false;
+  let tier, boss, zoneName, guildMorale = false, rewardMult = 1, hpMult = 1;
+
   if(source.kind === "zone"){
     tier = randomFrom(source.zone.tierPool);
     boss = randomFrom(BOSSES[tier]);
     zoneName = source.zone.name;
+    rewardMult = source.zone.rewardMult || 1;
+  } else if(source.kind === "dailyBoss"){
+    const def = DAILY_BOSS_DEFS[source.name];
+    tier = def.tier; boss = def.boss; zoneName = source.name;
+    rewardMult = def.rewardMult; hpMult = def.hpMult;
   } else {
     const def = CALENDAR_EVENT_DEFS[source.name];
     tier = def.tier; boss = def.boss; zoneName = def.zoneName; guildMorale = true;
   }
-  const cfg = TIER_CONFIG[tier];
-  const cameo = rollCameo();
 
-  state.quest = {source, tier, boss, zoneName, cfg, guildMorale, cameo};
+  const cfg = TIER_CONFIG[tier];
+  const multiHit = isMultiHit(source, tier);
+  const cameo = multiHit ? null : rollCameo();
+  const joinedGuildmates = multiHit ? rollGuildJoin() : [];
+  const bossHpMax = multiHit ? Math.round(99 * hpMult) : 0;
+
+  state.quest = {
+    source, tier, boss, zoneName, cfg, guildMorale, cameo, rewardMult,
+    multiHit, bossHpMax, bossHp: bossHpMax, joinedGuildmates, resolved: false,
+  };
   renderQuest();
   document.getElementById("room").scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+function renderBossHp(){
+  const q = state.quest;
+  const wrap = document.getElementById("boss-hp-wrap");
+  if(!q.multiHit){ wrap.classList.remove("show"); document.getElementById("retreat-btn").style.display = "none"; return; }
+  wrap.classList.add("show");
+  const pct = Math.max(0, Math.round((q.bossHp / q.bossHpMax) * 100));
+  document.getElementById("boss-hp-fill").style.width = pct + "%";
+  document.getElementById("boss-hp-num").textContent = pct + "%";
+  document.getElementById("retreat-btn").style.display = "block";
+}
+
+function renderChoiceButtons(handler){
+  const q = state.quest;
+  const row = document.getElementById("choice-row");
+  row.innerHTML = "";
+  CHOICES.forEach(c => {
+    const btn = document.createElement("button");
+    btn.className = "choice-btn";
+    btn.onclick = () => handler(c.key);
+    const stat = (q && q.multiHit) ? MULTIHIT_STAT_TEXT[c.key] : c.stat;
+    btn.innerHTML = `<div class="choice-label">${c.label}</div><div class="choice-desc">${c.desc}</div><div class="choice-stat">${stat}</div>`;
+    row.appendChild(btn);
+  });
 }
 
 function renderQuest(){
@@ -634,9 +749,17 @@ function renderQuest(){
   document.getElementById("room-zone").textContent = "⟟ " + q.zoneName.toUpperCase();
   document.getElementById("room-boss").textContent = q.boss.name;
   document.getElementById("room-flavor").textContent = q.boss.flavor;
+  document.getElementById("strike-line").textContent = "";
+  document.getElementById("strike-line").className = "strike-line";
 
   const cameoEl = document.getElementById("room-cameo");
-  if(q.cameo){
+  if(q.multiHit){
+    if(q.joinedGuildmates.length){
+      cameoEl.innerHTML = `<div class="cameo ally">🤝 ${q.joinedGuildmates.join(", ")} — ${q.joinedGuildmates.length === 1 ? "joins" : "join"} the fight, each landing their own hits every round.</div>`;
+    } else {
+      cameoEl.innerHTML = `<div class="cameo rival">👤 Nobody else made it this time — you're fighting this one alone.</div>`;
+    }
+  } else if(q.cameo){
     cameoEl.innerHTML = q.cameo.type === "ally"
       ? `<div class="cameo ally">🤝 ${q.cameo.name} fights alongside you this round (+2 bonus).</div>`
       : `<div class="cameo rival">👀 ${q.cameo.name} is already here, hunting the same mark.</div>`;
@@ -644,15 +767,8 @@ function renderQuest(){
     cameoEl.innerHTML = "";
   }
 
-  const row = document.getElementById("choice-row");
-  row.innerHTML = "";
-  CHOICES.forEach(c => {
-    const btn = document.createElement("button");
-    btn.className = "choice-btn";
-    btn.onclick = () => resolveChoice(c.key);
-    btn.innerHTML = `<div class="choice-label">${c.label}</div><div class="choice-desc">${c.desc}</div><div class="choice-stat">${c.stat}</div>`;
-    row.appendChild(btn);
-  });
+  renderBossHp();
+  renderChoiceButtons(q.multiHit ? resolveAttack : resolveChoice);
 
   document.getElementById("result-box").classList.remove("show");
   document.getElementById("room").classList.add("show");
@@ -673,10 +789,11 @@ function resolveChoice(key){
   const pillWrap = document.getElementById("pill-wrap");
   pillWrap.innerHTML = "";
   box.classList.add("show");
+  q.resolved = true;
 
   if(choice.guaranteed){
-    const xp = Math.round(q.cfg.xp * 0.4);
-    const zen = Math.round(q.cfg.zen * 0.4);
+    const xp = Math.round(q.cfg.xp * 0.4 * q.rewardMult);
+    const zen = Math.round(q.cfg.zen * 0.4 * q.rewardMult);
     const leveled = grantXP(xp);
     y.zen += zen;
     document.getElementById("roll-num").textContent = "—";
@@ -697,8 +814,8 @@ function resolveChoice(key){
   document.getElementById("roll-num").textContent = `${d20} + ${bonus} = ${total}`;
 
   if(success){
-    const xp = Math.round(q.cfg.xp * (choice.xpMult || 1));
-    const zen = Math.round(q.cfg.zen * (choice.xpMult || 1));
+    const xp = Math.round(q.cfg.xp * (choice.xpMult || 1) * q.rewardMult);
+    const zen = Math.round(q.cfg.zen * (choice.xpMult || 1) * q.rewardMult);
     const leveled = grantXP(xp);
     y.zen += zen;
     box.className = "result-box win show";
@@ -720,6 +837,101 @@ function resolveChoice(key){
 
   save();
   renderPlayer();
+}
+
+// Multi-hit boss fights: World Boss, Ancient Battlefield, Solo Boss, and Kalima.
+// Each attack chips the boss's HP bar instead of resolving the whole fight in one roll.
+// Damage per round scales with your level — low level, closer to 99 rounds; higher level, much faster.
+// Any guildmates who joined land their own hits every round, win or lose on your own roll.
+function resolveAttack(key){
+  const q = state.quest;
+  const choice = CHOICES.find(c => c.key === key);
+  const y = state.you;
+  const weaponBonus = Math.floor(y.weaponEnh / 2);
+  const armorMitigation = Math.floor(y.armorEnh / 2);
+  const levelBonus = Math.floor(y.level / 2);
+  const morale = q.guildMorale ? 2 : 0;
+  const levelDmg = 2 + Math.floor(y.level / 2);
+  const guildDmg = q.joinedGuildmates.length * 2;
+
+  const strikeEl = document.getElementById("strike-line");
+  let hit, dmg = 0, hpLoss = 0, strikeText;
+
+  if(choice.guaranteed){
+    dmg = Math.max(Math.round(levelDmg * 0.4), 1);
+    hit = true;
+    strikeText = `🛡 A careful poke — ${dmg} damage.`;
+  } else {
+    const bonus = levelBonus + weaponBonus + choice.bonusMod + morale;
+    const d20 = choice.advantage ? Math.max(roll1to20(), roll1to20()) : roll1to20();
+    const total = d20 + bonus;
+    hit = total >= q.cfg.dc;
+    if(hit){
+      dmg = choice.key === "aggressive" ? Math.round(levelDmg * 1.5) : levelDmg;
+      strikeText = `⚔ ${total} vs DC ${q.cfg.dc} — hit for ${dmg} damage.`;
+    } else {
+      const hpLossBase = Math.round(q.cfg.hp * (choice.hpMult || 1));
+      hpLoss = Math.max(hpLossBase - armorMitigation, 1);
+      y.hp = Math.max(y.hp - hpLoss, 0);
+      strikeText = `💢 ${total} vs DC ${q.cfg.dc} — missed. −${hpLoss} HP.`;
+    }
+  }
+
+  q.bossHp = Math.max(q.bossHp - dmg - guildDmg, 0);
+  if(guildDmg > 0) strikeText += ` Guild lands +${guildDmg} (${q.joinedGuildmates.length} fighting alongside you).`;
+
+  strikeEl.textContent = strikeText;
+  strikeEl.className = "strike-line " + (hit ? "hit" : "miss");
+  renderBossHp();
+
+  if(q.bossHp <= 0){
+    q.resolved = true;
+    const xp = Math.round(q.cfg.xp * q.rewardMult);
+    const zen = Math.round(q.cfg.zen * q.rewardMult);
+    const leveled = grantXP(xp);
+    y.zen += zen;
+    document.getElementById("choice-row").innerHTML = "";
+    document.getElementById("retreat-btn").style.display = "none";
+    const box = document.getElementById("result-box");
+    box.className = "result-box win show";
+    document.getElementById("roll-num").textContent = "—";
+    document.getElementById("result-verb").textContent = "Boss Down";
+    document.getElementById("result-detail").textContent =
+      `${q.boss.name} finally falls after a drawn-out fight. +${xp} XP, +${zen} Zen.` + (leveled ? ` LEVEL UP → ${y.level}!` : "");
+    document.getElementById("pill-wrap").innerHTML = "";
+    log(`⚔ ${y.name} downed ${q.boss.name} in ${q.zoneName} — +${xp} XP, +${zen} Zen.`);
+  } else if(y.hp <= 0){
+    q.resolved = true;
+    document.getElementById("choice-row").innerHTML = "";
+    document.getElementById("retreat-btn").style.display = "none";
+    const box = document.getElementById("result-box");
+    box.className = "result-box lose show";
+    document.getElementById("roll-num").textContent = "—";
+    document.getElementById("result-verb").textContent = "Forced Retreat";
+    const pctLeft = Math.round((q.bossHp / q.bossHpMax) * 100);
+    document.getElementById("result-detail").textContent =
+      `You're too hurt to continue. ${q.boss.name} still stands at ${pctLeft}% HP — no reward this time.`;
+    document.getElementById("pill-wrap").innerHTML = "";
+    log(`💀 ${y.name} was forced to retreat from ${q.boss.name} at ${pctLeft}% boss HP remaining.`);
+  }
+  // else: fight continues, choice buttons stay as-is for the next attack
+
+  save();
+  renderPlayer();
+}
+
+function startDailyBoss(name){
+  if(state.quest && !state.quest.resolved){ alert("Finish or retreat from your current fight first."); document.getElementById("room").scrollIntoView({behavior:"smooth"}); return; }
+  if(state.you.hp <= 0){ alert("You're too hurt to venture out. Rest first."); return; }
+  const def = DAILY_BOSS_DEFS[name];
+  const track = state.dailyBossAttempts[def.dailyKey];
+  ensureDailyReset(track, def.dailyLimit);
+  if(track.remaining <= 0){ alert(`${name} is out of attempts today. Resets tomorrow.`); return; }
+  track.remaining--;
+  save();
+  renderDailyBossTiles();
+  switchTab("zones");
+  startQuest({kind:"dailyBoss", name});
 }
 
 function unitLabel(n){
@@ -760,6 +972,7 @@ function toggleWeek(){
 }
 
 function joinGuildEvent(name){
+  if(state.quest && !state.quest.resolved){ alert("Finish or retreat from your current fight first."); document.getElementById("room").scrollIntoView({behavior:"smooth"}); return; }
   if(state.you.hp <= 0){ alert("You're too hurt to venture out. Rest first."); return; }
   switchTab("zones");
   startQuest({kind:"calendar", name});
@@ -839,12 +1052,14 @@ function todayStr(){
   return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
 }
 
-function ensureBountyReset(){
-  if(state.bounty.resetDate !== todayStr()){
-    state.bounty.remaining = 3;
-    state.bounty.resetDate = todayStr();
+function ensureDailyReset(track, defaultRemaining){
+  if(track.resetDate !== todayStr()){
+    track.remaining = defaultRemaining;
+    track.resetDate = todayStr();
   }
 }
+
+function ensureBountyReset(){ ensureDailyReset(state.bounty, 30); }
 
 function renderBounty(){
   ensureBountyReset();
@@ -857,13 +1072,25 @@ function takeBounty(){
   ensureBountyReset();
   if(state.bounty.remaining <= 0) return;
   state.bounty.remaining--;
-  const xp = 8, zen = 15;
+  const xp = 10, zen = 20;
   const leveled = grantXP(xp);
   state.you.zen += zen;
   log(`📜 Bounty turned in — +${xp} XP, +${zen} Zen.` + (leveled ? " LEVEL UP!" : ""));
   save();
   renderPlayer();
   renderBounty();
+}
+
+function renderDailyBossTiles(){
+  Object.entries(DAILY_BOSS_DEFS).forEach(([name, def]) => {
+    const track = state.dailyBossAttempts[def.dailyKey];
+    ensureDailyReset(track, def.dailyLimit);
+    const el = document.getElementById(def.dailyKey + "-remaining");
+    const btn = document.getElementById(def.dailyKey + "-btn");
+    el.textContent = "Remaining: " + track.remaining;
+    btn.disabled = track.remaining <= 0;
+    btn.textContent = track.remaining > 0 ? "Fight" : "No Attempts — Back Tomorrow";
+  });
 }
 
 /* ===================== AUTO-COMBAT (real AFK leveling feature) ===================== */
@@ -998,8 +1225,12 @@ function resetGame(){
     unit: "sip",
     quest: null,
     logEntries: [],
-    bounty: { remaining: 3, resetDate: null },
+    bounty: { remaining: 30, resetDate: null },
     autoCombat: { lastCollect: Date.now() },
+    dailyBossAttempts: {
+      ancient: { remaining: 3, resetDate: null },
+      solo: { remaining: 2, resetDate: null },
+    },
   };
   save();
   renderAll();
@@ -1015,6 +1246,7 @@ function renderAll(){
   renderCast();
   renderLog();
   renderBounty();
+  renderDailyBossTiles();
   renderAutoCombat();
   document.getElementById("room").classList.remove("show");
   if(state.quest){
