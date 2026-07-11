@@ -264,7 +264,7 @@
       <div id="room-cameo"></div>
       <div class="room-flavor" id="room-flavor">Flavor text...</div>
       <div class="boss-hp-wrap" id="boss-hp-wrap">
-        <div class="boss-hp-label"><span>Boss HP</span><span id="boss-hp-num">100%</span></div>
+        <div class="boss-hp-label"><span>Rounds Left</span><span id="boss-hp-num">99 / 99</span></div>
         <div class="bar-track"><div class="bar-fill hp" id="boss-hp-fill" style="width:100%"></div></div>
         <div class="strike-line" id="strike-line"></div>
       </div>
@@ -439,9 +439,9 @@ const CHOICES = [
   {key:"cautious",   label:"🛡 Play It Safe",  desc:"Guaranteed small gains, minimal risk.", guaranteed:true, stat:"No roll, no injury, modest reward"},
 ];
 const MULTIHIT_STAT_TEXT = {
-  aggressive: "Bigger hit if it lands, worse miss if it doesn't",
-  tactical: "Balanced hit chance and damage",
-  cautious: "Guaranteed small chip damage, zero risk",
+  aggressive: "Same 1 round either way — bigger hit if it lands, worse injury if it doesn't",
+  tactical: "Same 1 round either way — balanced hit chance and injury risk",
+  cautious: "Always clears the round safely, zero injury risk",
 };
 
 const WEEKDAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
@@ -724,7 +724,7 @@ function renderBossHp(){
   wrap.classList.add("show");
   const pct = Math.max(0, Math.round((q.bossHp / q.bossHpMax) * 100));
   document.getElementById("boss-hp-fill").style.width = pct + "%";
-  document.getElementById("boss-hp-num").textContent = pct + "%";
+  document.getElementById("boss-hp-num").textContent = `${Math.max(q.bossHp,0)} / ${q.bossHpMax}`;
   document.getElementById("retreat-btn").style.display = "block";
 }
 
@@ -852,7 +852,6 @@ function resolveAttack(key){
   const levelBonus = Math.floor(y.level / 2);
   const morale = q.guildMorale ? 2 : 0;
   const levelDmg = 2 + Math.floor(y.level / 2);
-  const guildDmg = q.joinedGuildmates.length * 2;
 
   const strikeEl = document.getElementById("strike-line");
   let hit, dmg = 0, hpLoss = 0, strikeText;
@@ -877,8 +876,11 @@ function resolveAttack(key){
     }
   }
 
-  q.bossHp = Math.max(q.bossHp - dmg - guildDmg, 0);
-  if(guildDmg > 0) strikeText += ` Guild lands +${guildDmg} (${q.joinedGuildmates.length} fighting alongside you).`;
+  // Fight always takes a fixed number of rounds — your damage doesn't skip rounds, it's flavor.
+  // Each guildmate who joined also takes their own swing this round, clearing an extra round each time.
+  const roundsThisTurn = 1 + q.joinedGuildmates.length;
+  q.bossHp = Math.max(q.bossHp - roundsThisTurn, 0);
+  if(q.joinedGuildmates.length > 0) strikeText += ` ${q.joinedGuildmates.length} guildmate${q.joinedGuildmates.length===1?"":"s"} also swing this round.`;
 
   strikeEl.textContent = strikeText;
   strikeEl.className = "strike-line " + (hit ? "hit" : "miss");
@@ -908,11 +910,11 @@ function resolveAttack(key){
     box.className = "result-box lose show";
     document.getElementById("roll-num").textContent = "—";
     document.getElementById("result-verb").textContent = "Forced Retreat";
-    const pctLeft = Math.round((q.bossHp / q.bossHpMax) * 100);
+    const roundsLeft = Math.max(q.bossHp, 0);
     document.getElementById("result-detail").textContent =
-      `You're too hurt to continue. ${q.boss.name} still stands at ${pctLeft}% HP — no reward this time.`;
+      `You're too hurt to continue. ${q.boss.name} still has ${roundsLeft} rounds left in it — no reward this time.`;
     document.getElementById("pill-wrap").innerHTML = "";
-    log(`💀 ${y.name} was forced to retreat from ${q.boss.name} at ${pctLeft}% boss HP remaining.`);
+    log(`💀 ${y.name} was forced to retreat from ${q.boss.name} with ${roundsLeft} rounds still to go.`);
   }
   // else: fight continues, choice buttons stay as-is for the next attack
 
