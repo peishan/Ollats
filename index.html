@@ -225,7 +225,7 @@
           <span class="mini-card-name">📜 Bounty Quest</span>
           <span class="mini-card-tag" id="bounty-remaining">Remaining: 30</span>
         </div>
-        <div class="mini-card-desc">A quick, guaranteed job off the board. No fight, no risk — straight from the real game's Event menu.</div>
+        <div class="mini-card-desc">A job off the board — turns into an Elite or Boss contract fight, or turns up a quest item outright. Straight from the real game's Event menu.</div>
         <button class="btn-small" id="bounty-btn" onclick="takeBounty()">Take Bounty</button>
       </div>
       <div class="mini-card">
@@ -680,8 +680,10 @@ function retreatFight(){
 }
 
 function isMultiHit(source, tier){
-  if(tier === "WorldBoss") return true;
-  if(source.kind === "zone" && source.zone.key === "kalima") return true;
+  // Every real boss — not trash mobs — gets the multi-hit round system, wherever it shows up:
+  // regular zones, the Guild Calendar, or the Daily Activities boss tiles.
+  if(tier === "Boss" || tier === "WorldBoss" || tier === "Ancient") return true;
+  if(source.kind === "zone" && source.zone.key === "kalima") return true; // Kalima's Elite pulls count too
   if(source.kind === "dailyBoss") return true;
   return false;
 }
@@ -698,10 +700,18 @@ function startQuest(source){
     const def = DAILY_BOSS_DEFS[source.name];
     tier = def.tier; boss = def.boss; zoneName = source.name;
     rewardMult = def.rewardMult; hpMult = def.hpMult;
+  } else if(source.kind === "bounty"){
+    tier = Math.random() < 0.5 ? "Elite" : "Boss";
+    boss = randomFrom(BOSSES[tier]);
+    zoneName = "Bounty Contract";
   } else {
     const def = CALENDAR_EVENT_DEFS[source.name];
     tier = def.tier; boss = def.boss; zoneName = def.zoneName; guildMorale = true;
   }
+
+  // Ancient-tier fights run longer by default (139 rounds), matching Ancient Battlefield's own scaling,
+  // unless a dailyBoss definition already set its own hpMult above.
+  if(hpMult === 1 && tier === "Ancient") hpMult = 1.4;
 
   const cfg = TIER_CONFIG[tier];
   const multiHit = isMultiHit(source, tier);
@@ -1070,17 +1080,36 @@ function renderBounty(){
   document.getElementById("bounty-btn").textContent = state.bounty.remaining > 0 ? "Take Bounty" : "Board Empty — Back Tomorrow";
 }
 
+const BOUNTY_ITEMS = [
+  "Garnet Shard", "Torn Bounty Ledger", "Sealed Coin Pouch", "Elemental Fragment",
+  "Ancient Insignia", "Chipped Rune Stone", "Contract Wax Seal", "Traveler's Whetstone",
+];
+
 function takeBounty(){
   ensureBountyReset();
   if(state.bounty.remaining <= 0) return;
+  if(state.quest && !state.quest.resolved){ alert("Finish or retreat from your current fight first."); document.getElementById("room").scrollIntoView({behavior:"smooth"}); return; }
+  if(state.you.hp <= 0){ alert("You're too hurt to venture out. Rest first."); return; }
+
   state.bounty.remaining--;
-  const xp = 10, zen = 20;
-  const leveled = grantXP(xp);
-  state.you.zen += zen;
-  log(`📜 Bounty turned in — +${xp} XP, +${zen} Zen.` + (leveled ? " LEVEL UP!" : ""));
   save();
-  renderPlayer();
   renderBounty();
+
+  if(Math.random() < 0.5){
+    // Bounty turns into a real Elite or Boss contract fight
+    switchTab("zones");
+    startQuest({kind:"bounty"});
+  } else {
+    // Bounty turns up a quest item instead of a fight
+    const item = randomFrom(BOUNTY_ITEMS);
+    const xp = 10, zen = 20;
+    const leveled = grantXP(xp);
+    state.you.zen += zen;
+    log(`📜 Bounty turned in — found a ${item}. +${xp} XP, +${zen} Zen.` + (leveled ? " LEVEL UP!" : ""));
+    save();
+    renderPlayer();
+    alert(`Bounty complete: you turn up a ${item}. +${xp} XP, +${zen} Zen.`);
+  }
 }
 
 function renderDailyBossTiles(){
