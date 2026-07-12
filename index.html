@@ -276,7 +276,7 @@
         <div class="result-detail" id="result-detail">—</div>
         <div id="pill-wrap"></div>
         <div class="room-actions">
-          <button class="btn-ghost" onclick="exploreAgain()">Explore Again</button>
+          <button class="btn-ghost" id="explore-again-btn" onclick="exploreAgain()">Explore Again</button>
           <button class="btn-leave" onclick="leaveZone()">Leave Zone</button>
         </div>
       </div>
@@ -651,16 +651,21 @@ function enterZone(key){
   startQuest({kind:"zone", zone});
 }
 
+function canExploreAgain(source){
+  // Bounty and daily-boss fights are one attempt = one fight. Repeats require spending
+  // another attempt from Daily Activities, not a free "Explore Again" loop.
+  return source.kind === "zone" || source.kind === "calendar";
+}
+
+function updateRoomActions(){
+  const q = state.quest;
+  document.getElementById("explore-again-btn").style.display = canExploreAgain(q.source) ? "inline-block" : "none";
+}
+
 function exploreAgain(){
   if(state.you.hp <= 0){ alert("You're too hurt to keep exploring. Rest first."); return; }
   const q = state.quest;
-  if(!q) return;
-  if(q.source.kind === "dailyBoss"){
-    const def = DAILY_BOSS_DEFS[q.source.name];
-    const track = state.dailyBossAttempts[def.dailyKey];
-    ensureDailyReset(track, def.dailyLimit);
-    if(track.remaining <= 0){ alert(`No attempts left for ${q.source.name} today. Resets tomorrow.`); leaveZone(); return; }
-  }
+  if(!q || !canExploreAgain(q.source)){ leaveZone(); return; }
   startQuest(q.source);
 }
 
@@ -800,6 +805,7 @@ function resolveChoice(key){
   pillWrap.innerHTML = "";
   box.classList.add("show");
   q.resolved = true;
+  updateRoomActions();
 
   if(choice.guaranteed){
     const xp = Math.round(q.cfg.xp * 0.4 * q.rewardMult);
@@ -912,6 +918,7 @@ function resolveAttack(key){
       `${q.boss.name} finally falls after a drawn-out fight. +${xp} XP, +${zen} Zen.` + (leveled ? ` LEVEL UP → ${y.level}!` : "");
     document.getElementById("pill-wrap").innerHTML = "";
     log(`⚔ ${y.name} downed ${q.boss.name} in ${q.zoneName} — +${xp} XP, +${zen} Zen.`);
+    updateRoomActions();
   } else if(y.hp <= 0){
     q.resolved = true;
     document.getElementById("choice-row").innerHTML = "";
@@ -925,6 +932,7 @@ function resolveAttack(key){
       `You're too hurt to continue. ${q.boss.name} still has ${roundsLeft} rounds left in it — no reward this time.`;
     document.getElementById("pill-wrap").innerHTML = "";
     log(`💀 ${y.name} was forced to retreat from ${q.boss.name} with ${roundsLeft} rounds still to go.`);
+    updateRoomActions();
   }
   // else: fight continues, choice buttons stay as-is for the next attack
 
