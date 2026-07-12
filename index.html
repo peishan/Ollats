@@ -63,7 +63,7 @@
 
   /* Tabs */
   .tabbar{display:flex;gap:6px;margin-bottom:14px;}
-  .tab-btn{flex:1;font-family:'Cinzel',serif;font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.08);color:var(--parchment-dim);padding:9px 4px;border-radius:7px;cursor:pointer;text-align:center;}
+  .tab-btn{flex:1;font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:.03em;text-transform:uppercase;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.08);color:var(--parchment-dim);padding:9px 3px;border-radius:7px;cursor:pointer;text-align:center;}
   .tab-btn.active{border-color:var(--rune-gold);color:var(--rune-gold);background:rgba(201,162,74,0.1);}
   .tab-panel{display:none;}
   .tab-panel.active{display:block;}
@@ -144,6 +144,20 @@
   .cal-day-name{font-family:'Cinzel',serif;font-size:12px;color:var(--rune-gold);text-transform:uppercase;}
   .cal-day-evs{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--parchment-dim);margin-top:3px;line-height:1.5;}
 
+  /* Loot */
+  .loot-empty{display:none;text-align:center;font-size:13px;color:var(--parchment-dim);font-style:italic;padding:14px 6px;line-height:1.5;}
+  .loot-empty.show{display:block;}
+  .loot-row{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid rgba(255,255,255,0.05);}
+  .loot-row:last-child{border-bottom:none;}
+  .loot-dot{width:9px;height:9px;border-radius:50%;flex:none;}
+  .loot-name{flex:1;font-family:'Cinzel',serif;font-size:13.5px;}
+  .loot-rarity{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;flex:none;}
+  .bestiary-row{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid rgba(255,255,255,0.05);}
+  .bestiary-row:last-child{border-bottom:none;}
+  .bestiary-name{flex:1;font-family:'Cinzel',serif;font-size:13.5px;color:var(--parchment);}
+  .bestiary-kills{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--rune-gold-dim);flex:none;}
+  .loot-count{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--parchment-dim);flex:none;width:28px;text-align:right;}
+
   /* Tavern & Hans */
   .npc-row{display:flex;gap:12px;align-items:flex-start;margin-bottom:6px;}
   .npc-portrait{width:44px;height:44px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;background:radial-gradient(circle,rgba(201,162,74,0.25),rgba(0,0,0,0.3));border:1px solid rgba(201,162,74,0.3);}
@@ -214,8 +228,9 @@
   <div class="tabbar">
     <button class="tab-btn active" data-tab="zones" onclick="switchTab('zones')">Zones</button>
     <button class="tab-btn" data-tab="calendar" onclick="switchTab('calendar')">Calendar</button>
+    <button class="tab-btn" data-tab="loot" onclick="switchTab('loot')">Loot</button>
     <button class="tab-btn" data-tab="tavern" onclick="switchTab('tavern')">Tavern</button>
-    <button class="tab-btn" data-tab="more" onclick="switchTab('more')">Log/Settings</button>
+    <button class="tab-btn" data-tab="more" onclick="switchTab('more')">Log</button>
   </div>
 
   <!-- ZONES TAB -->
@@ -292,6 +307,20 @@
       <div id="calendar-today-list"></div>
       <button class="reset-link" onclick="toggleWeek()">Show full week ▾</button>
       <div class="cal-week" id="calendar-week"></div>
+    </div>
+  </div>
+
+  <!-- LOOT TAB -->
+  <div class="tab-panel" id="tab-loot">
+    <div class="panel">
+      <div class="panel-title">Inventory <span id="loot-count" style="color:var(--parchment-dim);font-family:'JetBrains Mono',monospace;letter-spacing:0;">0 items</span></div>
+      <div id="loot-list"></div>
+      <div id="loot-empty" class="loot-empty">No loot yet. Real bosses (not trash mobs) have a chance to drop something when they fall.</div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Bestiary <span id="bestiary-count" style="color:var(--parchment-dim);font-family:'JetBrains Mono',monospace;letter-spacing:0;">0 recorded</span></div>
+      <div id="bestiary-list"></div>
+      <div id="bestiary-empty" class="loot-empty">No bosses recorded yet. Winning a fight (not playing it safe) adds the boss here.</div>
     </div>
   </div>
 
@@ -435,6 +464,29 @@ const TIER_CONFIG = {
   Ancient:  {dc:23, xp:100,zen:50, hp:12,drink:4},
 };
 
+// Loot only drops from real bosses (see resolveAttack). Weighted by rarity.
+const LOOT_TABLE = [
+  {name:"Cracked Bone Charm", rarity:"Common", weight:40},
+  {name:"Torn Banner Scrap", rarity:"Common", weight:40},
+  {name:"Elemental Dust", rarity:"Common", weight:35},
+  {name:"Frost Queen's Shard", rarity:"Rare", weight:18},
+  {name:"Balrog Fang", rarity:"Rare", weight:18},
+  {name:"Illusion Knight's Mirror", rarity:"Rare", weight:15},
+  {name:"Selupan's Scale", rarity:"Epic", weight:6},
+  {name:"Demon Ruler's Seal", rarity:"Epic", weight:6},
+  {name:"Kundun's Broken Horn", rarity:"Legendary", weight:2},
+  {name:"Erohim's Ember", rarity:"Legendary", weight:1},
+];
+const RARITY_COLORS = { Common:"#a89a86", Rare:"#9fc4e0", Epic:"#c9a2f0", Legendary:"#f0d98c" };
+const LOOT_DROP_CHANCE = 0.55;
+
+function rollLoot(){
+  const total = LOOT_TABLE.reduce((s, i) => s + i.weight, 0);
+  let r = Math.random() * total;
+  for(const item of LOOT_TABLE){ r -= item.weight; if(r <= 0) return item; }
+  return LOOT_TABLE[0];
+}
+
 const CHOICES = [
   {key:"aggressive", label:"🔥 Meteor Strike", desc:"Channel everything into one devastating spell.", bonusMod:3, hpMult:1.6, xpMult:1.25, advantage:true, stat:"Higher reward, higher injury risk"},
   {key:"tactical",   label:"⚡ Lightning Bolt", desc:"A precise arc of lightning, reliably placed.", bonusMod:1, hpMult:1.0, xpMult:1.0, stat:"Balanced risk and reward"},
@@ -518,6 +570,8 @@ let state = {
     ancient: { remaining: 3, resetDate: null },
     solo: { remaining: 2, resetDate: null },
   },
+  inventory: {},
+  bestiary: {},
 };
 
 function xpToNext(level){ return level * 30; }
@@ -837,11 +891,13 @@ function resolveChoice(key){
     const zen = Math.round(q.cfg.zen * (choice.xpMult || 1) * q.rewardMult);
     const leveled = grantXP(xp);
     y.zen += zen;
+    const firstKill = recordKill(q.boss.name);
     box.className = "result-box win show";
     document.getElementById("result-verb").textContent = "Victory";
     document.getElementById("result-detail").textContent =
-      `${total} vs DC ${q.cfg.dc} — ${choice.label} lands true and ${q.boss.name} falls. +${xp} XP, +${zen} Zen.` + (leveled ? ` LEVEL UP → ${y.level}!` : "");
+      `${total} vs DC ${q.cfg.dc} — ${choice.label} lands true and ${q.boss.name} falls. +${xp} XP, +${zen} Zen.` + (leveled ? ` LEVEL UP → ${y.level}!` : "") + (firstKill ? ` New Bestiary entry!` : "");
     log(`✨ ${y.name} cast ${choice.label}, rolled ${total} vs DC ${q.cfg.dc} — victory over ${q.boss.name} (${q.zoneName}).`);
+    if(firstKill) log(`📖 Bestiary: ${q.boss.name} recorded for the first time.`);
   } else {
     const hpLossBase = Math.round(q.cfg.hp * (choice.hpMult || 1));
     const hpLoss = Math.max(hpLossBase - armorMitigation, 1);
@@ -856,6 +912,7 @@ function resolveChoice(key){
 
   save();
   renderPlayer();
+  renderBestiary();
 }
 
 // Multi-hit boss fights: World Boss, Ancient Battlefield, Solo Boss, and Kalima.
@@ -911,6 +968,16 @@ function resolveAttack(key){
     const zen = Math.round(q.cfg.zen * q.rewardMult);
     const leveled = grantXP(xp);
     y.zen += zen;
+    const firstKill = recordKill(q.boss.name);
+
+    let lootText = "";
+    if(Math.random() < LOOT_DROP_CHANCE){
+      const item = rollLoot();
+      state.inventory[item.name] = (state.inventory[item.name] || 0) + 1;
+      lootText = ` ${q.boss.name} also drops a ${item.rarity.toLowerCase()} item: ${item.name}.`;
+      log(`🎁 Loot: ${item.name} (${item.rarity}) from ${q.boss.name}.`);
+    }
+
     document.getElementById("choice-row").innerHTML = "";
     document.getElementById("retreat-btn").style.display = "none";
     const box = document.getElementById("result-box");
@@ -918,9 +985,12 @@ function resolveAttack(key){
     document.getElementById("roll-num").textContent = "—";
     document.getElementById("result-verb").textContent = "Boss Down";
     document.getElementById("result-detail").textContent =
-      `${q.boss.name} finally falls after a drawn-out fight. +${xp} XP, +${zen} Zen.` + (leveled ? ` LEVEL UP → ${y.level}!` : "");
+      `${q.boss.name} finally falls after a drawn-out fight. +${xp} XP, +${zen} Zen.${lootText}` + (leveled ? ` LEVEL UP → ${y.level}!` : "") + (firstKill ? ` New Bestiary entry!` : "");
     document.getElementById("pill-wrap").innerHTML = "";
     log(`✨ ${y.name} downed ${q.boss.name} in ${q.zoneName} — +${xp} XP, +${zen} Zen.`);
+    if(firstKill) log(`📖 Bestiary: ${q.boss.name} recorded for the first time.`);
+    renderInventory();
+    renderBestiary();
     updateRoomActions();
   } else if(y.hp <= 0){
     q.resolved = true;
@@ -1258,9 +1328,81 @@ function renderLog(){
   });
 }
 
+/* ===================== LOOT / INVENTORY ===================== */
+const RARITY_ORDER = { Legendary:0, Epic:1, Rare:2, Common:3 };
+
+function renderInventory(){
+  const inv = state.inventory || {};
+  const names = Object.keys(inv);
+  document.getElementById("loot-count").textContent = names.reduce((s,n)=>s+inv[n],0) + " items";
+
+  const list = document.getElementById("loot-list");
+  const empty = document.getElementById("loot-empty");
+  list.innerHTML = "";
+
+  if(!names.length){
+    empty.classList.add("show");
+    return;
+  }
+  empty.classList.remove("show");
+
+  const items = names.map(name => {
+    const def = LOOT_TABLE.find(i => i.name === name);
+    return { name, count: inv[name], rarity: def ? def.rarity : "Common" };
+  }).sort((a,b) => (RARITY_ORDER[a.rarity]-RARITY_ORDER[b.rarity]) || a.name.localeCompare(b.name));
+
+  items.forEach(item => {
+    const row = document.createElement("div");
+    row.className = "loot-row";
+    const color = RARITY_COLORS[item.rarity] || "#a89a86";
+    row.innerHTML = `
+      <span class="loot-dot" style="background:${color}"></span>
+      <span class="loot-name">${item.name}</span>
+      <span class="loot-rarity" style="color:${color}">${item.rarity}</span>
+      <span class="loot-count">×${item.count}</span>
+    `;
+    list.appendChild(row);
+  });
+}
+
+// Records a genuine boss kill (not a "played it safe" outcome). Returns true if this
+// is the very first time this named boss has been recorded.
+function recordKill(bossName){
+  state.bestiary = state.bestiary || {};
+  const isFirst = !state.bestiary[bossName];
+  state.bestiary[bossName] = (state.bestiary[bossName] || 0) + 1;
+  save();
+  return isFirst;
+}
+
+function renderBestiary(){
+  const b = state.bestiary || {};
+  const names = Object.keys(b);
+  document.getElementById("bestiary-count").textContent = names.length + " recorded";
+
+  const list = document.getElementById("bestiary-list");
+  const empty = document.getElementById("bestiary-empty");
+  list.innerHTML = "";
+
+  if(!names.length){
+    empty.classList.add("show");
+    return;
+  }
+  empty.classList.remove("show");
+
+  names
+    .sort((a, c) => b[c] - b[a] || a.localeCompare(c))
+    .forEach(name => {
+      const row = document.createElement("div");
+      row.className = "bestiary-row";
+      row.innerHTML = `<span class="bestiary-name">${name}</span><span class="bestiary-kills">×${b[name]}</span>`;
+      list.appendChild(row);
+    });
+}
+
 /* ===================== RESET ===================== */
 function resetGame(){
-  if(!confirm("Reset the entire campaign? All levels, gear, and Zen will be lost.")) return;
+  if(!confirm("Reset the entire campaign? All levels, gear, Zen, loot, and the Bestiary will be lost.")) return;
   localStorage.removeItem("darkEpochTavernV2");
   state = {
     you: { name:"OLLAT", level:1, xp:0, hp:20, maxHp:20, zen:100, weaponEnh:0, armorEnh:0 },
@@ -1274,6 +1416,8 @@ function resetGame(){
       ancient: { remaining: 3, resetDate: null },
       solo: { remaining: 2, resetDate: null },
     },
+    inventory: {},
+    bestiary: {},
   };
   save();
   renderAll();
@@ -1291,6 +1435,8 @@ function renderAll(){
   renderBounty();
   renderDailyBossTiles();
   renderAutoCombat();
+  renderInventory();
+  renderBestiary();
   document.getElementById("room").classList.remove("show");
   if(state.quest){
     document.getElementById("room").classList.add("show");
