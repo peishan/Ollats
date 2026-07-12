@@ -42,6 +42,7 @@
   .player-badge{width:52px;height:52px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cinzel Decorative',serif;font-weight:700;font-size:18px;background:conic-gradient(from 220deg,var(--violet),var(--blood) 50%,var(--violet));color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.5);}
   .player-main{flex:1;min-width:0;}
   .player-name-row{display:flex;align-items:center;gap:8px;font-family:'Cinzel',serif;font-size:16px;color:var(--parchment);}
+  .player-class{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--violet-glow);letter-spacing:.05em;margin-top:1px;}
   .lvl-tag{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--rune-gold);}
   .cond-tag{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.05em;padding:2px 7px;border-radius:10px;text-transform:uppercase;}
   .cond-Healthy{background:rgba(125,156,63,0.18);color:#a9c97a;border:1px solid rgba(125,156,63,0.4);}
@@ -199,6 +200,7 @@
           <span class="lvl-tag" id="player-lvl">LV 1</span>
           <span class="cond-tag cond-Healthy" id="player-cond">Healthy</span>
         </div>
+        <div class="player-class">🌑 Dark Wizard</div>
         <div class="bar-row"><span class="bar-label">HP</span><div class="bar-track"><div class="bar-fill hp" id="hp-fill" style="width:100%"></div></div><span class="bar-num" id="hp-num">20/20</span></div>
         <div class="bar-row"><span class="bar-label">XP</span><div class="bar-track"><div class="bar-fill xp" id="xp-fill" style="width:0%"></div></div><span class="bar-num" id="xp-num">0/30</span></div>
       </div>
@@ -318,16 +320,16 @@
         </div>
       </div>
       <div class="item-card">
-        <div class="item-name">⚔ <span id="weapon-name">Rusty Blade</span> <span class="item-plus" id="weapon-plus">+0</span></div>
+        <div class="item-name">🪄 <span id="weapon-name">Apprentice Wand</span> <span class="item-plus" id="weapon-plus">+0</span></div>
         <div class="item-bar"><div class="item-bar-fill" id="weapon-bar" style="width:0%"></div></div>
         <div class="item-meta"><span id="weapon-cost">Cost: 40 Zen</span><span id="weapon-chance">Success: 85%</span></div>
-        <button class="btn-enhance" id="weapon-btn" onclick="enhance('weapon')">Enhance Weapon</button>
+        <button class="btn-enhance" id="weapon-btn" onclick="enhance('weapon')">Enhance Staff</button>
       </div>
       <div class="item-card">
-        <div class="item-name">🛡 <span id="armor-name">Cloth Vest</span> <span class="item-plus" id="armor-plus">+0</span></div>
+        <div class="item-name">👘 <span id="armor-name">Traveler's Robe</span> <span class="item-plus" id="armor-plus">+0</span></div>
         <div class="item-bar"><div class="item-bar-fill" id="armor-bar" style="width:0%"></div></div>
         <div class="item-meta"><span id="armor-cost">Cost: 40 Zen</span><span id="armor-chance">Success: 85%</span></div>
-        <button class="btn-enhance" id="armor-btn" onclick="enhance('armor')">Enhance Armor</button>
+        <button class="btn-enhance" id="armor-btn" onclick="enhance('armor')">Enhance Robe</button>
       </div>
       <div class="speech" id="hans-speech"></div>
     </div>
@@ -434,14 +436,14 @@ const TIER_CONFIG = {
 };
 
 const CHOICES = [
-  {key:"aggressive", label:"⚔ Fight Head-On", desc:"Full force, no half-measures.", bonusMod:3, hpMult:1.6, xpMult:1.25, advantage:true, stat:"Higher reward, higher injury risk"},
-  {key:"tactical",   label:"🗡 Fight Smart",   desc:"Read the enemy, strike the opening.", bonusMod:1, hpMult:1.0, xpMult:1.0, stat:"Balanced risk and reward"},
-  {key:"cautious",   label:"🛡 Play It Safe",  desc:"Guaranteed small gains, minimal risk.", guaranteed:true, stat:"No roll, no injury, modest reward"},
+  {key:"aggressive", label:"🔥 Meteor Strike", desc:"Channel everything into one devastating spell.", bonusMod:3, hpMult:1.6, xpMult:1.25, advantage:true, stat:"Higher reward, higher injury risk"},
+  {key:"tactical",   label:"⚡ Lightning Bolt", desc:"A precise arc of lightning, reliably placed.", bonusMod:1, hpMult:1.0, xpMult:1.0, stat:"Balanced risk and reward"},
+  {key:"cautious",   label:"❄ Ice Arrow",       desc:"A basic cantrip, cast safely from a distance.", guaranteed:true, stat:"No roll, no injury, modest reward"},
 ];
 const MULTIHIT_STAT_TEXT = {
-  aggressive: "Same 1 round either way — bigger hit if it lands, worse injury if it doesn't",
-  tactical: "Same 1 round either way — balanced hit chance and injury risk",
-  cautious: "Always clears the round safely, zero injury risk",
+  aggressive: "Same 1 round either way — bigger hit if it lands, worse backlash if it doesn't",
+  tactical: "Same 1 round either way — balanced hit chance and backlash risk",
+  cautious: "Always clears the round safely, zero backlash risk",
 };
 
 const WEEKDAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
@@ -481,23 +483,24 @@ const UNITS = [
 ];
 
 const RIELMANN_TIPS = [
-  "Fights go easier with better gear — see Hans about your weapon before diving into Kalima Rift.",
-  "Playing it safe is never wrong. If your HP's low, don't be too proud to take the guaranteed win.",
+  "Fights go easier with a sharper staff — see Hans before diving into Kalima Rift.",
+  "Playing it safe is never wrong. If your HP's low, don't be too proud to cast Ice Arrow and walk away.",
   "Land of Demons hits hardest but pays the best XP anywhere. Don't walk in wounded.",
-  "Fighting head-on doubles your risk, but the payoff matches it. Know your HP before you commit.",
+  "Meteor Strike doubles your risk, but the payoff matches it. Know your HP before you commit.",
   "I've seen a few of the Legends limp back from Devias more than once. Ice fields aren't kind to the reckless.",
   "Rest is free here. Use it. There's no prize for suffering through low HP.",
-  "Every level makes you tougher — your max HP grows each time you level up.",
+  "Every level makes you tougher — and your spells hit harder too.",
   "The Guild Calendar events pay the best Zen. Don't sleep on Guild BOSS at noon.",
-  "Armor doesn't stop hits, it just softens them. Get some enhancement in before Raklion.",
+  "A robe doesn't stop hits, it just softens them. Get some enhancement in before Raklion.",
   "Take a breath. This is supposed to help you unwind, not stress you out.",
   "A cameo from a friendly face gives you a small bonus that round — worth waiting for if you're on the fence.",
   "Treasure Convoy is low-risk. Good pick if you just want a quiet win.",
+  "Lightning Bolt won't win you glory, but it won't get you hurt either. There's no shame in reliable.",
 ];
 
 const HANS_LINES = [
-  "Hold still. This might sting your wallet more than your arm.",
-  "Good steel, better hands. Let's see what we can do.",
+  "Hold still. This might sting your wallet more than your mana.",
+  "Good wood, better hands. Let's see what we can do.",
   "No shame in a swing and a miss. Gold's not going anywhere either way.",
   "I don't destroy gear here — that's not the kind of shop I run.",
 ];
@@ -816,8 +819,8 @@ function resolveChoice(key){
     box.className = "result-box win show";
     document.getElementById("result-verb").textContent = "Careful Success";
     document.getElementById("result-detail").textContent =
-      `You keep your distance from ${q.boss.name} and still walk away with ${xp} XP and ${zen} Zen. No risk taken.` + (leveled ? ` LEVEL UP → ${y.level}!` : "");
-    log(`🛡 ${y.name} played it safe in ${q.zoneName} — +${xp} XP, +${zen} Zen.`);
+      `You keep your distance and pick ${q.boss.name} apart with ${choice.label}, walking away with ${xp} XP and ${zen} Zen. No risk taken.` + (leveled ? ` LEVEL UP → ${y.level}!` : "");
+    log(`❄ ${y.name} played it safe in ${q.zoneName} with ${choice.label} — +${xp} XP, +${zen} Zen.`);
     save(); renderPlayer();
     return;
   }
@@ -837,8 +840,8 @@ function resolveChoice(key){
     box.className = "result-box win show";
     document.getElementById("result-verb").textContent = "Victory";
     document.getElementById("result-detail").textContent =
-      `${total} vs DC ${q.cfg.dc} — ${q.boss.name} falls. +${xp} XP, +${zen} Zen.` + (leveled ? ` LEVEL UP → ${y.level}!` : "");
-    log(`⚔ ${y.name} rolled ${total} vs DC ${q.cfg.dc} — victory over ${q.boss.name} (${q.zoneName}).`);
+      `${total} vs DC ${q.cfg.dc} — ${choice.label} lands true and ${q.boss.name} falls. +${xp} XP, +${zen} Zen.` + (leveled ? ` LEVEL UP → ${y.level}!` : "");
+    log(`✨ ${y.name} cast ${choice.label}, rolled ${total} vs DC ${q.cfg.dc} — victory over ${q.boss.name} (${q.zoneName}).`);
   } else {
     const hpLossBase = Math.round(q.cfg.hp * (choice.hpMult || 1));
     const hpLoss = Math.max(hpLossBase - armorMitigation, 1);
@@ -846,9 +849,9 @@ function resolveChoice(key){
     box.className = "result-box lose show";
     document.getElementById("result-verb").textContent = "Injured";
     document.getElementById("result-detail").textContent =
-      `${total} vs DC ${q.cfg.dc} — ${q.boss.name} gets the better of you.`;
+      `${total} vs DC ${q.cfg.dc} — ${choice.label} fizzles and ${q.boss.name} gets the better of you.`;
     pillWrap.innerHTML = `<div class="pill hp">🩸 −${hpLoss} HP</div><div class="pill toll">🍷 ${q.cfg.drink} ${unitLabel(q.cfg.drink)}</div>`;
-    log(`💀 ${y.name} rolled ${total} vs DC ${q.cfg.dc} — injured by ${q.boss.name}, −${hpLoss} HP.`);
+    log(`💥 ${y.name} cast ${choice.label}, rolled ${total} vs DC ${q.cfg.dc} — injured by ${q.boss.name}, −${hpLoss} HP.`);
   }
 
   save();
@@ -875,7 +878,7 @@ function resolveAttack(key){
   if(choice.guaranteed){
     dmg = Math.max(Math.round(levelDmg * 0.4), 1);
     hit = true;
-    strikeText = `🛡 A careful poke — ${dmg} damage.`;
+    strikeText = `❄ ${choice.label} — a safe cast, ${dmg} damage.`;
   } else {
     const bonus = levelBonus + weaponBonus + choice.bonusMod + morale;
     const d20 = choice.advantage ? Math.max(roll1to20(), roll1to20()) : roll1to20();
@@ -883,12 +886,12 @@ function resolveAttack(key){
     hit = total >= q.cfg.dc;
     if(hit){
       dmg = choice.key === "aggressive" ? Math.round(levelDmg * 1.5) : levelDmg;
-      strikeText = `⚔ ${total} vs DC ${q.cfg.dc} — hit for ${dmg} damage.`;
+      strikeText = `${choice.label} lands — ${total} vs DC ${q.cfg.dc}, ${dmg} damage.`;
     } else {
       const hpLossBase = Math.round(q.cfg.hp * (choice.hpMult || 1));
       hpLoss = Math.max(hpLossBase - armorMitigation, 1);
       y.hp = Math.max(y.hp - hpLoss, 0);
-      strikeText = `💢 ${total} vs DC ${q.cfg.dc} — missed. −${hpLoss} HP.`;
+      strikeText = `${choice.label} fizzles — ${total} vs DC ${q.cfg.dc}. Backlash: −${hpLoss} HP.`;
     }
   }
 
@@ -917,7 +920,7 @@ function resolveAttack(key){
     document.getElementById("result-detail").textContent =
       `${q.boss.name} finally falls after a drawn-out fight. +${xp} XP, +${zen} Zen.` + (leveled ? ` LEVEL UP → ${y.level}!` : "");
     document.getElementById("pill-wrap").innerHTML = "";
-    log(`⚔ ${y.name} downed ${q.boss.name} in ${q.zoneName} — +${xp} XP, +${zen} Zen.`);
+    log(`✨ ${y.name} downed ${q.boss.name} in ${q.zoneName} — +${xp} XP, +${zen} Zen.`);
     updateRoomActions();
   } else if(y.hp <= 0){
     q.resolved = true;
@@ -1011,8 +1014,8 @@ function hansSpeak(){
   el.classList.add("show");
 }
 
-const WEAPON_NAMES = ["Rusty Blade","Tempered Blade","Runic Blade","Ancient Blade"];
-const ARMOR_NAMES = ["Cloth Vest","Leather Armor","Plate Mail","Ancient Plate"];
+const WEAPON_NAMES = ["Apprentice Wand","Runed Staff","Arcane Staff","Ancient Staff"];
+const ARMOR_NAMES = ["Traveler's Robe","Enchanted Robe","Arcane Vestments","Ancient Vestments"];
 const MAX_ENH = 9;
 
 function tierName(names, enh){
@@ -1049,6 +1052,7 @@ function renderEquipment(){
 function enhance(kind){
   const y = state.you;
   const enh = kind === "weapon" ? y.weaponEnh : y.armorEnh;
+  const label = kind === "weapon" ? "staff" : "robe";
   if(enh >= MAX_ENH) return;
   const cost = enhanceCost(enh);
   if(y.zen < cost) return;
@@ -1057,10 +1061,10 @@ function enhance(kind){
   if(success){
     if(kind === "weapon") y.weaponEnh++; else y.armorEnh++;
     hansSpeak();
-    log(`🔨 Hans enhances your ${kind} to +${kind === "weapon" ? y.weaponEnh : y.armorEnh}.`);
+    log(`🔨 Hans enhances your ${label} to +${kind === "weapon" ? y.weaponEnh : y.armorEnh}.`);
   } else {
     hansSpeak();
-    log(`🔨 The ${kind} enhancement fails. Your gear is untouched — Hans doesn't break things here.`);
+    log(`🔨 The ${label} enhancement fails. Your gear is untouched — Hans doesn't break things here.`);
   }
   save();
   renderPlayer();
