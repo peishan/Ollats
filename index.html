@@ -100,6 +100,8 @@
   .strike-line{margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--parchment);min-height:16px;}
   .strike-line.hit{color:#a9c97a;}
   .strike-line.miss{color:var(--blood-bright);}
+  .milestone-line{display:none;font-family:'Cinzel',serif;font-size:13px;color:var(--rune-gold);text-align:center;padding:6px 4px;font-style:italic;}
+  .milestone-line.show{display:block;animation:reveal .4s ease;}
   .cameo{font-family:'JetBrains Mono',monospace;font-size:11.5px;padding:7px 10px;border-radius:6px;margin-bottom:10px;}
   .cameo.ally{background:rgba(125,156,63,0.12);color:#a9c97a;border:1px solid rgba(125,156,63,0.35);}
   .cameo.rival{background:rgba(201,162,74,0.1);color:var(--rune-gold);border:1px solid rgba(201,162,74,0.3);}
@@ -156,6 +158,15 @@
   .bestiary-row:last-child{border-bottom:none;}
   .bestiary-name{flex:1;font-family:'Cinzel',serif;font-size:13.5px;color:var(--parchment);}
   .bestiary-kills{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--rune-gold-dim);flex:none;}
+  .title-row{display:flex;align-items:flex-start;gap:10px;padding:9px 4px;border-bottom:1px solid rgba(255,255,255,0.05);}
+  .title-row:last-child{border-bottom:none;}
+  .title-row.locked{opacity:0.45;}
+  .title-icon{font-size:18px;flex:none;width:22px;text-align:center;}
+  .title-main{flex:1;}
+  .title-name{font-family:'Cinzel',serif;font-size:13.5px;color:var(--parchment);}
+  .title-row.locked .title-name{color:var(--parchment-dim);}
+  .title-desc{font-size:11.5px;color:var(--parchment-dim);font-style:italic;margin-top:2px;}
+  .title-check{font-family:'JetBrains Mono',monospace;font-size:14px;flex:none;color:var(--xp);}
   .loot-count{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--parchment-dim);flex:none;width:28px;text-align:right;}
 
   /* Tavern & Hans */
@@ -283,6 +294,7 @@
       <div class="boss-hp-wrap" id="boss-hp-wrap">
         <div class="boss-hp-label"><span>Rounds Left</span><span id="boss-hp-num">99 / 99</span></div>
         <div class="bar-track"><div class="bar-fill hp" id="boss-hp-fill" style="width:100%"></div></div>
+        <div class="milestone-line" id="milestone-line"></div>
         <div class="strike-line" id="strike-line"></div>
       </div>
       <div class="choice-row" id="choice-row"></div>
@@ -321,6 +333,10 @@
       <div class="panel-title">Bestiary <span id="bestiary-count" style="color:var(--parchment-dim);font-family:'JetBrains Mono',monospace;letter-spacing:0;">0 recorded</span></div>
       <div id="bestiary-list"></div>
       <div id="bestiary-empty" class="loot-empty">No bosses recorded yet. Winning a fight (not playing it safe) adds the boss here.</div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Titles <span id="titles-count" style="color:var(--parchment-dim);font-family:'JetBrains Mono',monospace;letter-spacing:0;">0 / 0</span></div>
+      <div id="titles-list"></div>
     </div>
   </div>
 
@@ -480,6 +496,29 @@ const LOOT_TABLE = [
 const RARITY_COLORS = { Common:"#a89a86", Rare:"#9fc4e0", Epic:"#c9a2f0", Legendary:"#f0d98c" };
 const LOOT_DROP_CHANCE = 0.55;
 
+const ACHIEVEMENTS = [
+  {id:"first_blood",     name:"First Blood",        icon:"🩸", desc:"Defeat your first named boss.",
+    check: s => Object.keys(s.bestiary||{}).length >= 1},
+  {id:"collector_5",     name:"Bestiary Collector", icon:"📖", desc:"Record 5 unique bosses in the Bestiary.",
+    check: s => Object.keys(s.bestiary||{}).length >= 5},
+  {id:"collector_10",    name:"Bestiary Master",    icon:"📚", desc:"Record 10 unique bosses in the Bestiary.",
+    check: s => Object.keys(s.bestiary||{}).length >= 10},
+  {id:"kundun_slayer",   name:"Kundun Slayer",      icon:"👑", desc:"Defeat KUNDUN, The Fallen God at least once.",
+    check: s => ((s.bestiary||{})["KUNDUN, The Fallen God"]||0) >= 1},
+  {id:"ancient_hunter",  name:"Ancient Hunter",     icon:"🜏", desc:"Defeat The Divine Demon at least once.",
+    check: s => ((s.bestiary||{})["The Divine Demon"]||0) >= 1},
+  {id:"level_10",        name:"Seasoned Wizard",    icon:"🔮", desc:"Reach Level 10.",
+    check: s => s.you.level >= 10},
+  {id:"level_20",        name:"Archmage",           icon:"⭐", desc:"Reach Level 20.",
+    check: s => s.you.level >= 20},
+  {id:"fully_enhanced",  name:"Fully Enchanted",    icon:"🪄", desc:"Enhance both staff and robe to +9.",
+    check: s => s.you.weaponEnh >= 9 && s.you.armorEnh >= 9},
+  {id:"hoarder",         name:"Hoarder",            icon:"🎒", desc:"Collect 10 or more total loot items.",
+    check: s => Object.values(s.inventory||{}).reduce((a,b)=>a+b,0) >= 10},
+  {id:"legendary_find",  name:"Legendary Find",     icon:"✨", desc:"Loot a Legendary-rarity item.",
+    check: s => Object.keys(s.inventory||{}).some(name => (LOOT_TABLE.find(i=>i.name===name)||{}).rarity === "Legendary")},
+];
+
 function rollLoot(){
   const total = LOOT_TABLE.reduce((s, i) => s + i.weight, 0);
   let r = Math.random() * total;
@@ -572,6 +611,7 @@ let state = {
   },
   inventory: {},
   bestiary: {},
+  titlesSeen: [],
 };
 
 function xpToNext(level){ return level * 30; }
@@ -621,6 +661,7 @@ function renderPlayer(){
   renderZoneGrid();
 
   renderEquipment();
+  checkNewTitles();
 }
 
 function grantXP(amount){
@@ -783,7 +824,7 @@ function startQuest(source){
 
   state.quest = {
     source, tier, boss, zoneName, cfg, guildMorale, cameo, rewardMult,
-    multiHit, bossHpMax, bossHp: bossHpMax, joinedGuildmates, resolved: false,
+    multiHit, bossHpMax, bossHp: bossHpMax, joinedGuildmates, resolved: false, milestonesFired: [],
   };
   renderQuest();
   document.getElementById("room").scrollIntoView({behavior:"smooth", block:"start"});
@@ -823,6 +864,8 @@ function renderQuest(){
   document.getElementById("room-flavor").textContent = q.boss.flavor;
   document.getElementById("strike-line").textContent = "";
   document.getElementById("strike-line").className = "strike-line";
+  document.getElementById("milestone-line").textContent = "";
+  document.getElementById("milestone-line").classList.remove("show");
 
   const cameoEl = document.getElementById("room-cameo");
   if(q.multiHit){
@@ -915,6 +958,16 @@ function resolveChoice(key){
   renderBestiary();
 }
 
+// Milestone beats: one-time narrative flourishes as a long boss fight progresses,
+// so a 99-round grind has texture instead of being a silent countdown.
+const MILESTONE_THRESHOLDS = [75, 50, 25, 10];
+function milestoneLine(threshold, bossName){
+  if(threshold <= 10) return `💀 ${bossName} is barely standing — this is almost over.`;
+  if(threshold <= 25) return `⚔ ${bossName} is reeling. The end is in sight.`;
+  if(threshold <= 50) return `🌀 ${bossName} staggers — you're past the halfway point.`;
+  return `🔥 ${bossName} is still standing strong, but it's felt that.`;
+}
+
 // Multi-hit boss fights: World Boss, Ancient Battlefield, Solo Boss, and Kalima.
 // Each attack chips the boss's HP bar instead of resolving the whole fight in one roll.
 // Damage per round scales with your level — low level, closer to 99 rounds; higher level, much faster.
@@ -958,9 +1011,25 @@ function resolveAttack(key){
   q.bossHp = Math.max(q.bossHp - roundsThisTurn, 0);
   if(q.joinedGuildmates.length > 0) strikeText += ` ${q.joinedGuildmates.length} guildmate${q.joinedGuildmates.length===1?"":"s"} also swing this round.`;
 
+  const pctLeft = Math.round((q.bossHp / q.bossHpMax) * 100);
+  let milestoneText = "";
+  MILESTONE_THRESHOLDS.forEach(threshold => {
+    if(pctLeft <= threshold && !q.milestonesFired.includes(threshold)){
+      q.milestonesFired.push(threshold);
+      milestoneText = milestoneLine(threshold, q.boss.name);
+    }
+  });
+
   strikeEl.textContent = strikeText;
   strikeEl.className = "strike-line " + (hit ? "hit" : "miss");
   renderBossHp();
+
+  if(milestoneText){
+    const milestoneEl = document.getElementById("milestone-line");
+    milestoneEl.textContent = milestoneText;
+    milestoneEl.classList.add("show");
+    log(milestoneText);
+  }
 
   if(q.bossHp <= 0){
     q.resolved = true;
@@ -1400,9 +1469,48 @@ function renderBestiary(){
     });
 }
 
+// Checks every achievement against current state and announces any newly-earned ones.
+// Titles are computed live from existing progress — nothing extra to track except which
+// ones have already been announced, so this is safe to call after any stat-changing action.
+function checkNewTitles(){
+  state.titlesSeen = state.titlesSeen || [];
+  let changed = false;
+  ACHIEVEMENTS.forEach(a => {
+    if(a.check(state) && !state.titlesSeen.includes(a.id)){
+      state.titlesSeen.push(a.id);
+      log(`🏆 Title unlocked: ${a.name} — ${a.desc}`);
+      changed = true;
+    }
+  });
+  if(changed) save();
+  renderTitles();
+}
+
+function renderTitles(){
+  const unlocked = ACHIEVEMENTS.filter(a => a.check(state));
+  document.getElementById("titles-count").textContent = `${unlocked.length} / ${ACHIEVEMENTS.length}`;
+
+  const list = document.getElementById("titles-list");
+  list.innerHTML = "";
+  ACHIEVEMENTS.forEach(a => {
+    const isUnlocked = a.check(state);
+    const row = document.createElement("div");
+    row.className = "title-row" + (isUnlocked ? "" : " locked");
+    row.innerHTML = `
+      <span class="title-icon">${a.icon}</span>
+      <span class="title-main">
+        <span class="title-name">${a.name}</span>
+        <div class="title-desc">${a.desc}</div>
+      </span>
+      <span class="title-check">${isUnlocked ? "✓" : ""}</span>
+    `;
+    list.appendChild(row);
+  });
+}
+
 /* ===================== RESET ===================== */
 function resetGame(){
-  if(!confirm("Reset the entire campaign? All levels, gear, Zen, loot, and the Bestiary will be lost.")) return;
+  if(!confirm("Reset the entire campaign? All levels, gear, Zen, loot, Bestiary, and Titles will be lost.")) return;
   localStorage.removeItem("darkEpochTavernV2");
   state = {
     you: { name:"OLLAT", level:1, xp:0, hp:20, maxHp:20, zen:100, weaponEnh:0, armorEnh:0 },
@@ -1418,6 +1526,7 @@ function resetGame(){
     },
     inventory: {},
     bestiary: {},
+    titlesSeen: [],
   };
   save();
   renderAll();
