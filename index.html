@@ -75,6 +75,9 @@
   .mini-card-name{font-family:'Cinzel',serif;font-size:13.5px;color:var(--parchment);}
   .mini-card-tag{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--rune-gold-dim);}
   .mini-card-desc{font-size:12px;color:var(--parchment-dim);font-style:italic;margin:4px 0 8px;line-height:1.4;}
+  .autocombat-upgrade-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);}
+  .autocombat-upgrade-row span{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--parchment-dim);}
+  .autocombat-upgrade-row button{flex:none;}
   .zone-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
   .zone-card{background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:11px;cursor:pointer;transition:border-color .15s;}
   .zone-card:hover{border-color:var(--rune-gold-dim);}
@@ -113,6 +116,12 @@
   .tier-Ancient{background:rgba(201,162,74,0.1);color:#f0d98c;border:1px solid rgba(240,217,140,0.5);}
 
   .choice-row{display:flex;flex-direction:column;gap:8px;}
+  .choice-row.auto-running{opacity:0.4;pointer-events:none;}
+  .btn-auto-fight{
+    width:100%;margin-top:10px;font-family:'Cinzel',serif;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;
+    background:rgba(155,92,224,0.15);border:1px solid var(--violet-glow);color:#d8bdf5;padding:9px;border-radius:7px;cursor:pointer;
+  }
+  .btn-auto-fight.running{background:rgba(179,33,60,0.18);border-color:var(--blood-bright);color:#f0a4b4;}
   .choice-btn{text-align:left;background:rgba(0,0,0,0.22);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px 12px;cursor:pointer;}
   .choice-btn:hover{border-color:var(--violet-glow);}
   .choice-label{font-family:'Cinzel',serif;font-size:13.5px;color:var(--parchment);}
@@ -186,6 +195,10 @@
   .btn-enhance:disabled{opacity:.4;cursor:default;}
 
   /* Settings */
+  .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .stat-card{background:rgba(0,0,0,0.22);border-radius:8px;padding:10px;text-align:center;}
+  .stat-num{font-family:'Cinzel Decorative',serif;font-size:19px;color:var(--rune-gold);}
+  .stat-label{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--parchment-dim);margin-top:3px;letter-spacing:.03em;}
   .settings-grid{display:flex;gap:8px;flex-wrap:wrap;}
   .unit-btn{flex:1;min-width:90px;font-family:'JetBrains Mono',monospace;font-size:12px;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.08);color:var(--parchment-dim);padding:9px;border-radius:6px;cursor:pointer;text-align:center;}
   .unit-btn.active{border-color:var(--rune-gold);color:var(--rune-gold);background:rgba(201,162,74,0.1);}
@@ -277,8 +290,12 @@
           <span class="mini-card-name">⚙ Auto-Combat</span>
           <span class="mini-card-tag" id="autocombat-elapsed">0m idle</span>
         </div>
-        <div class="mini-card-desc">Progress banks passively while you're away, up to 4 hours. Collect it here — matches the real AFK leveling feature.</div>
+        <div class="mini-card-desc">Progress banks passively while you're away. Collect it here — matches the real AFK leveling feature.</div>
         <button class="btn-small" id="autocombat-btn" onclick="collectAutoCombat()">Collect</button>
+        <div class="autocombat-upgrade-row">
+          <span id="autocombat-upgrade-label">Lv 0 — 4h cap, 100% rate</span>
+          <button class="btn-small" id="autocombat-upgrade-btn" onclick="upgradeAutoCombat()">Upgrade</button>
+        </div>
       </div>
     </div>
     <div class="panel">
@@ -296,6 +313,7 @@
         <div class="bar-track"><div class="bar-fill hp" id="boss-hp-fill" style="width:100%"></div></div>
         <div class="milestone-line" id="milestone-line"></div>
         <div class="strike-line" id="strike-line"></div>
+        <button class="btn-auto-fight" id="auto-fight-btn" onclick="toggleAutoFight()" style="display:none;">⚡ Auto Fight</button>
       </div>
       <div class="choice-row" id="choice-row"></div>
       <button class="reset-link" id="retreat-btn" onclick="retreatFight()" style="display:none;">Retreat (no reward, no penalty)</button>
@@ -382,6 +400,11 @@
 
   <!-- LOG/SETTINGS TAB -->
   <div class="tab-panel" id="tab-more">
+    <div class="panel">
+      <div class="panel-title">Lifetime Stats</div>
+      <div class="stats-grid" id="stats-grid"></div>
+    </div>
+
     <div class="panel">
       <div class="panel-title">Toll Settings</div>
       <div class="settings-grid" id="unit-grid"></div>
@@ -597,6 +620,10 @@ const HANS_LINES = [
 ];
 
 /* ===================== STATE ===================== */
+// Transient UI flag — deliberately NOT part of `state`, so it never gets saved/restored
+// and always starts false on a fresh page load.
+let autoFighting = false;
+
 let state = {
   you: { name:"OLLAT", level:1, xp:0, hp:20, maxHp:20, zen:100, weaponEnh:0, armorEnh:0 },
   npcCast: NPC_DEFAULT_CAST.slice(),
@@ -604,7 +631,7 @@ let state = {
   quest: null,
   logEntries: [],
   bounty: { remaining: 30, resetDate: null },
-  autoCombat: { lastCollect: Date.now() },
+  autoCombat: { lastCollect: Date.now(), upgradeLevel: 0 },
   dailyBossAttempts: {
     ancient: { remaining: 3, resetDate: null },
     solo: { remaining: 2, resetDate: null },
@@ -612,6 +639,10 @@ let state = {
   inventory: {},
   bestiary: {},
   titlesSeen: [],
+  stats: {
+    fightsWon: 0, fightsLost: 0, totalXp: 0, totalZen: 0,
+    longestFight: 0, mostGuildmates: 0, bountiesTaken: 0,
+  },
 };
 
 function xpToNext(level){ return level * 30; }
@@ -662,11 +693,14 @@ function renderPlayer(){
 
   renderEquipment();
   checkNewTitles();
+  renderStats();
 }
 
 function grantXP(amount){
   const y = state.you;
   y.xp += amount;
+  state.stats = state.stats || {fightsWon:0,fightsLost:0,totalXp:0,totalZen:0,longestFight:0,mostGuildmates:0,bountiesTaken:0};
+  state.stats.totalXp += amount;
   let leveled = false;
   while(y.xp >= xpToNext(y.level)){
     y.xp -= xpToNext(y.level);
@@ -676,6 +710,12 @@ function grantXP(amount){
     leveled = true;
   }
   return leveled;
+}
+
+function grantZen(amount){
+  state.you.zen += amount;
+  state.stats = state.stats || {fightsWon:0,fightsLost:0,totalXp:0,totalZen:0,longestFight:0,mostGuildmates:0,bountiesTaken:0};
+  state.stats.totalZen += amount;
 }
 
 function restPlayer(){
@@ -768,10 +808,12 @@ function exploreAgain(){
 }
 
 function leaveZone(){
+  autoFighting = false;
   document.getElementById("room").classList.remove("show");
   document.getElementById("result-box").classList.remove("show");
   document.getElementById("boss-hp-wrap").classList.remove("show");
   document.getElementById("retreat-btn").style.display = "none";
+  document.getElementById("auto-fight-btn").style.display = "none";
   state.quest = null;
   save();
 }
@@ -825,6 +867,7 @@ function startQuest(source){
   state.quest = {
     source, tier, boss, zoneName, cfg, guildMorale, cameo, rewardMult,
     multiHit, bossHpMax, bossHp: bossHpMax, joinedGuildmates, resolved: false, milestonesFired: [],
+    attacksUsed: 0,
   };
   renderQuest();
   document.getElementById("room").scrollIntoView({behavior:"smooth", block:"start"});
@@ -866,6 +909,11 @@ function renderQuest(){
   document.getElementById("strike-line").className = "strike-line";
   document.getElementById("milestone-line").textContent = "";
   document.getElementById("milestone-line").classList.remove("show");
+
+  autoFighting = false;
+  const autoBtn = document.getElementById("auto-fight-btn");
+  autoBtn.style.display = q.multiHit ? "block" : "none";
+  updateAutoFightButton();
 
   const cameoEl = document.getElementById("room-cameo");
   if(q.multiHit){
@@ -911,7 +959,7 @@ function resolveChoice(key){
     const xp = Math.round(q.cfg.xp * 0.4 * q.rewardMult);
     const zen = Math.round(q.cfg.zen * 0.4 * q.rewardMult);
     const leveled = grantXP(xp);
-    y.zen += zen;
+    grantZen(zen);
     document.getElementById("roll-num").textContent = "—";
     box.className = "result-box win show";
     document.getElementById("result-verb").textContent = "Careful Success";
@@ -933,8 +981,9 @@ function resolveChoice(key){
     const xp = Math.round(q.cfg.xp * (choice.xpMult || 1) * q.rewardMult);
     const zen = Math.round(q.cfg.zen * (choice.xpMult || 1) * q.rewardMult);
     const leveled = grantXP(xp);
-    y.zen += zen;
+    grantZen(zen);
     const firstKill = recordKill(q.boss.name);
+    state.stats.fightsWon++;
     box.className = "result-box win show";
     document.getElementById("result-verb").textContent = "Victory";
     document.getElementById("result-detail").textContent =
@@ -942,6 +991,7 @@ function resolveChoice(key){
     log(`✨ ${y.name} cast ${choice.label}, rolled ${total} vs DC ${q.cfg.dc} — victory over ${q.boss.name} (${q.zoneName}).`);
     if(firstKill) log(`📖 Bestiary: ${q.boss.name} recorded for the first time.`);
   } else {
+    state.stats.fightsLost++;
     const hpLossBase = Math.round(q.cfg.hp * (choice.hpMult || 1));
     const hpLoss = Math.max(hpLossBase - armorMitigation, 1);
     y.hp = Math.max(y.hp - hpLoss, 0);
@@ -1009,6 +1059,7 @@ function resolveAttack(key){
   // Each guildmate who joined also takes their own swing this round, clearing an extra round each time.
   const roundsThisTurn = 1 + q.joinedGuildmates.length;
   q.bossHp = Math.max(q.bossHp - roundsThisTurn, 0);
+  q.attacksUsed = (q.attacksUsed || 0) + 1;
   if(q.joinedGuildmates.length > 0) strikeText += ` ${q.joinedGuildmates.length} guildmate${q.joinedGuildmates.length===1?"":"s"} also swing this round.`;
 
   const pctLeft = Math.round((q.bossHp / q.bossHpMax) * 100);
@@ -1033,10 +1084,13 @@ function resolveAttack(key){
 
   if(q.bossHp <= 0){
     q.resolved = true;
+    state.stats.fightsWon++;
+    state.stats.longestFight = Math.max(state.stats.longestFight, q.attacksUsed);
+    state.stats.mostGuildmates = Math.max(state.stats.mostGuildmates, q.joinedGuildmates.length);
     const xp = Math.round(q.cfg.xp * q.rewardMult);
     const zen = Math.round(q.cfg.zen * q.rewardMult);
     const leveled = grantXP(xp);
-    y.zen += zen;
+    grantZen(zen);
     const firstKill = recordKill(q.boss.name);
 
     let lootText = "";
@@ -1049,6 +1103,7 @@ function resolveAttack(key){
 
     document.getElementById("choice-row").innerHTML = "";
     document.getElementById("retreat-btn").style.display = "none";
+    document.getElementById("auto-fight-btn").style.display = "none";
     const box = document.getElementById("result-box");
     box.className = "result-box win show";
     document.getElementById("roll-num").textContent = "—";
@@ -1063,8 +1118,11 @@ function resolveAttack(key){
     updateRoomActions();
   } else if(y.hp <= 0){
     q.resolved = true;
+    state.stats.fightsLost++;
+    state.stats.mostGuildmates = Math.max(state.stats.mostGuildmates, q.joinedGuildmates.length);
     document.getElementById("choice-row").innerHTML = "";
     document.getElementById("retreat-btn").style.display = "none";
+    document.getElementById("auto-fight-btn").style.display = "none";
     const box = document.getElementById("result-box");
     box.className = "result-box lose show";
     document.getElementById("roll-num").textContent = "—";
@@ -1080,6 +1138,44 @@ function resolveAttack(key){
 
   save();
   renderPlayer();
+}
+
+// Auto Fight: plays rounds automatically instead of tapping a choice up to 99 times.
+// Simple HP-based strategy — aggressive while healthy, backs off to cautious when hurt,
+// so it won't blindly grind you down to 0 HP unattended.
+function toggleAutoFight(){
+  const q = state.quest;
+  if(!q || !q.multiHit || q.resolved) return;
+  autoFighting = !autoFighting;
+  updateAutoFightButton();
+  if(autoFighting) autoFightStep();
+}
+
+function updateAutoFightButton(){
+  const btn = document.getElementById("auto-fight-btn");
+  const row = document.getElementById("choice-row");
+  if(!btn || !row) return;
+  btn.textContent = autoFighting ? "⏹ Stop Auto Fight" : "⚡ Auto Fight";
+  btn.className = "btn-auto-fight" + (autoFighting ? " running" : "");
+  row.classList.toggle("auto-running", autoFighting);
+}
+
+function autoFightStep(){
+  if(!autoFighting) return;
+  const q = state.quest;
+  if(!q || q.resolved){ autoFighting = false; updateAutoFightButton(); return; }
+
+  const hpPct = state.you.hp / state.you.maxHp;
+  const key = hpPct > 0.5 ? "aggressive" : hpPct > 0.2 ? "tactical" : "cautious";
+  resolveAttack(key);
+
+  const q2 = state.quest;
+  if(autoFighting && q2 && !q2.resolved){
+    setTimeout(autoFightStep, 220);
+  } else {
+    autoFighting = false;
+    updateAutoFightButton();
+  }
 }
 
 function startDailyBoss(name){
@@ -1243,6 +1339,7 @@ function takeBounty(){
   if(state.you.hp <= 0){ alert("You're too hurt to venture out. Rest first."); return; }
 
   state.bounty.remaining--;
+  state.stats.bountiesTaken++;
   save();
   renderBounty();
 
@@ -1255,7 +1352,7 @@ function takeBounty(){
     const item = randomFrom(BOUNTY_ITEMS);
     const xp = 10, zen = 20;
     const leveled = grantXP(xp);
-    state.you.zen += zen;
+    grantZen(zen);
     log(`📜 Bounty turned in — found a ${item}. +${xp} XP, +${zen} Zen.` + (leveled ? " LEVEL UP!" : ""));
     save();
     renderPlayer();
@@ -1276,26 +1373,62 @@ function renderDailyBossTiles(){
 }
 
 /* ===================== AUTO-COMBAT (real AFK leveling feature) ===================== */
-const AUTOCOMBAT_CAP_MS = 4 * 60 * 60 * 1000; // caps at 4 hours, like the real feature
 const AUTOCOMBAT_XP_PER_MIN = 0.5;
 const AUTOCOMBAT_ZEN_PER_MIN = 0.4;
+const AUTOCOMBAT_UPGRADE_MAX = 5;
+
+function autoCombatLevel(){ return state.autoCombat.upgradeLevel || 0; }
+function autoCombatCapMs(){ return (4 + autoCombatLevel()) * 60 * 60 * 1000; } // 4h base, +1h per level
+function autoCombatRateMult(){ return 1 + autoCombatLevel() * 0.2; } // +20% per level
+function autoCombatUpgradeCost(){ return (autoCombatLevel() + 1) * 100; }
 
 function renderAutoCombat(){
-  const elapsed = Math.min(Date.now() - state.autoCombat.lastCollect, AUTOCOMBAT_CAP_MS);
+  const capMs = autoCombatCapMs();
+  const elapsed = Math.min(Date.now() - state.autoCombat.lastCollect, capMs);
   const mins = Math.floor(elapsed / 60000);
   const h = Math.floor(mins / 60), m = mins % 60;
   document.getElementById("autocombat-elapsed").textContent = (h > 0 ? `${h}h ${m}m` : `${m}m`) + " idle";
   document.getElementById("autocombat-btn").disabled = mins < 1;
+
+  const level = autoCombatLevel();
+  const capHours = 4 + level;
+  const upgradeBtn = document.getElementById("autocombat-upgrade-btn");
+  const upgradeLabel = document.getElementById("autocombat-upgrade-label");
+  if(level >= AUTOCOMBAT_UPGRADE_MAX){
+    upgradeLabel.textContent = `Maxed — ${capHours}h cap, ${Math.round(autoCombatRateMult()*100)}% rate`;
+    upgradeBtn.disabled = true;
+    upgradeBtn.textContent = "Maxed Out";
+  } else {
+    const cost = autoCombatUpgradeCost();
+    upgradeLabel.textContent = `Lv ${level} — ${capHours}h cap, ${Math.round(autoCombatRateMult()*100)}% rate`;
+    upgradeBtn.disabled = state.you.zen < cost;
+    upgradeBtn.textContent = `Upgrade (${cost} Zen)`;
+  }
+}
+
+function upgradeAutoCombat(){
+  const level = autoCombatLevel();
+  if(level >= AUTOCOMBAT_UPGRADE_MAX) return;
+  const cost = autoCombatUpgradeCost();
+  if(state.you.zen < cost) return;
+  state.you.zen -= cost;
+  state.autoCombat.upgradeLevel = level + 1;
+  log(`⚙ Auto-Combat upgraded to Lv ${state.autoCombat.upgradeLevel} — ${4 + state.autoCombat.upgradeLevel}h cap, ${Math.round(autoCombatRateMult()*100)}% rate.`);
+  save();
+  renderPlayer();
+  renderAutoCombat();
 }
 
 function collectAutoCombat(){
-  const elapsed = Math.min(Date.now() - state.autoCombat.lastCollect, AUTOCOMBAT_CAP_MS);
+  const capMs = autoCombatCapMs();
+  const elapsed = Math.min(Date.now() - state.autoCombat.lastCollect, capMs);
   const mins = Math.floor(elapsed / 60000);
   if(mins < 1) return;
-  const xp = Math.round(mins * AUTOCOMBAT_XP_PER_MIN);
-  const zen = Math.round(mins * AUTOCOMBAT_ZEN_PER_MIN);
+  const rate = autoCombatRateMult();
+  const xp = Math.round(mins * AUTOCOMBAT_XP_PER_MIN * rate);
+  const zen = Math.round(mins * AUTOCOMBAT_ZEN_PER_MIN * rate);
   const leveled = grantXP(xp);
-  state.you.zen += zen;
+  grantZen(zen);
   state.autoCombat.lastCollect = Date.now();
   log(`⚙ Auto-Combat collected — +${xp} XP, +${zen} Zen from ${mins}m idle.` + (leveled ? " LEVEL UP!" : ""));
   save();
@@ -1508,9 +1641,44 @@ function renderTitles(){
   });
 }
 
+function renderStats(){
+  const s = state.stats || {fightsWon:0,fightsLost:0,totalXp:0,totalZen:0,longestFight:0,mostGuildmates:0,bountiesTaken:0};
+  const totalFights = s.fightsWon + s.fightsLost;
+  const winRate = totalFights ? Math.round((s.fightsWon / totalFights) * 100) : 0;
+  const uniqueBosses = Object.keys(state.bestiary || {}).length;
+  const totalKills = Object.values(state.bestiary || {}).reduce((a,b)=>a+b, 0);
+  const totalLoot = Object.values(state.inventory || {}).reduce((a,b)=>a+b, 0);
+  const titlesUnlocked = ACHIEVEMENTS.filter(a => a.check(state)).length;
+
+  const cards = [
+    {num: state.you.level, label: "Level"},
+    {num: s.fightsWon, label: "Fights Won"},
+    {num: s.fightsLost, label: "Fights Lost"},
+    {num: winRate + "%", label: "Win Rate"},
+    {num: s.totalXp, label: "Total XP Earned"},
+    {num: s.totalZen, label: "Total Zen Earned"},
+    {num: s.longestFight, label: "Longest Fight (rounds)"},
+    {num: s.mostGuildmates, label: "Most Guildmates Joined"},
+    {num: s.bountiesTaken, label: "Bounties Taken"},
+    {num: uniqueBosses, label: "Unique Bosses (Bestiary)"},
+    {num: totalKills, label: "Total Boss Kills"},
+    {num: totalLoot, label: "Total Loot Items"},
+    {num: titlesUnlocked + " / " + ACHIEVEMENTS.length, label: "Titles Unlocked"},
+  ];
+
+  const grid = document.getElementById("stats-grid");
+  grid.innerHTML = "";
+  cards.forEach(c => {
+    const card = document.createElement("div");
+    card.className = "stat-card";
+    card.innerHTML = `<div class="stat-num">${c.num}</div><div class="stat-label">${c.label}</div>`;
+    grid.appendChild(card);
+  });
+}
+
 /* ===================== RESET ===================== */
 function resetGame(){
-  if(!confirm("Reset the entire campaign? All levels, gear, Zen, loot, Bestiary, and Titles will be lost.")) return;
+  if(!confirm("Reset the entire campaign? All levels, gear, Zen, loot, Bestiary, Titles, and Stats will be lost.")) return;
   localStorage.removeItem("darkEpochTavernV2");
   state = {
     you: { name:"OLLAT", level:1, xp:0, hp:20, maxHp:20, zen:100, weaponEnh:0, armorEnh:0 },
@@ -1519,7 +1687,7 @@ function resetGame(){
     quest: null,
     logEntries: [],
     bounty: { remaining: 30, resetDate: null },
-    autoCombat: { lastCollect: Date.now() },
+    autoCombat: { lastCollect: Date.now(), upgradeLevel: 0 },
     dailyBossAttempts: {
       ancient: { remaining: 3, resetDate: null },
       solo: { remaining: 2, resetDate: null },
@@ -1527,6 +1695,10 @@ function resetGame(){
     inventory: {},
     bestiary: {},
     titlesSeen: [],
+    stats: {
+      fightsWon: 0, fightsLost: 0, totalXp: 0, totalZen: 0,
+      longestFight: 0, mostGuildmates: 0, bountiesTaken: 0,
+    },
   };
   save();
   renderAll();
@@ -1546,6 +1718,7 @@ function renderAll(){
   renderAutoCombat();
   renderInventory();
   renderBestiary();
+  renderStats();
   document.getElementById("room").classList.remove("show");
   if(state.quest){
     document.getElementById("room").classList.add("show");
