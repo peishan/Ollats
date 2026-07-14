@@ -1,1 +1,1844 @@
-<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Legends — Dark Epoch Rift Tavern</title> <link rel="preconnect" href="https://fonts.googleapis.com"> <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"> <style> :root{ --void:#0b0710; --panel:#170f1e; --panel-2:#20141d; --rune-gold:#c9a24a; --rune-gold-dim:#8a7239; --blood:#7a1128; --blood-bright:#b3213c; --violet:#6b2fa3; --violet-glow:#9b5ce0; --parchment:#e8dfc7; --parchment-dim:#a89a86; --hp-good:#7d9c3f; --hp-mid:#c9a24a; --hp-low:#b3213c; --xp:#7d9c3f; } *{box-sizing:border-box;} html,body{margin:0;padding:0;} body{ background: radial-gradient(ellipse at 20% 0%, rgba(107,47,163,0.18), transparent 55%), radial-gradient(ellipse at 85% 15%, rgba(122,17,40,0.22), transparent 50%), linear-gradient(180deg, #0b0710 0%, #100a15 40%, #0b0710 100%); color:var(--parchment); font-family:'EB Garamond', serif; min-height:100vh; padding:0 0 60px; -webkit-font-smoothing:antialiased; } .wrap{max-width:640px;margin:0 auto;padding:18px 14px;} header{text-align:center;margin-bottom:16px;} .eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;color:var(--rune-gold-dim);text-transform:uppercase;margin-bottom:6px;} h1{font-family:'Cinzel Decorative', serif;font-size:clamp(26px,7vw,36px);margin:0;background:linear-gradient(180deg,#f3e3ad,#c9a24a 55%,#8a6a24);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 30px rgba(201,162,74,0.25);} .subtitle{font-family:'Cinzel',serif;font-size:12.5px;letter-spacing:.12em;color:var(--parchment-dim);margin-top:6px;text-transform:uppercase;} .divider{height:1px;margin:14px auto 0;width:70%;background:linear-gradient(90deg,transparent,var(--rune-gold-dim),transparent);} .panel{background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid rgba(201,162,74,0.18);border-radius:10px;padding:16px;margin-bottom:14px;box-shadow:0 8px 24px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.02);} .panel-title{font-family:'Cinzel',serif;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--rune-gold);margin:0 0 12px;display:flex;align-items:center;justify-content:space-between;} /* Player status (always visible) */ .player-card{display:flex;gap:12px;align-items:center;} .player-badge{width:52px;height:52px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cinzel Decorative',serif;font-weight:700;font-size:18px;background:conic-gradient(from 220deg,var(--violet),var(--blood) 50%,var(--violet));color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.5);} .player-main{flex:1;min-width:0;} .player-name-row{display:flex;align-items:center;gap:8px;font-family:'Cinzel',serif;font-size:16px;color:var(--parchment);} .player-class{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--violet-glow);letter-spacing:.05em;margin-top:1px;} .lvl-tag{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--rune-gold);} .cond-tag{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.05em;padding:2px 7px;border-radius:10px;text-transform:uppercase;} .cond-Healthy{background:rgba(125,156,63,0.18);color:#a9c97a;border:1px solid rgba(125,156,63,0.4);} .cond-Wounded{background:rgba(201,162,74,0.15);color:var(--rune-gold);border:1px solid rgba(201,162,74,0.4);} .cond-Critical{background:rgba(179,33,60,0.2);color:#f0a4b4;border:1px solid rgba(179,33,60,0.5);animation:pulseRed 1.4s infinite;} @keyframes pulseRed{0%,100%{opacity:1;}50%{opacity:.55;}} .bar-row{display:flex;align-items:center;gap:6px;margin-top:6px;} .bar-label{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--parchment-dim);width:26px;flex:none;} .bar-track{flex:1;height:7px;border-radius:4px;background:rgba(255,255,255,0.06);overflow:hidden;} .bar-fill{height:100%;border-radius:4px;transition:width .4s ease;} .bar-fill.xp{background:linear-gradient(90deg,#4d6b26,var(--xp));} .bar-fill.hp{background:linear-gradient(90deg,#7a1128,var(--hp-good));} .bar-num{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--parchment-dim);width:56px;flex:none;text-align:right;} .zen-row{margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--rune-gold);display:flex;justify-content:space-between;} .rest-btn{margin-top:10px;width:100%;font-family:'Cinzel',serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;background:rgba(125,156,63,0.12);border:1px solid rgba(125,156,63,0.4);color:#a9c97a;padding:8px;border-radius:7px;cursor:pointer;} .critical-banner{display:none;margin-top:10px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#f0a4b4;background:rgba(179,33,60,0.14);border:1px solid rgba(179,33,60,0.4);border-radius:7px;padding:8px;} .critical-banner.show{display:block;} /* Tabs */ .tabbar{display:flex;gap:6px;margin-bottom:14px;} .tab-btn{flex:1;font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:.03em;text-transform:uppercase;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.08);color:var(--parchment-dim);padding:9px 3px;border-radius:7px;cursor:pointer;text-align:center;} .tab-btn.active{border-color:var(--rune-gold);color:var(--rune-gold);background:rgba(201,162,74,0.1);} .tab-panel{display:none;} .tab-panel.active{display:block;} /* Zone grid */ .mini-card{background:rgba(0,0,0,0.22);border-radius:8px;padding:11px;margin-bottom:10px;} .mini-card:last-child{margin-bottom:0;} .mini-card-head{display:flex;justify-content:space-between;align-items:center;} .mini-card-name{font-family:'Cinzel',serif;font-size:13.5px;color:var(--parchment);} .mini-card-tag{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--rune-gold-dim);} .mini-card-desc{font-size:12px;color:var(--parchment-dim);font-style:italic;margin:4px 0 8px;line-height:1.4;} .autocombat-upgrade-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);} .autocombat-upgrade-row span{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--parchment-dim);} .autocombat-upgrade-row button{flex:none;} .zone-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;} .zone-card{background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:11px;cursor:pointer;transition:border-color .15s;} .zone-card:hover{border-color:var(--rune-gold-dim);} .zone-card.special{border-color:rgba(179,33,60,0.5);background:linear-gradient(180deg,rgba(122,17,40,0.15),rgba(0,0,0,0.25));grid-column:1 / -1;} .zone-card.locked{opacity:0.5;cursor:default;} .zone-card.locked:hover{border-color:rgba(255,255,255,0.07);} .zone-card.locked .zone-card-name{color:var(--parchment-dim);} .zone-card.locked .zone-card-tier{color:var(--blood-bright);} .zone-card-name{font-family:'Cinzel',serif;font-size:13.5px;color:var(--parchment);} .zone-card-tier{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--rune-gold-dim);margin-top:3px;} .zone-card-desc{font-size:12px;color:var(--parchment-dim);font-style:italic;margin-top:4px;line-height:1.4;} /* Zone room / quest overlay */ .room{display:none;margin-top:14px;} .room.show{display:block;animation:reveal .3s ease;} @keyframes reveal{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}} .room-zone{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--parchment-dim);letter-spacing:.05em;} .room-boss{font-family:'Cinzel',serif;font-size:19px;font-weight:700;color:var(--parchment);margin:4px 0 6px;} .room-flavor{font-style:italic;color:var(--parchment-dim);font-size:14px;line-height:1.5;margin-bottom:10px;} .boss-hp-wrap{display:none;margin-bottom:12px;} .boss-hp-wrap.show{display:block;} .boss-hp-label{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--parchment-dim);margin-bottom:4px;} .strike-line{margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--parchment);min-height:16px;} .strike-line.hit{color:#a9c97a;} .strike-line.miss{color:var(--blood-bright);} .milestone-line{display:none;font-family:'Cinzel',serif;font-size:13px;color:var(--rune-gold);text-align:center;padding:6px 4px;font-style:italic;} .milestone-line.show{display:block;animation:reveal .4s ease;} .cameo{font-family:'JetBrains Mono',monospace;font-size:11.5px;padding:7px 10px;border-radius:6px;margin-bottom:10px;} .cameo.ally{background:rgba(125,156,63,0.12);color:#a9c97a;border:1px solid rgba(125,156,63,0.35);} .cameo.rival{background:rgba(201,162,74,0.1);color:var(--rune-gold);border:1px solid rgba(201,162,74,0.3);} .tier-tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:4px;margin-bottom:8px;} .tier-Minion{background:rgba(125,156,63,0.18);color:#a9c97a;border:1px solid rgba(125,156,63,0.4);} .tier-Elite{background:rgba(201,162,74,0.15);color:var(--rune-gold);border:1px solid rgba(201,162,74,0.4);} .tier-Boss{background:rgba(179,33,60,0.18);color:#e0708a;border:1px solid rgba(179,33,60,0.45);} .tier-WorldBoss{background:rgba(107,47,163,0.25);color:#c9a2f0;border:1px solid rgba(155,92,224,0.55);} .tier-Ancient{background:rgba(201,162,74,0.1);color:#f0d98c;border:1px solid rgba(240,217,140,0.5);} .choice-row{display:flex;flex-direction:column;gap:8px;} .choice-row.auto-running{opacity:0.4;pointer-events:none;} .btn-auto-fight{ width:100%;margin-top:10px;font-family:'Cinzel',serif;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase; background:rgba(155,92,224,0.15);border:1px solid var(--violet-glow);color:#d8bdf5;padding:9px;border-radius:7px;cursor:pointer; } .btn-auto-fight.running{background:rgba(179,33,60,0.18);border-color:var(--blood-bright);color:#f0a4b4;} .choice-btn{text-align:left;background:rgba(0,0,0,0.22);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px 12px;cursor:pointer;} .choice-btn:hover{border-color:var(--violet-glow);} .choice-label{font-family:'Cinzel',serif;font-size:13.5px;color:var(--parchment);} .choice-desc{font-size:12px;color:var(--parchment-dim);font-style:italic;margin-top:2px;} .choice-stat{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--rune-gold-dim);margin-top:3px;} .result-box{margin-top:12px;padding:12px;border-radius:8px;text-align:center;display:none;} .result-box.show{display:block;animation:reveal .3s ease;} .result-box.win{background:rgba(125,156,63,0.14);border:1px solid rgba(125,156,63,0.4);} .result-box.lose{background:rgba(122,17,40,0.18);border:1px solid rgba(179,33,60,0.45);} .roll-num{font-family:'JetBrains Mono',monospace;font-size:24px;color:var(--parchment);margin-bottom:2px;} .result-verb{font-family:'Cinzel',serif;font-size:14.5px;text-transform:uppercase;letter-spacing:.07em;} .result-detail{font-size:13.5px;color:var(--parchment-dim);margin-top:4px;} .pill{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:12.5px;padding:6px 12px;border-radius:20px;} .pill.hp{color:var(--blood-bright);background:rgba(179,33,60,0.12);border:1px solid rgba(179,33,60,0.4);} .pill.toll{color:var(--blood-bright);background:rgba(179,33,60,0.12);border:1px solid rgba(179,33,60,0.4);margin-left:6px;} .room-actions{display:flex;gap:8px;margin-top:12px;} .btn-ghost{flex:1;font-family:'Cinzel',serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;background:rgba(201,162,74,0.1);border:1px solid var(--rune-gold-dim);color:var(--rune-gold);padding:9px;border-radius:7px;cursor:pointer;} .btn-leave{flex:1;font-family:'Cinzel',serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.1);color:var(--parchment-dim);padding:9px;border-radius:7px;cursor:pointer;} /* Calendar */ .cal-row{display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid rgba(255,255,255,0.05);} .cal-row:last-child{border-bottom:none;} .cal-time{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--rune-gold-dim);width:52px;flex:none;} .cal-name{font-family:'Cinzel',serif;font-size:13.5px;color:var(--parchment);flex:1;} .cal-join{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.05em;text-transform:uppercase;background:rgba(155,92,224,0.15);border:1px solid var(--violet-glow);color:#d8bdf5;padding:6px 12px;border-radius:14px;cursor:pointer;flex:none;} .cal-week{display:none;margin-top:10px;flex-direction:column;gap:6px;} .weekly-card{background:rgba(0,0,0,0.22);border-radius:8px;padding:11px;margin-bottom:10px;} .weekly-card:last-child{margin-bottom:0;} .weekly-card.done{border:1px solid rgba(125,156,63,0.4);background:rgba(125,156,63,0.08);} .weekly-head{display:flex;justify-content:space-between;align-items:center;} .weekly-name{font-family:'Cinzel',serif;font-size:13.5px;color:var(--parchment);} .weekly-progress-num{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--rune-gold-dim);} .weekly-desc{font-size:11.5px;color:var(--parchment-dim);font-style:italic;margin:4px 0 8px;} .weekly-bar-track{height:6px;border-radius:4px;background:rgba(255,255,255,0.06);overflow:hidden;} .weekly-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#4d6b26,var(--xp));transition:width .4s ease;} .btn-claim{width:100%;margin-top:8px;font-family:'Cinzel',serif;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;background:rgba(201,162,74,0.12);border:1px solid var(--rune-gold-dim);color:var(--rune-gold);padding:7px;border-radius:6px;cursor:pointer;} .btn-claim:disabled{opacity:0.4;cursor:default;} .btn-claim.claimed{background:rgba(125,156,63,0.12);border-color:rgba(125,156,63,0.4);color:#a9c97a;} .cal-week.show{display:flex;} .cal-day-block{background:rgba(0,0,0,0.2);border-radius:6px;padding:8px 10px;border-left:3px solid rgba(255,255,255,0.1);} .cal-day-block.cal-day-today{border-left-color:var(--rune-gold);background:rgba(201,162,74,0.08);} .cal-day-name{font-family:'Cinzel',serif;font-size:12px;color:var(--rune-gold);text-transform:uppercase;} .cal-day-evs{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--parchment-dim);margin-top:3px;line-height:1.5;} /* Loot */ .loot-empty{display:none;text-align:center;font-size:13px;color:var(--parchment-dim);font-style:italic;padding:14px 6px;line-height:1.5;} .loot-empty.show{display:block;} .loot-row{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid rgba(255,255,255,0.05);} .loot-row:last-child{border-bottom:none;} .loot-dot{width:9px;height:9px;border-radius:50%;flex:none;} .loot-name{flex:1;font-family:'Cinzel',serif;font-size:13.5px;} .loot-rarity{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;flex:none;} .bestiary-row{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid rgba(255,255,255,0.05);} .bestiary-row:last-child{border-bottom:none;} .bestiary-name{flex:1;font-family:'Cinzel',serif;font-size:13.5px;color:var(--parchment);} .bestiary-kills{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--rune-gold-dim);flex:none;} .title-row{display:flex;align-items:flex-start;gap:10px;padding:9px 4px;border-bottom:1px solid rgba(255,255,255,0.05);} .title-row:last-child{border-bottom:none;} .title-row.locked{opacity:0.45;} .title-icon{font-size:18px;flex:none;width:22px;text-align:center;} .title-main{flex:1;} .title-name{font-family:'Cinzel',serif;font-size:13.5px;color:var(--parchment);} .title-row.locked .title-name{color:var(--parchment-dim);} .title-desc{font-size:11.5px;color:var(--parchment-dim);font-style:italic;margin-top:2px;} .title-check{font-family:'JetBrains Mono',monospace;font-size:14px;flex:none;color:var(--xp);} .loot-count{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--parchment-dim);flex:none;width:28px;text-align:right;} /* Tavern & Hans */ .npc-row{display:flex;gap:12px;align-items:flex-start;margin-bottom:6px;} .npc-portrait{width:44px;height:44px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;background:radial-gradient(circle,rgba(201,162,74,0.25),rgba(0,0,0,0.3));border:1px solid rgba(201,162,74,0.3);} .npc-name{font-family:'Cinzel',serif;font-size:14.5px;color:var(--rune-gold);} .npc-role{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--parchment-dim);} .speech{margin-top:10px;background:rgba(0,0,0,0.25);border-left:3px solid var(--rune-gold-dim);border-radius:0 8px 8px 0;padding:10px 12px;font-style:italic;font-size:13.5px;color:var(--parchment);display:none;} .speech.show{display:block;animation:reveal .25s ease;} .item-card{background:rgba(0,0,0,0.22);border-radius:8px;padding:12px;margin-top:10px;} .item-name{font-family:'Cinzel',serif;font-size:14px;color:var(--parchment);} .item-plus{font-family:'JetBrains Mono',monospace;color:var(--rune-gold);} .item-bar{height:5px;border-radius:3px;background:rgba(255,255,255,0.06);margin-top:6px;overflow:hidden;} .item-bar-fill{height:100%;background:linear-gradient(90deg,#6b2fa3,var(--violet-glow));border-radius:3px;} .item-meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--parchment-dim);margin-top:6px;display:flex;justify-content:space-between;} .btn-enhance{width:100%;margin-top:8px;font-family:'Cinzel',serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;background:rgba(155,92,224,0.15);border:1px solid var(--violet-glow);color:#d8bdf5;padding:8px;border-radius:7px;cursor:pointer;} .btn-enhance:disabled{opacity:.4;cursor:default;} /* Settings */ .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;} .stat-card{background:rgba(0,0,0,0.22);border-radius:8px;padding:10px;text-align:center;} .stat-num{font-family:'Cinzel Decorative',serif;font-size:19px;color:var(--rune-gold);} .stat-label{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--parchment-dim);margin-top:3px;letter-spacing:.03em;} .settings-grid{display:flex;gap:8px;flex-wrap:wrap;} .unit-btn{flex:1;min-width:90px;font-family:'JetBrains Mono',monospace;font-size:12px;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.08);color:var(--parchment-dim);padding:9px;border-radius:6px;cursor:pointer;text-align:center;} .unit-btn.active{border-color:var(--rune-gold);color:var(--rune-gold);background:rgba(201,162,74,0.1);} .cast-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;} .cast-tag{font-family:'JetBrains Mono',monospace;font-size:11px;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.08);color:var(--parchment-dim);padding:4px 8px;border-radius:12px;display:flex;align-items:center;gap:5px;} .cast-tag button{background:none;border:none;color:var(--blood-bright);cursor:pointer;font-size:12px;padding:0;} .add-row{display:flex;gap:8px;margin-top:10px;} .add-row input{flex:1;background:rgba(0,0,0,0.3);border:1px solid rgba(201,162,74,0.25);border-radius:6px;color:var(--parchment);padding:8px 10px;font-family:'EB Garamond',serif;font-size:14px;} .btn-small{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:rgba(201,162,74,0.12);border:1px solid var(--rune-gold-dim);color:var(--rune-gold);padding:8px 12px;border-radius:6px;cursor:pointer;} .snap-row{display:flex;gap:8px;margin-top:12px;} .snap-row button{flex:1;} .reset-link{display:block;text-align:center;margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--parchment-dim);text-decoration:underline;cursor:pointer;background:none;border:none;} .save-note{text-align:center;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--parchment-dim);margin-top:8px;opacity:.8;} .log{max-height:150px;overflow-y:auto;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--parchment-dim);display:flex;flex-direction:column-reverse;gap:4px;} .log div{border-left:2px solid rgba(201,162,74,0.25);padding-left:8px;} .footnote{text-align:center;font-size:11.5px;color:var(--parchment-dim);opacity:.75;margin-top:16px;line-height:1.6;padding:0 10px;} </style> </head> <body> <div class="wrap"> <header> <div class="eyebrow">MU · DARK EPOCH</div> <h1>The Rift Tavern</h1> <div class="subtitle">Guild: Legends — Solo Campaign</div> <div class="divider"></div> </header> <!-- PLAYER STATUS (always visible) --> <div class="panel"> <div class="player-card"> <div class="player-badge" id="player-badge">OL</div> <div class="player-main"> <div class="player-name-row"> <span id="player-name">OLLAT</span> <span class="lvl-tag" id="player-lvl">LV 1</span> <span class="cond-tag cond-Healthy" id="player-cond">Healthy</span> </div> <div class="player-class">🌑 Dark Wizard</div> <div class="bar-row"><span class="bar-label">HP</span><div class="bar-track"><div class="bar-fill hp" id="hp-fill" style="width:100%"></div></div><span class="bar-num" id="hp-num">20/20</span></div> <div class="bar-row"><span class="bar-label">XP</span><div class="bar-track"><div class="bar-fill xp" id="xp-fill" style="width:0%"></div></div><span class="bar-num" id="xp-num">0/30</span></div> </div> </div> <div class="zen-row"><span>💰 Zen</span><span id="zen-num">100</span></div> <button class="rest-btn" onclick="restPlayer()">🛌 Rest (free, full heal)</button> <div class="critical-banner" id="critical-banner">You're too hurt to venture out. Rest above before your next fight.</div> </div> <!-- TABS --> <div class="tabbar"> <button class="tab-btn active" data-tab="zones" onclick="switchTab('zones')">Zones</button> <button class="tab-btn" data-tab="calendar" onclick="switchTab('calendar')">Calendar</button> <button class="tab-btn" data-tab="loot" onclick="switchTab('loot')">Loot</button> <button class="tab-btn" data-tab="tavern" onclick="switchTab('tavern')">Tavern</button> <button class="tab-btn" data-tab="more" onclick="switchTab('more')">Log</button> </div> <!-- ZONES TAB --> <div class="tab-panel active" id="tab-zones"> <div class="panel"> <div class="panel-title">Daily Activities</div> <div class="mini-card"> <div class="mini-card-head"> <span class="mini-card-name">📜 Bounty Quest</span> <span class="mini-card-tag" id="bounty-remaining">Remaining: 30</span> </div> <div class="mini-card-desc">A job off the board — turns into an Elite or Boss contract fight, or turns up a quest item outright. Straight from the real game's Event menu.</div> <button class="btn-small" id="bounty-btn" onclick="takeBounty()">Take Bounty</button> </div> <div class="mini-card"> <div class="mini-card-head"> <span class="mini-card-name">🏛 Ancient Battlefield</span> <span class="mini-card-tag" id="ancient-remaining">Remaining: 3</span> </div> <div class="mini-card-desc">A multi-hit boss fight — chip its HP down attack by attack, straight from the real Event menu.</div> <button class="btn-small" id="ancient-btn" onclick="startDailyBoss('Ancient Battlefield')">Fight</button> </div> <div class="mini-card"> <div class="mini-card-head"> <span class="mini-card-name">👤 Solo Boss</span> <span class="mini-card-tag" id="solo-remaining">Remaining: 2</span> </div> <div class="mini-card-desc">No party, no guild morale — just you against a boss HP bar.</div> <button class="btn-small" id="solo-btn" onclick="startDailyBoss('Solo Boss')">Fight</button> </div> <div class="mini-card"> <div class="mini-card-head"> <span class="mini-card-name">⚙ Auto-Combat</span> <span class="mini-card-tag" id="autocombat-elapsed">0m idle</span> </div> <div class="mini-card-desc">Progress banks passively while you're away. Collect it here — matches the real AFK leveling feature.</div> <button class="btn-small" id="autocombat-btn" onclick="collectAutoCombat()">Collect</button> <div class="autocombat-upgrade-row"> <span id="autocombat-upgrade-label">Lv 0 — 4h cap, 100% rate</span> <button class="btn-small" id="autocombat-upgrade-btn" onclick="upgradeAutoCombat()">Upgrade</button> </div> </div> </div> <div class="panel"> <div class="panel-title">Explore</div> <div class="zone-grid" id="zone-grid"></div> </div> <div class="panel room" id="room"> <div class="tier-tag" id="room-tier">Tier</div> <div class="room-zone" id="room-zone">Zone</div> <div class="room-boss" id="room-boss">Boss Name</div> <div id="room-cameo"></div> <div class="room-flavor" id="room-flavor">Flavor text...</div> <div class="boss-hp-wrap" id="boss-hp-wrap"> <div class="boss-hp-label"><span>Rounds Left</span><span id="boss-hp-num">99 / 99</span></div> <div class="bar-track"><div class="bar-fill hp" id="boss-hp-fill" style="width:100%"></div></div> <div class="milestone-line" id="milestone-line"></div> <div class="strike-line" id="strike-line"></div> <button class="btn-auto-fight" id="auto-fight-btn" onclick="toggleAutoFight()" style="display:none;">⚡ Auto Fight</button> </div> <div class="choice-row" id="choice-row"></div> <button class="reset-link" id="retreat-btn" onclick="retreatFight()" style="display:none;">Retreat (no reward, no penalty)</button> <div class="result-box" id="result-box"> <div class="roll-num" id="roll-num">--</div> <div class="result-verb" id="result-verb">—</div> <div class="result-detail" id="result-detail">—</div> <div id="pill-wrap"></div> <div class="room-actions"> <button class="btn-ghost" id="explore-again-btn" onclick="exploreAgain()">Explore Again</button> <button class="btn-leave" onclick="leaveZone()">Leave Zone</button> </div> </div> </div> </div> <!-- CALENDAR TAB --> <div class="tab-panel" id="tab-calendar"> <div class="panel"> <div class="panel-title">Weekly Goals <span id="weekly-reset-label" style="color:var(--parchment-dim);font-family:'JetBrains Mono',monospace;letter-spacing:0;">Resets Monday</span></div> <div id="weekly-goals-list"></div> </div> <div class="panel"> <div class="panel-title">Guild Calendar <span id="calendar-today-label" style="color:var(--parchment-dim);font-family:'JetBrains Mono',monospace;letter-spacing:0;">Today</span></div> <div id="calendar-today-list"></div> <button class="reset-link" onclick="toggleWeek()">Show full week ▾</button> <div class="cal-week" id="calendar-week"></div> </div> </div> <!-- LOOT TAB --> <div class="tab-panel" id="tab-loot"> <div class="panel"> <div class="panel-title">Inventory <span id="loot-count" style="color:var(--parchment-dim);font-family:'JetBrains Mono',monospace;letter-spacing:0;">0 items</span></div> <div id="loot-list"></div> <div id="loot-empty" class="loot-empty">No loot yet. Real bosses (not trash mobs) have a chance to drop something when they fall.</div> </div> <div class="panel"> <div class="panel-title">Bestiary <span id="bestiary-count" style="color:var(--parchment-dim);font-family:'JetBrains Mono',monospace;letter-spacing:0;">0 recorded</span></div> <div id="bestiary-list"></div> <div id="bestiary-empty" class="loot-empty">No bosses recorded yet. Winning a fight (not playing it safe) adds the boss here.</div> </div> <div class="panel"> <div class="panel-title">Titles <span id="titles-count" style="color:var(--parchment-dim);font-family:'JetBrains Mono',monospace;letter-spacing:0;">0 / 0</span></div> <div id="titles-list"></div> </div> </div> <!-- TAVERN TAB --> <div class="tab-panel" id="tab-tavern"> <div class="panel"> <div class="panel-title">The Tavern</div> <div class="npc-row"> <div class="npc-portrait">🧙‍♀️</div> <div> <div class="npc-name">Rielmann</div> <div class="npc-role">Guide · gives tips, helps with quests</div> </div> </div> <button class="btn-small" onclick="talkToRielmann()">Talk to Rielmann</button> <div class="speech" id="rielmann-speech"></div> </div> <div class="panel"> <div class="panel-title">Adventurer Hans</div> <div class="npc-row"> <div class="npc-portrait">🔨</div> <div> <div class="npc-name">Hans</div> <div class="npc-role">Blacksmith · enhances your gear</div> </div> </div> <div class="item-card"> <div class="item-name">🪄 <span id="weapon-name">Apprentice Wand</span> <span class="item-plus" id="weapon-plus">+0</span></div> <div class="item-bar"><div class="item-bar-fill" id="weapon-bar" style="width:0%"></div></div> <div class="item-meta"><span id="weapon-cost">Cost: 40 Zen</span><span id="weapon-chance">Success: 85%</span></div> <button class="btn-enhance" id="weapon-btn" onclick="enhance('weapon')">Enhance Staff</button> </div> <div class="item-card"> <div class="item-name">👘 <span id="armor-name">Traveler's Robe</span> <span class="item-plus" id="armor-plus">+0</span></div> <div class="item-bar"><div class="item-bar-fill" id="armor-bar" style="width:0%"></div></div> <div class="item-meta"><span id="armor-cost">Cost: 40 Zen</span><span id="armor-chance">Success: 85%</span></div> <button class="btn-enhance" id="armor-btn" onclick="enhance('armor')">Enhance Robe</button> </div> <div class="speech" id="hans-speech"></div> </div> </div> <!-- LOG/SETTINGS TAB --> <div class="tab-panel" id="tab-more"> <div class="panel"> <div class="panel-title">Lifetime Stats</div> <div class="stats-grid" id="stats-grid"></div> </div> <div class="panel"> <div class="panel-title">Toll Settings</div> <div class="settings-grid" id="unit-grid"></div> </div> <div class="panel"> <div class="panel-title">NPC Cast (random cameos)</div> <div class="cast-tags" id="cast-tags"></div> <div class="add-row"> <input id="cast-input" placeholder="Add a name" maxlength="16"> <button class="btn-small" onclick="addCast()">Add</button> </div> </div> <div class="panel"> <div class="panel-title">Snapshot</div> <div class="snap-row"> <button class="btn-small" onclick="exportSnapshot()">⬇ Export JSON</button> <button class="btn-small" onclick="document.getElementById('import-file').click()">⬆ Import JSON</button> </div> <input type="file" id="import-file" accept="application/json" style="display:none" onchange="importSnapshot(this.files[0])"> <div class="save-note">Auto-saves to this device after every action. Export a snapshot if you're switching devices, clearing your browser, or using a browser that reloads tabs in the background.</div> <button class="reset-link" onclick="resetGame()">Reset the entire campaign</button> </div> <div class="panel"> <div class="panel-title">Chronicle</div> <div class="log" id="log"></div> </div> </div> <div class="footnote"> Drink amounts are small by design — pace yourself, swap in water freely, and rest anytime. This is meant to be relaxing, not another chore.<br><br> Some names lean on the real game's own slightly-translated phrasing (Corps, Garnets, "Ruler's Butler") — kept as flavor rather than smoothed out, since that's part of its charm. Mechanics behind those menus are my best approximation, not a 1:1 port. </div> </div> <script> /* ===================== DATA ===================== */ const NPC_DEFAULT_CAST = ["JMARTIN","KOKI","GADO","SAYURI","TOYANG","ALZ","002","JMEB","MARCUS"]; const ZONES = [ {key:"lorencia", name:"Lorencia Ruins", tierPool:["Minion","Minion","Elite"], desc:"The fallen capital. Easy pickings for a warm-up.", levelReq:1}, {key:"noria", name:"Noria Woodlands", tierPool:["Minion","Elite"], desc:"Quiet groves, restless spirits.", levelReq:1}, {key:"swamp", name:"Swamp of Calmness", tierPool:["Minion","Elite"], desc:"Ironic name. Watch your footing.", levelReq:2}, {key:"elemental", name:"Elemental Altar", tierPool:["Minion","Elite"], desc:"Wave after wave pushes for the crystal at the center — hold the line and keep them off it.", levelReq:2}, {key:"icaria", name:"Icaria", tierPool:["Elite","Boss"], desc:"A running fight to keep hordes from reaching the entrance. Collect Illusionary Feathers along the way.", levelReq:4}, {key:"devias", name:"Devias Ice Fields", tierPool:["Elite","Boss"], desc:"Frostbite country. Bring your nerve.", levelReq:4}, {key:"atlans", name:"Atlans Deep", tierPool:["Elite","Boss"], desc:"Something ancient sleeps beneath the tide.", levelReq:5}, {key:"icarus", name:"Icarus Sky Tower", tierPool:["Elite","Boss"], desc:"The wind up here holds grudges.", levelReq:5}, {key:"kalima", name:"Kalima Rift", tierPool:["Elite","Boss"], desc:"A tear in the world. Don't linger — every boss here is a real multi-hit fight, not a single roll.", levelReq:6}, {key:"kanturu", name:"Kanturu Wastes", tierPool:["Elite","Boss"], desc:"Sand swallows the careless.", levelReq:6}, {key:"aida", name:"Aida Temple", tierPool:["Elite","Boss"], desc:"Cursed halls, older gods.", levelReq:7}, {key:"crywolf", name:"Crywolf Fortress", tierPool:["Elite","Boss"], desc:"The wolf legion never truly sleeps.", levelReq:7}, {key:"raklion", name:"Raklion Sanctuary", tierPool:["Boss"], desc:"Dragon country. Only for the geared-up.", levelReq:9}, {key:"demons", name:"Land of Demons", tierPool:["Minion","Minion","Minion","Elite"], desc:"No boss here — just hordes of monsters, one wave after another, for the better part of an hour. Best sustained XP anywhere, always open, no level gate.", special:true, rewardMult:1.6}, ]; const BOSSES = { Minion:[ {name:"Goblin Scout", flavor:"A scrawny lookout who screams for backup the moment it sees you."}, {name:"Skeleton Archer", flavor:"Rattling bones and a bow that's seen three centuries of dust."}, {name:"Bog Leech Swarm", flavor:"They drop from the reeds. You will find one in your boot later."}, {name:"Wind Wisp", flavor:"Harmless-looking. Extremely rude about it."}, {name:"Elbeland Bandit", flavor:"Wants your gold. Settles for your dignity instead."}, ], Elite:[ {name:"Death Beam Knight", flavor:"His blade hums a note that means 'run.'"}, {name:"Genocider", flavor:"Blood Castle's old warden. Retired. Still bites."}, {name:"Frost Queen Sylvane", flavor:"Rules the ice fields with a stare that lowers the room temperature."}, {name:"Sand Wyrm Karesh", flavor:"Surfaces once, eats twice."}, {name:"Nightmare Wraith", flavor:"You've fought this one in your dreams. It remembers."}, {name:"Illusionary Feather Wraith", flavor:"Guards Icaria's relics. Molts when startled — mind the feathers."}, {name:"Elemental Core Guardian", flavor:"Animated crystal, humming with raw element. Not thrilled to be mined."}, ], Boss:[ {name:"Red Dragon Selupan", flavor:"Raklion's guardian. Breathes fire, holds grudges longer."}, {name:"Hydra Queen Nyx", flavor:"Cut one head, two opinions grow back."}, {name:"Balrog Chief Utan", flavor:"Crywolf's iron general. Has never once said 'good game.'"}, {name:"Gorgon of Aida", flavor:"Do not maintain eye contact."}, {name:"Illusion Knight Zaikan", flavor:"There may be three of him. There is only one exit."}, ], WorldBoss:[ {name:"KUNDUN, The Fallen God", flavor:"The Land of Demons bows to no adventurer. Tonight, you answer for it alone."}, ], Ancient:[ {name:"EROHIM, The First Light", flavor:"Older than Kundun, older than the continent."}, ], }; const TIER_CONFIG = { Minion: {dc:8, xp:10, zen:6, hp:2, drink:1}, Elite: {dc:12, xp:20, zen:12, hp:4, drink:2}, Boss: {dc:16, xp:35, zen:20, hp:7, drink:3}, WorldBoss:{dc:20, xp:60, zen:32, hp:10,drink:4}, Ancient: {dc:23, xp:100,zen:50, hp:12,drink:4}, }; // Loot only drops from real bosses (see resolveAttack). Weighted by rarity. const LOOT_TABLE = [ {name:"Cracked Bone Charm", rarity:"Common", weight:40}, {name:"Torn Banner Scrap", rarity:"Common", weight:40}, {name:"Elemental Dust", rarity:"Common", weight:35}, {name:"Frost Queen's Shard", rarity:"Rare", weight:18}, {name:"Balrog Fang", rarity:"Rare", weight:18}, {name:"Illusion Knight's Mirror", rarity:"Rare", weight:15}, {name:"Selupan's Scale", rarity:"Epic", weight:6}, {name:"Demon Ruler's Seal", rarity:"Epic", weight:6}, {name:"Kundun's Broken Horn", rarity:"Legendary", weight:2}, {name:"Erohim's Ember", rarity:"Legendary", weight:1}, ]; const RARITY_COLORS = { Common:"#a89a86", Rare:"#9fc4e0", Epic:"#c9a2f0", Legendary:"#f0d98c" }; const LOOT_DROP_CHANCE = 0.55; const ACHIEVEMENTS = [ {id:"first_blood", name:"First Blood", icon:"🩸", desc:"Defeat your first named boss.", check: s => Object.keys(s.bestiary||{}).length >= 1}, {id:"collector_5", name:"Bestiary Collector", icon:"📖", desc:"Record 5 unique bosses in the Bestiary.", check: s => Object.keys(s.bestiary||{}).length >= 5}, {id:"collector_10", name:"Bestiary Master", icon:"📚", desc:"Record 10 unique bosses in the Bestiary.", check: s => Object.keys(s.bestiary||{}).length >= 10}, {id:"kundun_slayer", name:"Kundun Slayer", icon:"👑", desc:"Defeat KUNDUN, The Fallen God at least once.", check: s => ((s.bestiary||{})["KUNDUN, The Fallen God"]||0) >= 1}, {id:"ancient_hunter", name:"Ancient Hunter", icon:"🜏", desc:"Defeat The Divine Demon at least once.", check: s => ((s.bestiary||{})["The Divine Demon"]||0) >= 1}, {id:"level_10", name:"Seasoned Wizard", icon:"🔮", desc:"Reach Level 10.", check: s => s.you.level >= 10}, {id:"level_20", name:"Archmage", icon:"⭐", desc:"Reach Level 20.", check: s => s.you.level >= 20}, {id:"fully_enhanced", name:"Fully Enchanted", icon:"🪄", desc:"Enhance both staff and robe to +9.", check: s => s.you.weaponEnh >= 9 && s.you.armorEnh >= 9}, {id:"hoarder", name:"Hoarder", icon:"🎒", desc:"Collect 10 or more total loot items.", check: s => Object.values(s.inventory||{}).reduce((a,b)=>a+b,0) >= 10}, {id:"legendary_find", name:"Legendary Find", icon:"✨", desc:"Loot a Legendary-rarity item.", check: s => Object.keys(s.inventory||{}).some(name => (LOOT_TABLE.find(i=>i.name===name)||{}).rarity === "Legendary")}, ]; // Weekly Goals: bigger targets than the daily resets, tracked in state.weekly and // wiped whenever the current Monday-anchored week changes. const WEEKLY_GOALS = [ {id:"guild_devotion", name:"Guild Devotion", key:"guildBossWins", target:5, reward:{zen:100}, desc:"Win 5 Guild BOSS fights this week."}, {id:"boss_hunter", name:"Boss Hunter", key:"bossKills", target:20, reward:{zen:150}, desc:"Defeat 20 bosses this week (any Bestiary kill)."}, {id:"bounty_runner", name:"Bounty Runner", key:"bountiesTaken", target:15, reward:{zen:80}, desc:"Complete 15 Bounty Quests this week."}, {id:"gearing_up", name:"Gearing Up", key:"enhancements", target:3, reward:{zen:100}, desc:"Successfully enhance your gear 3 times this week."}, ]; function rollLoot(){ const total = LOOT_TABLE.reduce((s, i) => s + i.weight, 0); let r = Math.random() * total; for(const item of LOOT_TABLE){ r -= item.weight; if(r <= 0) return item; } return LOOT_TABLE[0]; } const CHOICES = [ {key:"aggressive", label:"🔥 Meteor Strike", desc:"Channel everything into one devastating spell.", bonusMod:3, hpMult:1.6, xpMult:1.25, advantage:true, stat:"Higher reward, higher injury risk"}, {key:"tactical", label:"⚡ Lightning Bolt", desc:"A precise arc of lightning, reliably placed.", bonusMod:1, hpMult:1.0, xpMult:1.0, stat:"Balanced risk and reward"}, {key:"cautious", label:"❄ Ice Arrow", desc:"A basic cantrip, cast safely from a distance.", guaranteed:true, stat:"No roll, no injury, modest reward"}, ]; const MULTIHIT_STAT_TEXT = { aggressive: "Same 1 round either way — bigger hit if it lands, worse backlash if it doesn't", tactical: "Same 1 round either way — balanced hit chance and backlash risk", cautious: "Always clears the round safely, zero backlash risk", }; const WEEKDAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]; const GUILD_SCHEDULE = { Monday: [{time:"12:00", name:"Guild BOSS"}, {time:"20:30", name:"Square of Devil"}, {time:"19:45", name:"Lost Continent"}, {time:"Evening", name:"Treasure Convoy"}], Tuesday: [{time:"12:00", name:"Guild BOSS"}, {time:"20:30", name:"Battle of Gods"}, {time:"19:45", name:"Lost Continent"}], Wednesday: [{time:"12:00", name:"Guild BOSS"}, {time:"20:00", name:"Conquest Battle"}, {time:"20:30", name:"Square of Devil"}, {time:"19:45", name:"Lost Continent"}, {time:"Evening", name:"Treasure Convoy"}], Thursday: [{time:"12:00", name:"Guild BOSS"}, {time:"20:30", name:"Demon Ruler Raid"}, {time:"19:45", name:"Lost Continent"}], Friday: [{time:"12:00", name:"Guild BOSS"}, {time:"20:30", name:"Square of Devil"}, {time:"19:45", name:"Lost Continent"}, {time:"Evening", name:"Treasure Convoy"}], Saturday: [{time:"12:00", name:"Guild BOSS"}, {time:"20:00", name:"Conquest Battle"}, {time:"19:45", name:"Lost Continent"}], Sunday: [{time:"12:00", name:"Guild BOSS"}, {time:"19:45", name:"Lost Continent"}, {time:"Evening", name:"Divine Demon Homefield"}], }; const CALENDAR_EVENT_DEFS = { "Guild BOSS": {tier:"WorldBoss", zoneName:"Land of Demons — Guild Raid", boss:{name:"KUNDUN, The Fallen God", flavor:"An all-guild call. Five, six, sometimes more of Legends pile in alongside you — you lead the strike."}}, "Lost Continent": {tier:"Boss", zoneName:"Lost Continent — Faction Assembly", boss:{name:"Rival Corps Vanguard", flavor:"A faction-wide push — every guild in your faction shows up together. The loot still comes home to Legends."}}, "Square of Devil": {tier:"Elite", zoneName:"Square of Devil", boss:{name:"Devil's Honor Guard", flavor:"A closed arena test of raw guild strength."}}, "Conquest Battle": {tier:"Boss", zoneName:"Conquest Battlefield", boss:{name:"Enemy Guild Vanguard", flavor:"Territory's on the line. So is bragging rights."}}, "Demon Ruler Raid": {tier:"Boss", zoneName:"Demon Ruler's Domain", boss:{name:"The Demon Ruler", flavor:"He doesn't negotiate. He collects taxes in blood."}}, "Battle of Gods": {tier:"Boss", zoneName:"Battle of Gods Arena", boss:{name:"A Rival Champion", flavor:"Divinity's up for debate tonight."}}, "Treasure Convoy": {tier:"Elite", zoneName:"Treasure Convoy Route", boss:{name:"Convoy Guard Escort", flavor:"Less a boss fight, more a heist."}}, "Divine Demon Homefield": {tier:"Ancient", zoneName:"Divine Demon Homefield", boss:{name:"The Divine Demon", flavor:"Sunday's reckoning. The whole realm is watching."}}, }; // Real Event-menu daily bosses — these get the multi-hit HP-bar fight treatment, // same as World Boss and Kalima (see resolveAttack / multiHit logic below). const DAILY_BOSS_DEFS = { "Ancient Battlefield": {tier:"Boss", hpMult:1.4, rewardMult:1.3, dailyLimit:3, dailyKey:"ancient", boss:{name:"Ancient Battlefield Guardian", flavor:"A relic warden from a war nobody remembers. Slow. Does not stop."}}, "Solo Boss": {tier:"Boss", hpMult:1.0, rewardMult:1.0, dailyLimit:2, dailyKey:"solo", boss:{name:"Wandering Solo Boss", flavor:"No entourage, no mercy. Just you and it."}}, }; const UNITS = [ {key:"sip", label:"Sips"}, {key:"shot", label:"Shots"}, {key:"point", label:"Points (soft mode)"}, ]; const RIELMANN_TIPS = [ "Fights go easier with a sharper staff — see Hans before diving into Kalima Rift.", "Playing it safe is never wrong. If your HP's low, don't be too proud to cast Ice Arrow and walk away.", "Land of Demons hits hardest but pays the best XP anywhere. Don't walk in wounded.", "Meteor Strike doubles your risk, but the payoff matches it. Know your HP before you commit.", "I've seen a few of the Legends limp back from Devias more than once. Ice fields aren't kind to the reckless.", "Rest is free here. Use it. There's no prize for suffering through low HP.", "Every level makes you tougher — and your spells hit harder too.", "The Guild Calendar events pay the best Zen. Don't sleep on Guild BOSS at noon.", "A robe doesn't stop hits, it just softens them. Get some enhancement in before Raklion.", "Take a breath. This is supposed to help you unwind, not stress you out.", "A cameo from a friendly face gives you a small bonus that round — worth waiting for if you're on the fence.", "Treasure Convoy is low-risk. Good pick if you just want a quiet win.", "Lightning Bolt won't win you glory, but it won't get you hurt either. There's no shame in reliable.", ]; const HANS_LINES = [ "Hold still. This might sting your wallet more than your mana.", "Good wood, better hands. Let's see what we can do.", "No shame in a swing and a miss. Gold's not going anywhere either way.", "I don't destroy gear here — that's not the kind of shop I run.", ]; /* ===================== STATE ===================== */ // Transient UI flag — deliberately NOT part of `state`, so it never gets saved/restored // and always starts false on a fresh page load. let autoFighting = false; let state = { you: { name:"OLLAT", level:1, xp:0, hp:20, maxHp:20, zen:100, weaponEnh:0, armorEnh:0 }, npcCast: NPC_DEFAULT_CAST.slice(), unit: "sip", quest: null, logEntries: [], bounty: { remaining: 30, resetDate: null }, autoCombat: { lastCollect: Date.now(), upgradeLevel: 0 }, dailyBossAttempts: { ancient: { remaining: 3, resetDate: null }, solo: { remaining: 2, resetDate: null }, }, inventory: {}, bestiary: {}, titlesSeen: [], stats: { fightsWon: 0, fightsLost: 0, totalXp: 0, totalZen: 0, longestFight: 0, mostGuildmates: 0, bountiesTaken: 0, }, weekly: { weekStart: null, guildBossWins: 0, bossKills: 0, bountiesTaken: 0, enhancements: 0, claimed: [], }, }; function xpToNext(level){ return level * 30; } function load(){ try{ const saved = JSON.parse(localStorage.getItem("darkEpochTavernV2")); if(saved && saved.you){ state = Object.assign(state, saved); return; } }catch(e){} } function save(){ localStorage.setItem("darkEpochTavernV2", JSON.stringify(state)); } /* ===================== RENDER: PLAYER ===================== */ function condition(){ const pct = state.you.hp / state.you.maxHp; if(state.you.hp <= 0) return "Critical"; if(pct < 0.4) return "Wounded"; return "Healthy"; } function renderPlayer(){ const y = state.you; document.getElementById("player-badge").textContent = y.name.slice(0,2).toUpperCase(); document.getElementById("player-name").textContent = y.name; document.getElementById("player-lvl").textContent = "LV " + y.level; const cond = condition(); const condEl = document.getElementById("player-cond"); condEl.textContent = cond; condEl.className = "cond-tag cond-" + cond; const hpPct = Math.max(0, Math.round((y.hp / y.maxHp) * 100)); document.getElementById("hp-fill").style.width = hpPct + "%"; document.getElementById("hp-num").textContent = `${y.hp}/${y.maxHp}`; const need = xpToNext(y.level); const xpPct = Math.min(100, Math.round((y.xp / need) * 100)); document.getElementById("xp-fill").style.width = xpPct + "%"; document.getElementById("xp-num").textContent = `${y.xp}/${need}`; document.getElementById("zen-num").textContent = y.zen; document.getElementById("critical-banner").classList.toggle("show", y.hp <= 0); renderZoneGrid(); renderEquipment(); checkNewTitles(); renderStats(); renderWeeklyGoals(); } function grantXP(amount){ const y = state.you; y.xp += amount; state.stats = state.stats || {fightsWon:0,fightsLost:0,totalXp:0,totalZen:0,longestFight:0,mostGuildmates:0,bountiesTaken:0}; state.stats.totalXp += amount; let leveled = false; while(y.xp >= xpToNext(y.level)){ y.xp -= xpToNext(y.level); y.level++; y.maxHp += 4; y.hp = y.maxHp; // level-up fully heals leveled = true; } return leveled; } function grantZen(amount){ state.you.zen += amount; state.stats = state.stats || {fightsWon:0,fightsLost:0,totalXp:0,totalZen:0,longestFight:0,mostGuildmates:0,bountiesTaken:0}; state.stats.totalZen += amount; } function restPlayer(){ state.you.hp = state.you.maxHp; save(); renderPlayer(); log("🛌 You rest. Full HP restored."); } /* ===================== TABS ===================== */ function switchTab(name){ document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === name)); document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active")); document.getElementById("tab-" + name).classList.add("active"); } /* ===================== ZONES ===================== */ function isZoneLocked(z){ return !!z.levelReq && state.you.level < z.levelReq; } function renderZoneGrid(){ const grid = document.getElementById("zone-grid"); grid.innerHTML = ""; ZONES.forEach(z => { const locked = isZoneLocked(z); const card = document.createElement("div"); card.className = "zone-card" + (z.special ? " special" : "") + (locked ? " locked" : ""); card.onclick = () => enterZone(z.key); card.innerHTML = locked ? ` <div class="zone-card-name">🔒 ${z.name}</div> <div class="zone-card-tier">Requires Level ${z.levelReq}</div> <div class="zone-card-desc">${z.desc}</div> ` : ` <div class="zone-card-name">⟟ ${z.name}</div> <div class="zone-card-tier">${z.tierPool.join(" / ")}</div> <div class="zone-card-desc">${z.desc}</div> `; grid.appendChild(card); }); } function randomFrom(arr){ return arr[Math.floor(Math.random()*arr.length)]; } function roll1to20(){ return 1 + Math.floor(Math.random()*20); } function rollCameo(){ const r = Math.random(); if(!state.npcCast.length) return null; if(r < 0.25) return {type:"ally", name: randomFrom(state.npcCast)}; if(r < 0.5) return {type:"rival", name: randomFrom(state.npcCast)}; return null; } // For boss fights: a random number of Legends guildmates show up and fight alongside you, // each chipping in their own damage every round regardless of your own rolls. function rollGuildJoin(){ if(!state.npcCast.length) return []; const count = Math.floor(Math.random() * 4); // 0-3 guildmates if(count === 0) return []; const shuffled = state.npcCast.slice().sort(() => Math.random() - 0.5); return shuffled.slice(0, Math.min(count, shuffled.length)); } function enterZone(key){ const zone = ZONES.find(z => z.key === key); if(isZoneLocked(zone)){ alert(`${zone.name} is locked until Level ${zone.levelReq}. Land of Demons is always open if you want XP right now.`); return; } if(state.quest && !state.quest.resolved){ alert("Finish or retreat from your current fight first."); document.getElementById("room").scrollIntoView({behavior:"smooth"}); return; } if(state.you.hp <= 0){ alert("You're too hurt to venture out. Rest first."); return; } startQuest({kind:"zone", zone}); } function canExploreAgain(source){ // Bounty and daily-boss fights are one attempt = one fight. Repeats require spending // another attempt from Daily Activities, not a free "Explore Again" loop. return source.kind === "zone" || source.kind === "calendar"; } function updateRoomActions(){ const q = state.quest; document.getElementById("explore-again-btn").style.display = canExploreAgain(q.source) ? "inline-block" : "none"; } function exploreAgain(){ if(state.you.hp <= 0){ alert("You're too hurt to keep exploring. Rest first."); return; } const q = state.quest; if(!q || !canExploreAgain(q.source)){ leaveZone(); return; } startQuest(q.source); } function leaveZone(){ autoFighting = false; document.getElementById("room").classList.remove("show"); document.getElementById("result-box").classList.remove("show"); document.getElementById("boss-hp-wrap").classList.remove("show"); document.getElementById("retreat-btn").style.display = "none"; document.getElementById("auto-fight-btn").style.display = "none"; state.quest = null; save(); } function retreatFight(){ const q = state.quest; if(q) log(`🏳 ${state.you.name} retreats from ${q.boss.name}, no reward taken.`); leaveZone(); } function isMultiHit(source, tier){ // Every real boss — not trash mobs — gets the multi-hit round system, wherever it shows up: // regular zones, the Guild Calendar, or the Daily Activities boss tiles. if(tier === "Boss" || tier === "WorldBoss" || tier === "Ancient") return true; if(source.kind === "zone" && source.zone.key === "kalima") return true; // Kalima's Elite pulls count too if(source.kind === "dailyBoss") return true; return false; } function startQuest(source){ let tier, boss, zoneName, guildMorale = false, rewardMult = 1, hpMult = 1; if(source.kind === "zone"){ tier = randomFrom(source.zone.tierPool); boss = randomFrom(BOSSES[tier]); zoneName = source.zone.name; rewardMult = source.zone.rewardMult || 1; } else if(source.kind === "dailyBoss"){ const def = DAILY_BOSS_DEFS[source.name]; tier = def.tier; boss = def.boss; zoneName = source.name; rewardMult = def.rewardMult; hpMult = def.hpMult; } else if(source.kind === "bounty"){ tier = Math.random() < 0.5 ? "Elite" : "Boss"; boss = randomFrom(BOSSES[tier]); zoneName = "Bounty Contract"; } else { const def = CALENDAR_EVENT_DEFS[source.name]; tier = def.tier; boss = def.boss; zoneName = def.zoneName; guildMorale = true; } // Ancient-tier fights run longer by default (139 rounds), matching Ancient Battlefield's own scaling, // unless a dailyBoss definition already set its own hpMult above. if(hpMult === 1 && tier === "Ancient") hpMult = 1.4; const cfg = TIER_CONFIG[tier]; const multiHit = isMultiHit(source, tier); const cameo = multiHit ? null : rollCameo(); const joinedGuildmates = multiHit ? rollGuildJoin() : []; const bossHpMax = multiHit ? Math.round(99 * hpMult) : 0; state.quest = { source, tier, boss, zoneName, cfg, guildMorale, cameo, rewardMult, multiHit, bossHpMax, bossHp: bossHpMax, joinedGuildmates, resolved: false, milestonesFired: [], attacksUsed: 0, }; renderQuest(); document.getElementById("room").scrollIntoView({behavior:"smooth", block:"start"}); } function renderBossHp(){ const q = state.quest; const wrap = document.getElementById("boss-hp-wrap"); if(!q.multiHit){ wrap.classList.remove("show"); document.getElementById("retreat-btn").style.display = "none"; return; } wrap.classList.add("show"); const pct = Math.max(0, Math.round((q.bossHp / q.bossHpMax) * 100)); document.getElementById("boss-hp-fill").style.width = pct + "%"; document.getElementById("boss-hp-num").textContent = `${Math.max(q.bossHp,0)} / ${q.bossHpMax}`; document.getElementById("retreat-btn").style.display = "block"; } function renderChoiceButtons(handler){ const q = state.quest; const row = document.getElementById("choice-row"); row.innerHTML = ""; CHOICES.forEach(c => { const btn = document.createElement("button"); btn.className = "choice-btn"; btn.onclick = () => handler(c.key); const stat = (q && q.multiHit) ? MULTIHIT_STAT_TEXT[c.key] : c.stat; btn.innerHTML = `<div class="choice-label">${c.label}</div><div class="choice-desc">${c.desc}</div><div class="choice-stat">${stat}</div>`; row.appendChild(btn); }); } function renderQuest(){ const q = state.quest; document.getElementById("room-tier").textContent = q.tier === "WorldBoss" ? "World Boss" : q.tier; document.getElementById("room-tier").className = "tier-tag tier-" + q.tier; document.getElementById("room-zone").textContent = "⟟ " + q.zoneName.toUpperCase(); document.getElementById("room-boss").textContent = q.boss.name; document.getElementById("room-flavor").textContent = q.boss.flavor; document.getElementById("strike-line").textContent = ""; document.getElementById("strike-line").className = "strike-line"; document.getElementById("milestone-line").textContent = ""; document.getElementById("milestone-line").classList.remove("show"); autoFighting = false; const autoBtn = document.getElementById("auto-fight-btn"); autoBtn.style.display = q.multiHit ? "block" : "none"; updateAutoFightButton(); const cameoEl = document.getElementById("room-cameo"); if(q.multiHit){ if(q.joinedGuildmates.length){ cameoEl.innerHTML = `<div class="cameo ally">🤝 ${q.joinedGuildmates.join(", ")} — ${q.joinedGuildmates.length === 1 ? "joins" : "join"} the fight, each landing their own hits every round.</div>`; } else { cameoEl.innerHTML = `<div class="cameo rival">👤 Nobody else made it this time — you're fighting this one alone.</div>`; } } else if(q.cameo){ cameoEl.innerHTML = q.cameo.type === "ally" ? `<div class="cameo ally">🤝 ${q.cameo.name} fights alongside you this round (+2 bonus).</div>` : `<div class="cameo rival">👀 ${q.cameo.name} is already here, hunting the same mark.</div>`; } else { cameoEl.innerHTML = ""; } renderBossHp(); renderChoiceButtons(q.multiHit ? resolveAttack : resolveChoice); document.getElementById("result-box").classList.remove("show"); document.getElementById("room").classList.add("show"); } function resolveChoice(key){ const q = state.quest; const choice = CHOICES.find(c => c.key === key); const y = state.you; const weaponBonus = Math.floor(y.weaponEnh / 2); const armorMitigation = Math.floor(y.armorEnh / 2); const levelBonus = Math.floor(y.level / 2); const morale = q.guildMorale ? 2 : 0; const allyBonus = (q.cameo && q.cameo.type === "ally") ? 2 : 0; document.getElementById("choice-row").innerHTML = ""; const box = document.getElementById("result-box"); const pillWrap = document.getElementById("pill-wrap"); pillWrap.innerHTML = ""; box.classList.add("show"); q.resolved = true; updateRoomActions(); if(choice.guaranteed){ const xp = Math.round(q.cfg.xp * 0.4 * q.rewardMult); const zen = Math.round(q.cfg.zen * 0.4 * q.rewardMult); const leveled = grantXP(xp); grantZen(zen); document.getElementById("roll-num").textContent = "—"; box.className = "result-box win show"; document.getElementById("result-verb").textContent = "Careful Success"; document.getElementById("result-detail").textContent = `You keep your distance and pick ${q.boss.name} apart with ${choice.label}, walking away with ${xp} XP and ${zen} Zen. No risk taken.` + (leveled ? ` LEVEL UP → ${y.level}!` : ""); log(`❄ ${y.name} played it safe in ${q.zoneName} with ${choice.label} — +${xp} XP, +${zen} Zen.`); save(); renderPlayer(); return; } const bonus = levelBonus + weaponBonus + choice.bonusMod + morale + allyBonus; const d20 = choice.advantage ? Math.max(roll1to20(), roll1to20()) : roll1to20(); const total = d20 + bonus; const success = total >= q.cfg.dc; document.getElementById("roll-num").textContent = `${d20} + ${bonus} = ${total}`; if(success){ const xp = Math.round(q.cfg.xp * (choice.xpMult || 1) * q.rewardMult); const zen = Math.round(q.cfg.zen * (choice.xpMult || 1) * q.rewardMult); const leveled = grantXP(xp); grantZen(zen); const firstKill = recordKill(q.boss.name); state.stats.fightsWon++; box.className = "result-box win show"; document.getElementById("result-verb").textContent = "Victory"; document.getElementById("result-detail").textContent = `${total} vs DC ${q.cfg.dc} — ${choice.label} lands true and ${q.boss.name} falls. +${xp} XP, +${zen} Zen.` + (leveled ? ` LEVEL UP → ${y.level}!` : "") + (firstKill ? ` New Bestiary entry!` : ""); log(`✨ ${y.name} cast ${choice.label}, rolled ${total} vs DC ${q.cfg.dc} — victory over ${q.boss.name} (${q.zoneName}).`); if(firstKill) log(`📖 Bestiary: ${q.boss.name} recorded for the first time.`); } else { state.stats.fightsLost++; const hpLossBase = Math.round(q.cfg.hp * (choice.hpMult || 1)); const hpLoss = Math.max(hpLossBase - armorMitigation, 1); y.hp = Math.max(y.hp - hpLoss, 0); box.className = "result-box lose show"; document.getElementById("result-verb").textContent = "Injured"; document.getElementById("result-detail").textContent = `${total} vs DC ${q.cfg.dc} — ${choice.label} fizzles and ${q.boss.name} gets the better of you.`; pillWrap.innerHTML = `<div class="pill hp">🩸 −${hpLoss} HP</div><div class="pill toll">🍷 ${q.cfg.drink} ${unitLabel(q.cfg.drink)}</div>`; log(`💥 ${y.name} cast ${choice.label}, rolled ${total} vs DC ${q.cfg.dc} — injured by ${q.boss.name}, −${hpLoss} HP.`); } save(); renderPlayer(); renderBestiary(); } // Milestone beats: one-time narrative flourishes as a long boss fight progresses, // so a 99-round grind has texture instead of being a silent countdown. const MILESTONE_THRESHOLDS = [75, 50, 25, 10]; function milestoneLine(threshold, bossName){ if(threshold <= 10) return `💀 ${bossName} is barely standing — this is almost over.`; if(threshold <= 25) return `⚔ ${bossName} is reeling. The end is in sight.`; if(threshold <= 50) return `🌀 ${bossName} staggers — you're past the halfway point.`; return `🔥 ${bossName} is still standing strong, but it's felt that.`; } // Multi-hit boss fights: World Boss, Ancient Battlefield, Solo Boss, and Kalima. // Each attack chips the boss's HP bar instead of resolving the whole fight in one roll. // Damage per round scales with your level — low level, closer to 99 rounds; higher level, much faster. // Any guildmates who joined land their own hits every round, win or lose on your own roll. function resolveAttack(key){ const q = state.quest; const choice = CHOICES.find(c => c.key === key); const y = state.you; const weaponBonus = Math.floor(y.weaponEnh / 2); const armorMitigation = Math.floor(y.armorEnh / 2); const levelBonus = Math.floor(y.level / 2); const morale = q.guildMorale ? 2 : 0; const levelDmg = 2 + Math.floor(y.level / 2); const strikeEl = document.getElementById("strike-line"); let hit, dmg = 0, hpLoss = 0, strikeText; if(choice.guaranteed){ dmg = Math.max(Math.round(levelDmg * 0.4), 1); hit = true; strikeText = `❄ ${choice.label} — a safe cast, ${dmg} damage.`; } else { const bonus = levelBonus + weaponBonus + choice.bonusMod + morale; const d20 = choice.advantage ? Math.max(roll1to20(), roll1to20()) : roll1to20(); const total = d20 + bonus; hit = total >= q.cfg.dc; if(hit){ dmg = choice.key === "aggressive" ? Math.round(levelDmg * 1.5) : levelDmg; strikeText = `${choice.label} lands — ${total} vs DC ${q.cfg.dc}, ${dmg} damage.`; } else { const hpLossBase = Math.round(q.cfg.hp * (choice.hpMult || 1)); hpLoss = Math.max(hpLossBase - armorMitigation, 1); y.hp = Math.max(y.hp - hpLoss, 0); strikeText = `${choice.label} fizzles — ${total} vs DC ${q.cfg.dc}. Backlash: −${hpLoss} HP.`; } } // Fight always takes a fixed number of rounds — your damage doesn't skip rounds, it's flavor. // Each guildmate who joined also takes their own swing this round, clearing an extra round each time. const roundsThisTurn = 1 + q.joinedGuildmates.length; q.bossHp = Math.max(q.bossHp - roundsThisTurn, 0); q.attacksUsed = (q.attacksUsed || 0) + 1; if(q.joinedGuildmates.length > 0) strikeText += ` ${q.joinedGuildmates.length} guildmate${q.joinedGuildmates.length===1?"":"s"} also swing this round.`; const pctLeft = Math.round((q.bossHp / q.bossHpMax) * 100); let milestoneText = ""; MILESTONE_THRESHOLDS.forEach(threshold => { if(pctLeft <= threshold && !q.milestonesFired.includes(threshold)){ q.milestonesFired.push(threshold); milestoneText = milestoneLine(threshold, q.boss.name); } }); strikeEl.textContent = strikeText; strikeEl.className = "strike-line " + (hit ? "hit" : "miss"); renderBossHp(); if(milestoneText){ const milestoneEl = document.getElementById("milestone-line"); milestoneEl.textContent = milestoneText; milestoneEl.classList.add("show"); log(milestoneText); } if(q.bossHp <= 0){ q.resolved = true; state.stats.fightsWon++; state.stats.longestFight = Math.max(state.stats.longestFight, q.attacksUsed); state.stats.mostGuildmates = Math.max(state.stats.mostGuildmates, q.joinedGuildmates.length); if(q.source.kind === "calendar" && q.source.name === "Guild BOSS"){ ensureWeeklyReset(); state.weekly.guildBossWins++; } const xp = Math.round(q.cfg.xp * q.rewardMult); const zen = Math.round(q.cfg.zen * q.rewardMult); const leveled = grantXP(xp); grantZen(zen); const firstKill = recordKill(q.boss.name); let lootText = ""; if(Math.random() < LOOT_DROP_CHANCE){ const item = rollLoot(); state.inventory[item.name] = (state.inventory[item.name] || 0) + 1; lootText = ` ${q.boss.name} also drops a ${item.rarity.toLowerCase()} item: ${item.name}.`; log(`🎁 Loot: ${item.name} (${item.rarity}) from ${q.boss.name}.`); } document.getElementById("choice-row").innerHTML = ""; document.getElementById("retreat-btn").style.display = "none"; document.getElementById("auto-fight-btn").style.display = "none"; const box = document.getElementById("result-box"); box.className = "result-box win show"; document.getElementById("roll-num").textContent = "—"; document.getElementById("result-verb").textContent = "Boss Down"; document.getElementById("result-detail").textContent = `${q.boss.name} finally falls after a drawn-out fight. +${xp} XP, +${zen} Zen.${lootText}` + (leveled ? ` LEVEL UP → ${y.level}!` : "") + (firstKill ? ` New Bestiary entry!` : ""); document.getElementById("pill-wrap").innerHTML = ""; log(`✨ ${y.name} downed ${q.boss.name} in ${q.zoneName} — +${xp} XP, +${zen} Zen.`); if(firstKill) log(`📖 Bestiary: ${q.boss.name} recorded for the first time.`); renderInventory(); renderBestiary(); updateRoomActions(); } else if(y.hp <= 0){ q.resolved = true; state.stats.fightsLost++; state.stats.mostGuildmates = Math.max(state.stats.mostGuildmates, q.joinedGuildmates.length); document.getElementById("choice-row").innerHTML = ""; document.getElementById("retreat-btn").style.display = "none"; document.getElementById("auto-fight-btn").style.display = "none"; const box = document.getElementById("result-box"); box.className = "result-box lose show"; document.getElementById("roll-num").textContent = "—"; document.getElementById("result-verb").textContent = "Forced Retreat"; const roundsLeft = Math.max(q.bossHp, 0); document.getElementById("result-detail").textContent = `You're too hurt to continue. ${q.boss.name} still has ${roundsLeft} rounds left in it — no reward this time.`; document.getElementById("pill-wrap").innerHTML = ""; log(`💀 ${y.name} was forced to retreat from ${q.boss.name} with ${roundsLeft} rounds still to go.`); updateRoomActions(); } // else: fight continues, choice buttons stay as-is for the next attack save(); renderPlayer(); } // Auto Fight: plays rounds automatically instead of tapping a choice up to 99 times. // Simple HP-based strategy — aggressive while healthy, backs off to cautious when hurt, // so it won't blindly grind you down to 0 HP unattended. function toggleAutoFight(){ const q = state.quest; if(!q || !q.multiHit || q.resolved) return; autoFighting = !autoFighting; updateAutoFightButton(); if(autoFighting) autoFightStep(); } function updateAutoFightButton(){ const btn = document.getElementById("auto-fight-btn"); const row = document.getElementById("choice-row"); if(!btn || !row) return; btn.textContent = autoFighting ? "⏹ Stop Auto Fight" : "⚡ Auto Fight"; btn.className = "btn-auto-fight" + (autoFighting ? " running" : ""); row.classList.toggle("auto-running", autoFighting); } function autoFightStep(){ if(!autoFighting) return; const q = state.quest; if(!q || q.resolved){ autoFighting = false; updateAutoFightButton(); return; } const hpPct = state.you.hp / state.you.maxHp; const key = hpPct > 0.5 ? "aggressive" : hpPct > 0.2 ? "tactical" : "cautious"; resolveAttack(key); const q2 = state.quest; if(autoFighting && q2 && !q2.resolved){ setTimeout(autoFightStep, 220); } else { autoFighting = false; updateAutoFightButton(); } } function startDailyBoss(name){ if(state.quest && !state.quest.resolved){ alert("Finish or retreat from your current fight first."); document.getElementById("room").scrollIntoView({behavior:"smooth"}); return; } if(state.you.hp <= 0){ alert("You're too hurt to venture out. Rest first."); return; } const def = DAILY_BOSS_DEFS[name]; const track = state.dailyBossAttempts[def.dailyKey]; ensureDailyReset(track, def.dailyLimit); if(track.remaining <= 0){ alert(`${name} is out of attempts today. Resets tomorrow.`); return; } track.remaining--; save(); renderDailyBossTiles(); switchTab("zones"); startQuest({kind:"dailyBoss", name}); } function unitLabel(n){ const map = {sip:"sip", shot:"shot", point:"point"}; const base = map[state.unit] || "sip"; return (n===1) ? base : base + "s"; } /* ===================== GUILD CALENDAR ===================== */ function todayName(){ return WEEKDAYS[new Date().getDay()]; } function renderCalendar(){ const today = todayName(); document.getElementById("calendar-today-label").textContent = today; const list = document.getElementById("calendar-today-list"); list.innerHTML = ""; (GUILD_SCHEDULE[today] || []).forEach(ev => { const row = document.createElement("div"); row.className = "cal-row"; row.innerHTML = `<span class="cal-time">${ev.time}</span><span class="cal-name">${ev.name}</span><button class="cal-join" onclick="joinGuildEvent('${ev.name}')">Join</button>`; list.appendChild(row); }); const week = document.getElementById("calendar-week"); week.innerHTML = ""; ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"].forEach(day => { const block = document.createElement("div"); block.className = "cal-day-block" + (day === today ? " cal-day-today" : ""); const evs = (GUILD_SCHEDULE[day] || []).map(e => `${e.time} ${e.name}`).join(" · "); block.innerHTML = `<div class="cal-day-name">${day}</div><div class="cal-day-evs">${evs}</div>`; week.appendChild(block); }); } function toggleWeek(){ document.getElementById("calendar-week").classList.toggle("show"); } function joinGuildEvent(name){ if(state.quest && !state.quest.resolved){ alert("Finish or retreat from your current fight first."); document.getElementById("room").scrollIntoView({behavior:"smooth"}); return; } if(state.you.hp <= 0){ alert("You're too hurt to venture out. Rest first."); return; } switchTab("zones"); startQuest({kind:"calendar", name}); } /* ===================== TAVERN / HANS ===================== */ function talkToRielmann(){ const el = document.getElementById("rielmann-speech"); el.textContent = "\u201C" + randomFrom(RIELMANN_TIPS) + "\u201D"; el.classList.add("show"); } function hansSpeak(){ const el = document.getElementById("hans-speech"); el.textContent = "\u201C" + randomFrom(HANS_LINES) + "\u201D"; el.classList.add("show"); } const WEAPON_NAMES = ["Apprentice Wand","Runed Staff","Arcane Staff","Ancient Staff"]; const ARMOR_NAMES = ["Traveler's Robe","Enchanted Robe","Arcane Vestments","Ancient Vestments"]; const MAX_ENH = 9; function tierName(names, enh){ const idx = enh < 3 ? 0 : enh < 6 ? 1 : enh < 9 ? 2 : 3; return names[idx]; } function enhanceCost(level){ return (level + 1) * 40; } function enhanceChance(level){ return Math.max(0.85 - level * 0.07, 0.2); } function renderEquipment(){ const y = state.you; ["weapon","armor"].forEach(kind => { const names = kind === "weapon" ? WEAPON_NAMES : ARMOR_NAMES; const enh = kind === "weapon" ? y.weaponEnh : y.armorEnh; document.getElementById(kind + "-name").textContent = tierName(names, enh); document.getElementById(kind + "-plus").textContent = "+" + enh; document.getElementById(kind + "-bar").style.width = Math.round((enh / MAX_ENH) * 100) + "%"; const btn = document.getElementById(kind + "-btn"); if(enh >= MAX_ENH){ document.getElementById(kind + "-cost").textContent = "Maxed out"; document.getElementById(kind + "-chance").textContent = ""; btn.disabled = true; btn.textContent = "Fully Enhanced"; } else { const cost = enhanceCost(enh); document.getElementById(kind + "-cost").textContent = `Cost: ${cost} Zen`; document.getElementById(kind + "-chance").textContent = `Success: ${Math.round(enhanceChance(enh)*100)}%`; btn.disabled = y.zen < cost; btn.textContent = "Enhance " + (kind === "weapon" ? "Weapon" : "Armor"); } }); } function enhance(kind){ const y = state.you; const enh = kind === "weapon" ? y.weaponEnh : y.armorEnh; const label = kind === "weapon" ? "staff" : "robe"; if(enh >= MAX_ENH) return; const cost = enhanceCost(enh); if(y.zen < cost) return; y.zen -= cost; const success = Math.random() < enhanceChance(enh); if(success){ if(kind === "weapon") y.weaponEnh++; else y.armorEnh++; ensureWeeklyReset(); state.weekly.enhancements++; hansSpeak(); log(`🔨 Hans enhances your ${label} to +${kind === "weapon" ? y.weaponEnh : y.armorEnh}.`); } else { hansSpeak(); log(`🔨 The ${label} enhancement fails. Your gear is untouched — Hans doesn't break things here.`); } save(); renderPlayer(); renderWeeklyGoals(); } /* ===================== BOUNTY QUEST (real Event menu feature) ===================== */ function todayStr(){ const d = new Date(); return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`; } function ensureDailyReset(track, defaultRemaining){ if(track.resetDate !== todayStr()){ track.remaining = defaultRemaining; track.resetDate = todayStr(); } } function ensureBountyReset(){ ensureDailyReset(state.bounty, 30); } function renderBounty(){ ensureBountyReset(); document.getElementById("bounty-remaining").textContent = "Remaining: " + state.bounty.remaining; document.getElementById("bounty-btn").disabled = state.bounty.remaining <= 0; document.getElementById("bounty-btn").textContent = state.bounty.remaining > 0 ? "Take Bounty" : "Board Empty — Back Tomorrow"; } const BOUNTY_ITEMS = [ "Garnet Shard", "Torn Bounty Ledger", "Sealed Coin Pouch", "Elemental Fragment", "Ancient Insignia", "Chipped Rune Stone", "Contract Wax Seal", "Traveler's Whetstone", ]; function takeBounty(){ ensureBountyReset(); if(state.bounty.remaining <= 0) return; if(state.quest && !state.quest.resolved){ alert("Finish or retreat from your current fight first."); document.getElementById("room").scrollIntoView({behavior:"smooth"}); return; } if(state.you.hp <= 0){ alert("You're too hurt to venture out. Rest first."); return; } state.bounty.remaining--; state.stats.bountiesTaken++; ensureWeeklyReset(); state.weekly.bountiesTaken++; save(); renderBounty(); if(Math.random() < 0.5){ // Bounty turns into a real Elite or Boss contract fight switchTab("zones"); startQuest({kind:"bounty"}); } else { // Bounty turns up a quest item instead of a fight const item = randomFrom(BOUNTY_ITEMS); const xp = 10, zen = 20; const leveled = grantXP(xp); grantZen(zen); log(`📜 Bounty turned in — found a ${item}. +${xp} XP, +${zen} Zen.` + (leveled ? " LEVEL UP!" : "")); save(); renderPlayer(); alert(`Bounty complete: you turn up a ${item}. +${xp} XP, +${zen} Zen.`); } } function renderDailyBossTiles(){ Object.entries(DAILY_BOSS_DEFS).forEach(([name, def]) => { const track = state.dailyBossAttempts[def.dailyKey]; ensureDailyReset(track, def.dailyLimit); const el = document.getElementById(def.dailyKey + "-remaining"); const btn = document.getElementById(def.dailyKey + "-btn"); el.textContent = "Remaining: " + track.remaining; btn.disabled = track.remaining <= 0; btn.textContent = track.remaining > 0 ? "Fight" : "No Attempts — Back Tomorrow"; }); } /* ===================== AUTO-COMBAT (real AFK leveling feature) ===================== */ const AUTOCOMBAT_XP_PER_MIN = 0.5; const AUTOCOMBAT_ZEN_PER_MIN = 0.4; const AUTOCOMBAT_UPGRADE_MAX = 5; function autoCombatLevel(){ return state.autoCombat.upgradeLevel || 0; } function autoCombatCapMs(){ return (4 + autoCombatLevel()) * 60 * 60 * 1000; } // 4h base, +1h per level function autoCombatRateMult(){ return 1 + autoCombatLevel() * 0.2; } // +20% per level function autoCombatUpgradeCost(){ return (autoCombatLevel() + 1) * 100; } function renderAutoCombat(){ const capMs = autoCombatCapMs(); const elapsed = Math.min(Date.now() - state.autoCombat.lastCollect, capMs); const mins = Math.floor(elapsed / 60000); const h = Math.floor(mins / 60), m = mins % 60; document.getElementById("autocombat-elapsed").textContent = (h > 0 ? `${h}h ${m}m` : `${m}m`) + " idle"; document.getElementById("autocombat-btn").disabled = mins < 1; const level = autoCombatLevel(); const capHours = 4 + level; const upgradeBtn = document.getElementById("autocombat-upgrade-btn"); const upgradeLabel = document.getElementById("autocombat-upgrade-label"); if(level >= AUTOCOMBAT_UPGRADE_MAX){ upgradeLabel.textContent = `Maxed — ${capHours}h cap, ${Math.round(autoCombatRateMult()*100)}% rate`; upgradeBtn.disabled = true; upgradeBtn.textContent = "Maxed Out"; } else { const cost = autoCombatUpgradeCost(); upgradeLabel.textContent = `Lv ${level} — ${capHours}h cap, ${Math.round(autoCombatRateMult()*100)}% rate`; upgradeBtn.disabled = state.you.zen < cost; upgradeBtn.textContent = `Upgrade (${cost} Zen)`; } } function upgradeAutoCombat(){ const level = autoCombatLevel(); if(level >= AUTOCOMBAT_UPGRADE_MAX) return; const cost = autoCombatUpgradeCost(); if(state.you.zen < cost) return; state.you.zen -= cost; state.autoCombat.upgradeLevel = level + 1; log(`⚙ Auto-Combat upgraded to Lv ${state.autoCombat.upgradeLevel} — ${4 + state.autoCombat.upgradeLevel}h cap, ${Math.round(autoCombatRateMult()*100)}% rate.`); save(); renderPlayer(); renderAutoCombat(); } function collectAutoCombat(){ const capMs = autoCombatCapMs(); const elapsed = Math.min(Date.now() - state.autoCombat.lastCollect, capMs); const mins = Math.floor(elapsed / 60000); if(mins < 1) return; const rate = autoCombatRateMult(); const xp = Math.round(mins * AUTOCOMBAT_XP_PER_MIN * rate); const zen = Math.round(mins * AUTOCOMBAT_ZEN_PER_MIN * rate); const leveled = grantXP(xp); grantZen(zen); state.autoCombat.lastCollect = Date.now(); log(`⚙ Auto-Combat collected — +${xp} XP, +${zen} Zen from ${mins}m idle.` + (leveled ? " LEVEL UP!" : "")); save(); renderPlayer(); renderAutoCombat(); } /* ===================== SETTINGS ===================== */ function renderUnits(){ const grid = document.getElementById("unit-grid"); grid.innerHTML = ""; UNITS.forEach(u => { const b = document.createElement("button"); b.className = "unit-btn" + (state.unit === u.key ? " active" : ""); b.textContent = u.label; b.onclick = () => { state.unit = u.key; save(); renderUnits(); }; grid.appendChild(b); }); } function renderCast(){ const wrap = document.getElementById("cast-tags"); wrap.innerHTML = ""; state.npcCast.forEach((name, i) => { const tag = document.createElement("div"); tag.className = "cast-tag"; tag.innerHTML = `${name} <button onclick="removeCast(${i})">×</button>`; wrap.appendChild(tag); }); } function addCast(){ const input = document.getElementById("cast-input"); const name = input.value.trim().toUpperCase(); if(!name || state.npcCast.includes(name)) { input.value = ""; return; } state.npcCast.push(name); input.value = ""; save(); renderCast(); } function removeCast(i){ state.npcCast.splice(i, 1); save(); renderCast(); } /* ===================== SNAPSHOT ===================== */ function exportSnapshot(){ const data = JSON.stringify(state, null, 2); const blob = new Blob([data], {type:"application/json"}); const url = URL.createObjectURL(blob); const a = document.createElement("a"); const stamp = new Date().toISOString().slice(0,10); a.href = url; a.download = `dark-epoch-tavern-save-${stamp}.json`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); log("⬇ Snapshot exported."); } function importSnapshot(file){ if(!file) return; const reader = new FileReader(); reader.onload = (e) => { try{ const data = JSON.parse(e.target.result); if(!data.you) throw new Error("missing player data"); state = Object.assign({}, state, data); save(); renderAll(); log("⬆ Snapshot imported."); alert("Snapshot loaded."); }catch(err){ alert("That doesn't look like a valid snapshot file."); } }; reader.readAsText(file); document.getElementById("import-file").value = ""; } /* ===================== LOG ===================== */ function log(msg){ state.logEntries = state.logEntries || []; state.logEntries.unshift(msg); state.logEntries = state.logEntries.slice(0, 40); save(); renderLog(); } function renderLog(){ const el = document.getElementById("log"); el.innerHTML = ""; (state.logEntries || []).forEach(msg => { const div = document.createElement("div"); div.textContent = msg; el.appendChild(div); }); } /* ===================== LOOT / INVENTORY ===================== */ const RARITY_ORDER = { Legendary:0, Epic:1, Rare:2, Common:3 }; function renderInventory(){ const inv = state.inventory || {}; const names = Object.keys(inv); document.getElementById("loot-count").textContent = names.reduce((s,n)=>s+inv[n],0) + " items"; const list = document.getElementById("loot-list"); const empty = document.getElementById("loot-empty"); list.innerHTML = ""; if(!names.length){ empty.classList.add("show"); return; } empty.classList.remove("show"); const items = names.map(name => { const def = LOOT_TABLE.find(i => i.name === name); return { name, count: inv[name], rarity: def ? def.rarity : "Common" }; }).sort((a,b) => (RARITY_ORDER[a.rarity]-RARITY_ORDER[b.rarity]) || a.name.localeCompare(b.name)); items.forEach(item => { const row = document.createElement("div"); row.className = "loot-row"; const color = RARITY_COLORS[item.rarity] || "#a89a86"; row.innerHTML = ` <span class="loot-dot" style="background:${color}"></span> <span class="loot-name">${item.name}</span> <span class="loot-rarity" style="color:${color}">${item.rarity}</span> <span class="loot-count">×${item.count}</span> `; list.appendChild(row); }); } // Records a genuine boss kill (not a "played it safe" outcome). Returns true if this // is the very first time this named boss has been recorded. function recordKill(bossName){ state.bestiary = state.bestiary || {}; const isFirst = !state.bestiary[bossName]; state.bestiary[bossName] = (state.bestiary[bossName] || 0) + 1; ensureWeeklyReset(); state.weekly.bossKills++; save(); return isFirst; } function renderBestiary(){ const b = state.bestiary || {}; const names = Object.keys(b); document.getElementById("bestiary-count").textContent = names.length + " recorded"; const list = document.getElementById("bestiary-list"); const empty = document.getElementById("bestiary-empty"); list.innerHTML = ""; if(!names.length){ empty.classList.add("show"); return; } empty.classList.remove("show"); names .sort((a, c) => b[c] - b[a] || a.localeCompare(c)) .forEach(name => { const row = document.createElement("div"); row.className = "bestiary-row"; row.innerHTML = `<span class="bestiary-name">${name}</span><span class="bestiary-kills">×${b[name]}</span>`; list.appendChild(row); }); } // Checks every achievement against current state and announces any newly-earned ones. // Titles are computed live from existing progress — nothing extra to track except which // ones have already been announced, so this is safe to call after any stat-changing action. function checkNewTitles(){ state.titlesSeen = state.titlesSeen || []; let changed = false; ACHIEVEMENTS.forEach(a => { if(a.check(state) && !state.titlesSeen.includes(a.id)){ state.titlesSeen.push(a.id); log(`🏆 Title unlocked: ${a.name} — ${a.desc}`); changed = true; } }); if(changed) save(); renderTitles(); } function renderTitles(){ const unlocked = ACHIEVEMENTS.filter(a => a.check(state)); document.getElementById("titles-count").textContent = `${unlocked.length} / ${ACHIEVEMENTS.length}`; const list = document.getElementById("titles-list"); list.innerHTML = ""; ACHIEVEMENTS.forEach(a => { const isUnlocked = a.check(state); const row = document.createElement("div"); row.className = "title-row" + (isUnlocked ? "" : " locked"); row.innerHTML = ` <span class="title-icon">${a.icon}</span> <span class="title-main"> <span class="title-name">${a.name}</span> <div class="title-desc">${a.desc}</div> </span> <span class="title-check">${isUnlocked ? "✓" : ""}</span> `; list.appendChild(row); }); } function renderStats(){ const s = state.stats || {fightsWon:0,fightsLost:0,totalXp:0,totalZen:0,longestFight:0,mostGuildmates:0,bountiesTaken:0}; const totalFights = s.fightsWon + s.fightsLost; const winRate = totalFights ? Math.round((s.fightsWon / totalFights) * 100) : 0; const uniqueBosses = Object.keys(state.bestiary || {}).length; const totalKills = Object.values(state.bestiary || {}).reduce((a,b)=>a+b, 0); const totalLoot = Object.values(state.inventory || {}).reduce((a,b)=>a+b, 0); const titlesUnlocked = ACHIEVEMENTS.filter(a => a.check(state)).length; const cards = [ {num: state.you.level, label: "Level"}, {num: s.fightsWon, label: "Fights Won"}, {num: s.fightsLost, label: "Fights Lost"}, {num: winRate + "%", label: "Win Rate"}, {num: s.totalXp, label: "Total XP Earned"}, {num: s.totalZen, label: "Total Zen Earned"}, {num: s.longestFight, label: "Longest Fight (rounds)"}, {num: s.mostGuildmates, label: "Most Guildmates Joined"}, {num: s.bountiesTaken, label: "Bounties Taken"}, {num: uniqueBosses, label: "Unique Bosses (Bestiary)"}, {num: totalKills, label: "Total Boss Kills"}, {num: totalLoot, label: "Total Loot Items"}, {num: titlesUnlocked + " / " + ACHIEVEMENTS.length, label: "Titles Unlocked"}, ]; const grid = document.getElementById("stats-grid"); grid.innerHTML = ""; cards.forEach(c => { const card = document.createElement("div"); card.className = "stat-card"; card.innerHTML = `<div class="stat-num">${c.num}</div><div class="stat-label">${c.label}</div>`; grid.appendChild(card); }); } /* ===================== WEEKLY GOALS ===================== */ // Week is anchored to Monday, matching the Guild Calendar's own week layout. function weekStr(){ const d = new Date(); const day = d.getDay(); // 0=Sun..6=Sat const diffToMonday = (day === 0 ? -6 : 1) - day; const monday = new Date(d); monday.setDate(d.getDate() + diffToMonday); return `${monday.getFullYear()}-${monday.getMonth()+1}-${monday.getDate()}`; } function ensureWeeklyReset(){ state.weekly = state.weekly || {weekStart:null,guildBossWins:0,bossKills:0,bountiesTaken:0,enhancements:0,claimed:[]}; const w = weekStr(); if(state.weekly.weekStart !== w){ state.weekly = {weekStart:w, guildBossWins:0, bossKills:0, bountiesTaken:0, enhancements:0, claimed:[]}; } } function renderWeeklyGoals(){ ensureWeeklyReset(); const wk = state.weekly; const list = document.getElementById("weekly-goals-list"); list.innerHTML = ""; WEEKLY_GOALS.forEach(g => { const progress = Math.min(wk[g.key] || 0, g.target); const pct = Math.round((progress / g.target) * 100); const isDone = progress >= g.target; const isClaimed = wk.claimed.includes(g.id); const rewardText = Object.entries(g.reward).map(([k,v]) => `+${v} ${k === "zen" ? "Zen" : "XP"}`).join(", "); const card = document.createElement("div"); card.className = "weekly-card" + (isDone ? " done" : ""); card.innerHTML = ` <div class="weekly-head"> <span class="weekly-name">${g.name}</span> <span class="weekly-progress-num">${progress} / ${g.target}</span> </div> <div class="weekly-desc">${g.desc} Reward: ${rewardText}.</div> <div class="weekly-bar-track"><div class="weekly-bar-fill" style="width:${pct}%"></div></div> <button class="btn-claim ${isClaimed ? "claimed" : ""}" ${(!isDone || isClaimed) ? "disabled" : ""} onclick="claimWeeklyGoal('${g.id}')"> ${isClaimed ? "✓ Claimed" : isDone ? "Claim Reward" : "In Progress"} </button> `; list.appendChild(card); }); } function claimWeeklyGoal(id){ ensureWeeklyReset(); const g = WEEKLY_GOALS.find(x => x.id === id); if(!g) return; const wk = state.weekly; if(wk.claimed.includes(id)) return; if((wk[g.key] || 0) < g.target) return; wk.claimed.push(id); if(g.reward.zen) grantZen(g.reward.zen); if(g.reward.xp) grantXP(g.reward.xp); log(`🗓 Weekly Goal complete: ${g.name} — ${Object.entries(g.reward).map(([k,v]) => `+${v} ${k === "zen" ? "Zen" : "XP"}`).join(", ")}.`); save(); renderPlayer(); renderWeeklyGoals(); } /* ===================== RESET ===================== */ function resetGame(){ if(!confirm("Reset the entire campaign? All levels, gear, Zen, loot, Bestiary, Titles, and Stats will be lost.")) return; localStorage.removeItem("darkEpochTavernV2"); state = { you: { name:"OLLAT", level:1, xp:0, hp:20, maxHp:20, zen:100, weaponEnh:0, armorEnh:0 }, npcCast: NPC_DEFAULT_CAST.slice(), unit: "sip", quest: null, logEntries: [], bounty: { remaining: 30, resetDate: null }, autoCombat: { lastCollect: Date.now(), upgradeLevel: 0 }, dailyBossAttempts: { ancient: { remaining: 3, resetDate: null }, solo: { remaining: 2, resetDate: null }, }, inventory: {}, bestiary: {}, titlesSeen: [], stats: { fightsWon: 0, fightsLost: 0, totalXp: 0, totalZen: 0, longestFight: 0, mostGuildmates: 0, bountiesTaken: 0, }, weekly: { weekStart: null, guildBossWins: 0, bossKills: 0, bountiesTaken: 0, enhancements: 0, claimed: [], }, }; save(); renderAll(); log("🌑 A new campaign begins in the Rift Tavern."); } /* ===================== INIT ===================== */ function renderAll(){ renderPlayer(); renderZoneGrid(); renderCalendar(); renderUnits(); renderCast(); renderLog(); renderBounty(); renderDailyBossTiles(); renderAutoCombat(); renderInventory(); renderBestiary(); renderStats(); document.getElementById("room").classList.remove("show"); if(state.quest){ document.getElementById("room").classList.add("show"); renderQuest(); } } load(); renderAll(); document.getElementById("cast-input").addEventListener("keydown", e => { if(e.key === "Enter") addCast(); }); setInterval(renderAutoCombat, 30000); </script> </body> </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legends — Dark Epoch Rift Tavern</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#0b0710; --panel:#170f1e; --panel-2:#20141d;
+    --rune-gold:#c9a24a; --rune-gold-dim:#8a7239;
+    --blood:#7a1128; --blood-bright:#b3213c;
+    --violet:#6b2fa3; --violet-glow:#9b5ce0;
+    --parchment:#e8dfc7; --parchment-dim:#a89a86;
+    --hp-good:#7d9c3f; --hp-mid:#c9a24a; --hp-low:#b3213c;
+    --xp:#7d9c3f;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(107,47,163,0.18), transparent 55%),
+      radial-gradient(ellipse at 85% 15%, rgba(122,17,40,0.22), transparent 50%),
+      linear-gradient(180deg, #0b0710 0%, #100a15 40%, #0b0710 100%);
+    color:var(--parchment); font-family:'EB Garamond', serif;
+    min-height:100vh; padding:0 0 60px; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:640px;margin:0 auto;padding:18px 14px;}
+
+  header{text-align:center;margin-bottom:16px;}
+  .eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;color:var(--rune-gold-dim);text-transform:uppercase;margin-bottom:6px;}
+  h1{font-family:'Cinzel Decorative', serif;font-size:clamp(26px,7vw,36px);margin:0;background:linear-gradient(180deg,#f3e3ad,#c9a24a 55%,#8a6a24);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 30px rgba(201,162,74,0.25);}
+  .subtitle{font-family:'Cinzel',serif;font-size:12.5px;letter-spacing:.12em;color:var(--parchment-dim);margin-top:6px;text-transform:uppercase;}
+  .divider{height:1px;margin:14px auto 0;width:70%;background:linear-gradient(90deg,transparent,var(--rune-gold-dim),transparent);}
+
+  .panel{background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid rgba(201,162,74,0.18);border-radius:10px;padding:16px;margin-bottom:14px;box-shadow:0 8px 24px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.02);}
+  .panel-title{font-family:'Cinzel',serif;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--rune-gold);margin:0 0 12px;display:flex;align-items:center;justify-content:space-between;}
+
+  /* Player status (always visible) */
+  .player-card{display:flex;gap:12px;align-items:center;}
+  .player-badge{width:52px;height:52px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cinzel Decorative',serif;font-weight:700;font-size:18px;background:conic-gradient(from 220deg,var(--violet),var(--blood) 50%,var(--violet));color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.5);}
+  .player-main{flex:1;min-width:0;}
+  .player-name-row{display:flex;align-items:center;gap:8px;font-family:'Cinzel',serif;font-size:16px;color:var(--parchment);}
+  .player-class{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--violet-glow);letter-spacing:.05em;margin-top:1px;}
+  .lvl-tag{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--rune-gold);}
+  .cond-tag{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.05em;padding:2px 7px;border-radius:10px;text-transform:uppercase;}
+  .cond-Healthy{background:rgba(125,156,63,0.18);color:#a9c97a;border:1px solid rgba(125,156,63,0.4);}
+  .cond-Wounded{background:rgba(201,162,74,0.15);color:var(--rune-gold);border:1px solid rgba(201,162,74,0.4);}
+  .cond-Critical{background:rgba(179,33,60,0.2);color:#f0a4b4;border:1px solid rgba(179,33,60,0.5);animation:pulseRed 1.4s infinite;}
+  @keyframes pulseRed{0%,100%{opacity:1;}50%{opacity:.55;}}
+  .bar-row{display:flex;align-items:center;gap:6px;margin-top:6px;}
+  .bar-label{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--parchment-dim);width:26px;flex:none;}
+  .bar-track{flex:1;height:7px;border-radius:4px;background:rgba(255,255,255,0.06);overflow:hidden;}
+  .bar-fill{height:100%;border-radius:4px;transition:width .4s ease;}
+  .bar-fill.xp{background:linear-gradient(90deg,#4d6b26,var(--xp));}
+  .bar-fill.hp{background:linear-gradient(90deg,#7a1128,var(--hp-good));}
+  .bar-num{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--parchment-dim);width:56px;flex:none;text-align:right;}
+  .zen-row{margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--rune-gold);display:flex;justify-content:space-between;}
+  .rest-btn{margin-top:10px;width:100%;font-family:'Cinzel',serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;background:rgba(125,156,63,0.12);border:1px solid rgba(125,156,63,0.4);color:#a9c97a;padding:8px;border-radius:7px;cursor:pointer;}
+  .critical-banner{display:none;margin-top:10px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#f0a4b4;background:rgba(179,33,60,0.14);border:1px solid rgba(179,33,60,0.4);border-radius:7px;padding:8px;}
+  .critical-banner.show{display:block;}
+
+  /* Tabs */
+  .tabbar{display:flex;gap:6px;margin-bottom:14px;}
+  .tab-btn{flex:1;font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:.03em;text-transform:uppercase;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.08);color:var(--parchment-dim);padding:9px 3px;border-radius:7px;cursor:pointer;text-align:center;}
+  .tab-btn.active{border-color:var(--rune-gold);color:var(--rune-gold);background:rgba(201,162,74,0.1);}
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;}
+
+  /* Zone grid */
+  .mini-card{background:rgba(0,0,0,0.22);border-radius:8px;padding:11px;margin-bottom:10px;}
+  .mini-card:last-child{margin-bottom:0;}
+  .mini-card-head{display:flex;justify-content:space-between;align-items:center;}
+  .mini-card-name{font-family:'Cinzel',serif;font-size:13.5px;color:var(--parchment);}
+  .mini-card-tag{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--rune-gold-dim);}
+  .mini-card-desc{font-size:12px;color:var(--parchment-dim);font-style:italic;margin:4px 0 8px;line-height:1.4;}
+  .autocombat-upgrade-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);}
+  .autocombat-upgrade-row span{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--parchment-dim);}
+  .autocombat-upgrade-row button{flex:none;}
+  .zone-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .zone-card{background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:11px;cursor:pointer;transition:border-color .15s;}
+  .zone-card:hover{border-color:var(--rune-gold-dim);}
+  .zone-card.special{border-color:rgba(179,33,60,0.5);background:linear-gradient(180deg,rgba(122,17,40,0.15),rgba(0,0,0,0.25));grid-column:1 / -1;}
+  .zone-card.locked{opacity:0.5;cursor:default;}
+  .zone-card.locked:hover{border-color:rgba(255,255,255,0.07);}
+  .zone-card.locked .zone-card-name{color:var(--parchment-dim);}
+  .zone-card.locked .zone-card-tier{color:var(--blood-bright);}
+  .zone-card-name{font-family:'Cinzel',serif;font-size:13.5px;color:var(--parchment);}
+  .zone-card-tier{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--rune-gold-dim);margin-top:3px;}
+  .zone-card-desc{font-size:12px;color:var(--parchment-dim);font-style:italic;margin-top:4px;line-height:1.4;}
+
+  /* Zone room / quest overlay */
+  .room{display:none;margin-top:14px;}
+  .room.show{display:block;animation:reveal .3s ease;}
+  @keyframes reveal{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+  .room-zone{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--parchment-dim);letter-spacing:.05em;}
+  .room-boss{font-family:'Cinzel',serif;font-size:19px;font-weight:700;color:var(--parchment);margin:4px 0 6px;}
+  .room-flavor{font-style:italic;color:var(--parchment-dim);font-size:14px;line-height:1.5;margin-bottom:10px;}
+  .boss-hp-wrap{display:none;margin-bottom:12px;}
+  .boss-hp-wrap.show{display:block;}
+  .boss-hp-label{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--parchment-dim);margin-bottom:4px;}
+  .strike-line{margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--parchment);min-height:16px;}
+  .strike-line.hit{color:#a9c97a;}
+  .strike-line.miss{color:var(--blood-bright);}
+  .milestone-line{display:none;font-family:'Cinzel',serif;font-size:13px;color:var(--rune-gold);text-align:center;padding:6px 4px;font-style:italic;}
+  .milestone-line.show{display:block;animation:reveal .4s ease;}
+  .cameo{font-family:'JetBrains Mono',monospace;font-size:11.5px;padding:7px 10px;border-radius:6px;margin-bottom:10px;}
+  .cameo.ally{background:rgba(125,156,63,0.12);color:#a9c97a;border:1px solid rgba(125,156,63,0.35);}
+  .cameo.rival{background:rgba(201,162,74,0.1);color:var(--rune-gold);border:1px solid rgba(201,162,74,0.3);}
+  .tier-tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:4px;margin-bottom:8px;}
+  .tier-Minion{background:rgba(125,156,63,0.18);color:#a9c97a;border:1px solid rgba(125,156,63,0.4);}
+  .tier-Elite{background:rgba(201,162,74,0.15);color:var(--rune-gold);border:1px solid rgba(201,162,74,0.4);}
+  .tier-Boss{background:rgba(179,33,60,0.18);color:#e0708a;border:1px solid rgba(179,33,60,0.45);}
+  .tier-WorldBoss{background:rgba(107,47,163,0.25);color:#c9a2f0;border:1px solid rgba(155,92,224,0.55);}
+  .tier-Ancient{background:rgba(201,162,74,0.1);color:#f0d98c;border:1px solid rgba(240,217,140,0.5);}
+
+  .choice-row{display:flex;flex-direction:column;gap:8px;}
+  .choice-row.auto-running{opacity:0.4;pointer-events:none;}
+  .btn-auto-fight{
+    width:100%;margin-top:10px;font-family:'Cinzel',serif;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;
+    background:rgba(155,92,224,0.15);border:1px solid var(--violet-glow);color:#d8bdf5;padding:9px;border-radius:7px;cursor:pointer;
+  }
+  .btn-auto-fight.running{background:rgba(179,33,60,0.18);border-color:var(--blood-bright);color:#f0a4b4;}
+  .choice-btn{text-align:left;background:rgba(0,0,0,0.22);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px 12px;cursor:pointer;}
+  .choice-btn:hover{border-color:var(--violet-glow);}
+  .choice-label{font-family:'Cinzel',serif;font-size:13.5px;color:var(--parchment);}
+  .choice-desc{font-size:12px;color:var(--parchment-dim);font-style:italic;margin-top:2px;}
+  .choice-stat{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--rune-gold-dim);margin-top:3px;}
+
+  .result-box{margin-top:12px;padding:12px;border-radius:8px;text-align:center;display:none;}
+  .result-box.show{display:block;animation:reveal .3s ease;}
+  .result-box.win{background:rgba(125,156,63,0.14);border:1px solid rgba(125,156,63,0.4);}
+  .result-box.lose{background:rgba(122,17,40,0.18);border:1px solid rgba(179,33,60,0.45);}
+  .roll-num{font-family:'JetBrains Mono',monospace;font-size:24px;color:var(--parchment);margin-bottom:2px;}
+  .result-verb{font-family:'Cinzel',serif;font-size:14.5px;text-transform:uppercase;letter-spacing:.07em;}
+  .result-detail{font-size:13.5px;color:var(--parchment-dim);margin-top:4px;}
+  .pill{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:12.5px;padding:6px 12px;border-radius:20px;}
+  .pill.hp{color:var(--blood-bright);background:rgba(179,33,60,0.12);border:1px solid rgba(179,33,60,0.4);}
+  .pill.toll{color:var(--blood-bright);background:rgba(179,33,60,0.12);border:1px solid rgba(179,33,60,0.4);margin-left:6px;}
+  .room-actions{display:flex;gap:8px;margin-top:12px;}
+  .btn-ghost{flex:1;font-family:'Cinzel',serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;background:rgba(201,162,74,0.1);border:1px solid var(--rune-gold-dim);color:var(--rune-gold);padding:9px;border-radius:7px;cursor:pointer;}
+  .btn-leave{flex:1;font-family:'Cinzel',serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.1);color:var(--parchment-dim);padding:9px;border-radius:7px;cursor:pointer;}
+
+  /* Calendar */
+  .cal-row{display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid rgba(255,255,255,0.05);}
+  .cal-row:last-child{border-bottom:none;}
+  .cal-time{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--rune-gold-dim);width:52px;flex:none;}
+  .cal-name{font-family:'Cinzel',serif;font-size:13.5px;color:var(--parchment);flex:1;}
+  .cal-join{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.05em;text-transform:uppercase;background:rgba(155,92,224,0.15);border:1px solid var(--violet-glow);color:#d8bdf5;padding:6px 12px;border-radius:14px;cursor:pointer;flex:none;}
+  .cal-week{display:none;margin-top:10px;flex-direction:column;gap:6px;}
+  .weekly-card{background:rgba(0,0,0,0.22);border-radius:8px;padding:11px;margin-bottom:10px;}
+  .weekly-card:last-child{margin-bottom:0;}
+  .weekly-card.done{border:1px solid rgba(125,156,63,0.4);background:rgba(125,156,63,0.08);}
+  .weekly-head{display:flex;justify-content:space-between;align-items:center;}
+  .weekly-name{font-family:'Cinzel',serif;font-size:13.5px;color:var(--parchment);}
+  .weekly-progress-num{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--rune-gold-dim);}
+  .weekly-desc{font-size:11.5px;color:var(--parchment-dim);font-style:italic;margin:4px 0 8px;}
+  .weekly-bar-track{height:6px;border-radius:4px;background:rgba(255,255,255,0.06);overflow:hidden;}
+  .weekly-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#4d6b26,var(--xp));transition:width .4s ease;}
+  .btn-claim{width:100%;margin-top:8px;font-family:'Cinzel',serif;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;background:rgba(201,162,74,0.12);border:1px solid var(--rune-gold-dim);color:var(--rune-gold);padding:7px;border-radius:6px;cursor:pointer;}
+  .btn-claim:disabled{opacity:0.4;cursor:default;}
+  .btn-claim.claimed{background:rgba(125,156,63,0.12);border-color:rgba(125,156,63,0.4);color:#a9c97a;}
+  .cal-week.show{display:flex;}
+  .cal-day-block{background:rgba(0,0,0,0.2);border-radius:6px;padding:8px 10px;border-left:3px solid rgba(255,255,255,0.1);}
+  .cal-day-block.cal-day-today{border-left-color:var(--rune-gold);background:rgba(201,162,74,0.08);}
+  .cal-day-name{font-family:'Cinzel',serif;font-size:12px;color:var(--rune-gold);text-transform:uppercase;}
+  .cal-day-evs{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--parchment-dim);margin-top:3px;line-height:1.5;}
+
+  /* Loot */
+  .loot-empty{display:none;text-align:center;font-size:13px;color:var(--parchment-dim);font-style:italic;padding:14px 6px;line-height:1.5;}
+  .loot-empty.show{display:block;}
+  .loot-row{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid rgba(255,255,255,0.05);}
+  .loot-row:last-child{border-bottom:none;}
+  .loot-dot{width:9px;height:9px;border-radius:50%;flex:none;}
+  .loot-name{flex:1;font-family:'Cinzel',serif;font-size:13.5px;}
+  .loot-rarity{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;flex:none;}
+  .bestiary-row{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid rgba(255,255,255,0.05);}
+  .bestiary-row:last-child{border-bottom:none;}
+  .bestiary-name{flex:1;font-family:'Cinzel',serif;font-size:13.5px;color:var(--parchment);}
+  .bestiary-kills{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--rune-gold-dim);flex:none;}
+  .title-row{display:flex;align-items:flex-start;gap:10px;padding:9px 4px;border-bottom:1px solid rgba(255,255,255,0.05);}
+  .title-row:last-child{border-bottom:none;}
+  .title-row.locked{opacity:0.45;}
+  .title-icon{font-size:18px;flex:none;width:22px;text-align:center;}
+  .title-main{flex:1;}
+  .title-name{font-family:'Cinzel',serif;font-size:13.5px;color:var(--parchment);}
+  .title-row.locked .title-name{color:var(--parchment-dim);}
+  .title-desc{font-size:11.5px;color:var(--parchment-dim);font-style:italic;margin-top:2px;}
+  .title-check{font-family:'JetBrains Mono',monospace;font-size:14px;flex:none;color:var(--xp);}
+  .loot-count{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--parchment-dim);flex:none;width:28px;text-align:right;}
+
+  /* Tavern & Hans */
+  .npc-row{display:flex;gap:12px;align-items:flex-start;margin-bottom:6px;}
+  .npc-portrait{width:44px;height:44px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;background:radial-gradient(circle,rgba(201,162,74,0.25),rgba(0,0,0,0.3));border:1px solid rgba(201,162,74,0.3);}
+  .npc-name{font-family:'Cinzel',serif;font-size:14.5px;color:var(--rune-gold);}
+  .npc-role{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--parchment-dim);}
+  .speech{margin-top:10px;background:rgba(0,0,0,0.25);border-left:3px solid var(--rune-gold-dim);border-radius:0 8px 8px 0;padding:10px 12px;font-style:italic;font-size:13.5px;color:var(--parchment);display:none;}
+  .speech.show{display:block;animation:reveal .25s ease;}
+  .item-card{background:rgba(0,0,0,0.22);border-radius:8px;padding:12px;margin-top:10px;}
+  .item-name{font-family:'Cinzel',serif;font-size:14px;color:var(--parchment);}
+  .item-plus{font-family:'JetBrains Mono',monospace;color:var(--rune-gold);}
+  .item-bar{height:5px;border-radius:3px;background:rgba(255,255,255,0.06);margin-top:6px;overflow:hidden;}
+  .item-bar-fill{height:100%;background:linear-gradient(90deg,#6b2fa3,var(--violet-glow));border-radius:3px;}
+  .item-meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--parchment-dim);margin-top:6px;display:flex;justify-content:space-between;}
+  .btn-enhance{width:100%;margin-top:8px;font-family:'Cinzel',serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;background:rgba(155,92,224,0.15);border:1px solid var(--violet-glow);color:#d8bdf5;padding:8px;border-radius:7px;cursor:pointer;}
+  .btn-enhance:disabled{opacity:.4;cursor:default;}
+
+  /* Settings */
+  .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .stat-card{background:rgba(0,0,0,0.22);border-radius:8px;padding:10px;text-align:center;}
+  .stat-num{font-family:'Cinzel Decorative',serif;font-size:19px;color:var(--rune-gold);}
+  .stat-label{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--parchment-dim);margin-top:3px;letter-spacing:.03em;}
+  .settings-grid{display:flex;gap:8px;flex-wrap:wrap;}
+  .unit-btn{flex:1;min-width:90px;font-family:'JetBrains Mono',monospace;font-size:12px;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.08);color:var(--parchment-dim);padding:9px;border-radius:6px;cursor:pointer;text-align:center;}
+  .unit-btn.active{border-color:var(--rune-gold);color:var(--rune-gold);background:rgba(201,162,74,0.1);}
+  .cast-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+  .cast-tag{font-family:'JetBrains Mono',monospace;font-size:11px;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.08);color:var(--parchment-dim);padding:4px 8px;border-radius:12px;display:flex;align-items:center;gap:5px;}
+  .cast-tag button{background:none;border:none;color:var(--blood-bright);cursor:pointer;font-size:12px;padding:0;}
+  .add-row{display:flex;gap:8px;margin-top:10px;}
+  .add-row input{flex:1;background:rgba(0,0,0,0.3);border:1px solid rgba(201,162,74,0.25);border-radius:6px;color:var(--parchment);padding:8px 10px;font-family:'EB Garamond',serif;font-size:14px;}
+  .btn-small{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:rgba(201,162,74,0.12);border:1px solid var(--rune-gold-dim);color:var(--rune-gold);padding:8px 12px;border-radius:6px;cursor:pointer;}
+  .snap-row{display:flex;gap:8px;margin-top:12px;}
+  .snap-row button{flex:1;}
+  .reset-link{display:block;text-align:center;margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--parchment-dim);text-decoration:underline;cursor:pointer;background:none;border:none;}
+  .save-note{text-align:center;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--parchment-dim);margin-top:8px;opacity:.8;}
+
+  .log{max-height:150px;overflow-y:auto;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--parchment-dim);display:flex;flex-direction:column-reverse;gap:4px;}
+  .log div{border-left:2px solid rgba(201,162,74,0.25);padding-left:8px;}
+  .footnote{text-align:center;font-size:11.5px;color:var(--parchment-dim);opacity:.75;margin-top:16px;line-height:1.6;padding:0 10px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">MU · DARK EPOCH</div>
+    <h1>The Rift Tavern</h1>
+    <div class="subtitle">Guild: Legends — Solo Campaign</div>
+    <div class="divider"></div>
+  </header>
+
+  <!-- PLAYER STATUS (always visible) -->
+  <div class="panel">
+    <div class="player-card">
+      <div class="player-badge" id="player-badge">OL</div>
+      <div class="player-main">
+        <div class="player-name-row">
+          <span id="player-name">OLLAT</span>
+          <span class="lvl-tag" id="player-lvl">LV 1</span>
+          <span class="cond-tag cond-Healthy" id="player-cond">Healthy</span>
+        </div>
+        <div class="player-class">🌑 Dark Wizard</div>
+        <div class="bar-row"><span class="bar-label">HP</span><div class="bar-track"><div class="bar-fill hp" id="hp-fill" style="width:100%"></div></div><span class="bar-num" id="hp-num">20/20</span></div>
+        <div class="bar-row"><span class="bar-label">XP</span><div class="bar-track"><div class="bar-fill xp" id="xp-fill" style="width:0%"></div></div><span class="bar-num" id="xp-num">0/30</span></div>
+      </div>
+    </div>
+    <div class="zen-row"><span>💰 Zen</span><span id="zen-num">100</span></div>
+    <button class="rest-btn" onclick="restPlayer()">🛌 Rest (free, full heal)</button>
+    <div class="critical-banner" id="critical-banner">You're too hurt to venture out. Rest above before your next fight.</div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabbar">
+    <button class="tab-btn active" data-tab="zones" onclick="switchTab('zones')">Zones</button>
+    <button class="tab-btn" data-tab="calendar" onclick="switchTab('calendar')">Calendar</button>
+    <button class="tab-btn" data-tab="loot" onclick="switchTab('loot')">Loot</button>
+    <button class="tab-btn" data-tab="tavern" onclick="switchTab('tavern')">Tavern</button>
+    <button class="tab-btn" data-tab="more" onclick="switchTab('more')">Log</button>
+  </div>
+
+  <!-- ZONES TAB -->
+  <div class="tab-panel active" id="tab-zones">
+    <div class="panel">
+      <div class="panel-title">Daily Activities</div>
+      <div class="mini-card">
+        <div class="mini-card-head">
+          <span class="mini-card-name">📜 Bounty Quest</span>
+          <span class="mini-card-tag" id="bounty-remaining">Remaining: 30</span>
+        </div>
+        <div class="mini-card-desc">A job off the board — turns into an Elite or Boss contract fight, or turns up a quest item outright. Straight from the real game's Event menu.</div>
+        <button class="btn-small" id="bounty-btn" onclick="takeBounty()">Take Bounty</button>
+      </div>
+      <div class="mini-card">
+        <div class="mini-card-head">
+          <span class="mini-card-name">🏛 Ancient Battlefield</span>
+          <span class="mini-card-tag" id="ancient-remaining">Remaining: 3</span>
+        </div>
+        <div class="mini-card-desc">A multi-hit boss fight — chip its HP down attack by attack, straight from the real Event menu.</div>
+        <button class="btn-small" id="ancient-btn" onclick="startDailyBoss('Ancient Battlefield')">Fight</button>
+      </div>
+      <div class="mini-card">
+        <div class="mini-card-head">
+          <span class="mini-card-name">👤 Solo Boss</span>
+          <span class="mini-card-tag" id="solo-remaining">Remaining: 2</span>
+        </div>
+        <div class="mini-card-desc">No party, no guild morale — just you against a boss HP bar.</div>
+        <button class="btn-small" id="solo-btn" onclick="startDailyBoss('Solo Boss')">Fight</button>
+      </div>
+      <div class="mini-card">
+        <div class="mini-card-head">
+          <span class="mini-card-name">⚙ Auto-Combat</span>
+          <span class="mini-card-tag" id="autocombat-elapsed">0m idle</span>
+        </div>
+        <div class="mini-card-desc">Progress banks passively while you're away. Collect it here — matches the real AFK leveling feature.</div>
+        <button class="btn-small" id="autocombat-btn" onclick="collectAutoCombat()">Collect</button>
+        <div class="autocombat-upgrade-row">
+          <span id="autocombat-upgrade-label">Lv 0 — 4h cap, 100% rate</span>
+          <button class="btn-small" id="autocombat-upgrade-btn" onclick="upgradeAutoCombat()">Upgrade</button>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Explore</div>
+      <div class="zone-grid" id="zone-grid"></div>
+    </div>
+    <div class="panel room" id="room">
+      <div class="tier-tag" id="room-tier">Tier</div>
+      <div class="room-zone" id="room-zone">Zone</div>
+      <div class="room-boss" id="room-boss">Boss Name</div>
+      <div id="room-cameo"></div>
+      <div class="room-flavor" id="room-flavor">Flavor text...</div>
+      <div class="boss-hp-wrap" id="boss-hp-wrap">
+        <div class="boss-hp-label"><span>Rounds Left</span><span id="boss-hp-num">99 / 99</span></div>
+        <div class="bar-track"><div class="bar-fill hp" id="boss-hp-fill" style="width:100%"></div></div>
+        <div class="milestone-line" id="milestone-line"></div>
+        <div class="strike-line" id="strike-line"></div>
+        <button class="btn-auto-fight" id="auto-fight-btn" onclick="toggleAutoFight()" style="display:none;">⚡ Auto Fight</button>
+      </div>
+      <div class="choice-row" id="choice-row"></div>
+      <button class="reset-link" id="retreat-btn" onclick="retreatFight()" style="display:none;">Retreat (no reward, no penalty)</button>
+      <div class="result-box" id="result-box">
+        <div class="roll-num" id="roll-num">--</div>
+        <div class="result-verb" id="result-verb">—</div>
+        <div class="result-detail" id="result-detail">—</div>
+        <div id="pill-wrap"></div>
+        <div class="room-actions">
+          <button class="btn-ghost" id="explore-again-btn" onclick="exploreAgain()">Explore Again</button>
+          <button class="btn-leave" onclick="leaveZone()">Leave Zone</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CALENDAR TAB -->
+  <div class="tab-panel" id="tab-calendar">
+    <div class="panel">
+      <div class="panel-title">Weekly Goals <span id="weekly-reset-label" style="color:var(--parchment-dim);font-family:'JetBrains Mono',monospace;letter-spacing:0;">Resets Monday</span></div>
+      <div id="weekly-goals-list"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Guild Calendar <span id="calendar-today-label" style="color:var(--parchment-dim);font-family:'JetBrains Mono',monospace;letter-spacing:0;">Today</span></div>
+      <div id="calendar-today-list"></div>
+      <button class="reset-link" onclick="toggleWeek()">Show full week ▾</button>
+      <div class="cal-week" id="calendar-week"></div>
+    </div>
+  </div>
+
+  <!-- LOOT TAB -->
+  <div class="tab-panel" id="tab-loot">
+    <div class="panel">
+      <div class="panel-title">Inventory <span id="loot-count" style="color:var(--parchment-dim);font-family:'JetBrains Mono',monospace;letter-spacing:0;">0 items</span></div>
+      <div id="loot-list"></div>
+      <div id="loot-empty" class="loot-empty">No loot yet. Real bosses (not trash mobs) have a chance to drop something when they fall.</div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Bestiary <span id="bestiary-count" style="color:var(--parchment-dim);font-family:'JetBrains Mono',monospace;letter-spacing:0;">0 recorded</span></div>
+      <div id="bestiary-list"></div>
+      <div id="bestiary-empty" class="loot-empty">No bosses recorded yet. Winning a fight (not playing it safe) adds the boss here.</div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Titles <span id="titles-count" style="color:var(--parchment-dim);font-family:'JetBrains Mono',monospace;letter-spacing:0;">0 / 0</span></div>
+      <div id="titles-list"></div>
+    </div>
+  </div>
+
+  <!-- TAVERN TAB -->
+  <div class="tab-panel" id="tab-tavern">
+    <div class="panel">
+      <div class="panel-title">The Tavern</div>
+      <div class="npc-row">
+        <div class="npc-portrait">🧙‍♀️</div>
+        <div>
+          <div class="npc-name">Rielmann</div>
+          <div class="npc-role">Guide · gives tips, helps with quests</div>
+        </div>
+      </div>
+      <button class="btn-small" onclick="talkToRielmann()">Talk to Rielmann</button>
+      <div class="speech" id="rielmann-speech"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Adventurer Hans</div>
+      <div class="npc-row">
+        <div class="npc-portrait">🔨</div>
+        <div>
+          <div class="npc-name">Hans</div>
+          <div class="npc-role">Blacksmith · enhances your gear</div>
+        </div>
+      </div>
+      <div class="item-card">
+        <div class="item-name">🪄 <span id="weapon-name">Apprentice Wand</span> <span class="item-plus" id="weapon-plus">+0</span></div>
+        <div class="item-bar"><div class="item-bar-fill" id="weapon-bar" style="width:0%"></div></div>
+        <div class="item-meta"><span id="weapon-cost">Cost: 40 Zen</span><span id="weapon-chance">Success: 85%</span></div>
+        <button class="btn-enhance" id="weapon-btn" onclick="enhance('weapon')">Enhance Staff</button>
+      </div>
+      <div class="item-card">
+        <div class="item-name">👘 <span id="armor-name">Traveler's Robe</span> <span class="item-plus" id="armor-plus">+0</span></div>
+        <div class="item-bar"><div class="item-bar-fill" id="armor-bar" style="width:0%"></div></div>
+        <div class="item-meta"><span id="armor-cost">Cost: 40 Zen</span><span id="armor-chance">Success: 85%</span></div>
+        <button class="btn-enhance" id="armor-btn" onclick="enhance('armor')">Enhance Robe</button>
+      </div>
+      <div class="speech" id="hans-speech"></div>
+    </div>
+  </div>
+
+  <!-- LOG/SETTINGS TAB -->
+  <div class="tab-panel" id="tab-more">
+    <div class="panel">
+      <div class="panel-title">Lifetime Stats</div>
+      <div class="stats-grid" id="stats-grid"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Toll Settings</div>
+      <div class="settings-grid" id="unit-grid"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">NPC Cast (random cameos)</div>
+      <div class="cast-tags" id="cast-tags"></div>
+      <div class="add-row">
+        <input id="cast-input" placeholder="Add a name" maxlength="16">
+        <button class="btn-small" onclick="addCast()">Add</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Snapshot</div>
+      <div class="snap-row">
+        <button class="btn-small" onclick="exportSnapshot()">⬇ Export JSON</button>
+        <button class="btn-small" onclick="document.getElementById('import-file').click()">⬆ Import JSON</button>
+      </div>
+      <input type="file" id="import-file" accept="application/json" style="display:none" onchange="importSnapshot(this.files[0])">
+      <div class="save-note">Auto-saves to this device after every action. Export a snapshot if you're switching devices, clearing your browser, or using a browser that reloads tabs in the background.</div>
+      <button class="reset-link" onclick="resetGame()">Reset the entire campaign</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Chronicle</div>
+      <div class="log" id="log"></div>
+    </div>
+  </div>
+
+  <div class="footnote">
+    Drink amounts are small by design — pace yourself, swap in water freely, and rest anytime. This is meant to be relaxing, not another chore.<br><br>
+    Some names lean on the real game's own slightly-translated phrasing (Corps, Garnets, "Ruler's Butler") — kept as flavor rather than smoothed out, since that's part of its charm. Mechanics behind those menus are my best approximation, not a 1:1 port.
+  </div>
+</div>
+
+<script>
+/* ===================== DATA ===================== */
+const NPC_DEFAULT_CAST = ["JMARTIN","KOKI","GADO","SAYURI","TOYANG","ALZ","002","JMEB","MARCUS"];
+
+const ZONES = [
+  {key:"lorencia", name:"Lorencia Ruins", tierPool:["Minion","Minion","Elite"], desc:"The fallen capital. Easy pickings for a warm-up.", levelReq:1},
+  {key:"noria", name:"Noria Woodlands", tierPool:["Minion","Elite"], desc:"Quiet groves, restless spirits.", levelReq:1},
+  {key:"swamp", name:"Swamp of Calmness", tierPool:["Minion","Elite"], desc:"Ironic name. Watch your footing.", levelReq:2},
+  {key:"elemental", name:"Elemental Altar", tierPool:["Minion","Elite"], desc:"Wave after wave pushes for the crystal at the center — hold the line and keep them off it.", levelReq:2},
+  {key:"icaria", name:"Icaria", tierPool:["Elite","Boss"], desc:"A running fight to keep hordes from reaching the entrance. Collect Illusionary Feathers along the way.", levelReq:4},
+  {key:"devias", name:"Devias Ice Fields", tierPool:["Elite","Boss"], desc:"Frostbite country. Bring your nerve.", levelReq:4},
+  {key:"atlans", name:"Atlans Deep", tierPool:["Elite","Boss"], desc:"Something ancient sleeps beneath the tide.", levelReq:5},
+  {key:"icarus", name:"Icarus Sky Tower", tierPool:["Elite","Boss"], desc:"The wind up here holds grudges.", levelReq:5},
+  {key:"kalima", name:"Kalima Rift", tierPool:["Elite","Boss"], desc:"A tear in the world. Don't linger — every boss here is a real multi-hit fight, not a single roll.", levelReq:6},
+  {key:"kanturu", name:"Kanturu Wastes", tierPool:["Elite","Boss"], desc:"Sand swallows the careless.", levelReq:6},
+  {key:"aida", name:"Aida Temple", tierPool:["Elite","Boss"], desc:"Cursed halls, older gods.", levelReq:7},
+  {key:"crywolf", name:"Crywolf Fortress", tierPool:["Elite","Boss"], desc:"The wolf legion never truly sleeps.", levelReq:7},
+  {key:"raklion", name:"Raklion Sanctuary", tierPool:["Boss"], desc:"Dragon country. Only for the geared-up.", levelReq:9},
+  {key:"demons", name:"Land of Demons", tierPool:["Minion","Minion","Minion","Elite"], desc:"No boss here — just hordes of monsters, one wave after another, for the better part of an hour. Best sustained XP anywhere, always open, no level gate.", special:true, rewardMult:1.6},
+];
+
+const BOSSES = {
+  Minion:[
+    {name:"Goblin Scout", flavor:"A scrawny lookout who screams for backup the moment it sees you."},
+    {name:"Skeleton Archer", flavor:"Rattling bones and a bow that's seen three centuries of dust."},
+    {name:"Bog Leech Swarm", flavor:"They drop from the reeds. You will find one in your boot later."},
+    {name:"Wind Wisp", flavor:"Harmless-looking. Extremely rude about it."},
+    {name:"Elbeland Bandit", flavor:"Wants your gold. Settles for your dignity instead."},
+  ],
+  Elite:[
+    {name:"Death Beam Knight", flavor:"His blade hums a note that means 'run.'"},
+    {name:"Genocider", flavor:"Blood Castle's old warden. Retired. Still bites."},
+    {name:"Frost Queen Sylvane", flavor:"Rules the ice fields with a stare that lowers the room temperature."},
+    {name:"Sand Wyrm Karesh", flavor:"Surfaces once, eats twice."},
+    {name:"Nightmare Wraith", flavor:"You've fought this one in your dreams. It remembers."},
+    {name:"Illusionary Feather Wraith", flavor:"Guards Icaria's relics. Molts when startled — mind the feathers."},
+    {name:"Elemental Core Guardian", flavor:"Animated crystal, humming with raw element. Not thrilled to be mined."},
+  ],
+  Boss:[
+    {name:"Red Dragon Selupan", flavor:"Raklion's guardian. Breathes fire, holds grudges longer."},
+    {name:"Hydra Queen Nyx", flavor:"Cut one head, two opinions grow back."},
+    {name:"Balrog Chief Utan", flavor:"Crywolf's iron general. Has never once said 'good game.'"},
+    {name:"Gorgon of Aida", flavor:"Do not maintain eye contact."},
+    {name:"Illusion Knight Zaikan", flavor:"There may be three of him. There is only one exit."},
+  ],
+  WorldBoss:[
+    {name:"KUNDUN, The Fallen God", flavor:"The Land of Demons bows to no adventurer. Tonight, you answer for it alone."},
+  ],
+  Ancient:[
+    {name:"EROHIM, The First Light", flavor:"Older than Kundun, older than the continent."},
+  ],
+};
+
+const TIER_CONFIG = {
+  Minion:   {dc:8,  xp:10, zen:6,  hp:2, drink:1},
+  Elite:    {dc:12, xp:20, zen:12, hp:4, drink:2},
+  Boss:     {dc:16, xp:35, zen:20, hp:7, drink:3},
+  WorldBoss:{dc:20, xp:60, zen:32, hp:10,drink:4},
+  Ancient:  {dc:23, xp:100,zen:50, hp:12,drink:4},
+};
+
+// Loot only drops from real bosses (see resolveAttack). Weighted by rarity.
+const LOOT_TABLE = [
+  {name:"Cracked Bone Charm", rarity:"Common", weight:40},
+  {name:"Torn Banner Scrap", rarity:"Common", weight:40},
+  {name:"Elemental Dust", rarity:"Common", weight:35},
+  {name:"Frost Queen's Shard", rarity:"Rare", weight:18},
+  {name:"Balrog Fang", rarity:"Rare", weight:18},
+  {name:"Illusion Knight's Mirror", rarity:"Rare", weight:15},
+  {name:"Selupan's Scale", rarity:"Epic", weight:6},
+  {name:"Demon Ruler's Seal", rarity:"Epic", weight:6},
+  {name:"Kundun's Broken Horn", rarity:"Legendary", weight:2},
+  {name:"Erohim's Ember", rarity:"Legendary", weight:1},
+];
+const RARITY_COLORS = { Common:"#a89a86", Rare:"#9fc4e0", Epic:"#c9a2f0", Legendary:"#f0d98c" };
+const LOOT_DROP_CHANCE = 0.55;
+
+const ACHIEVEMENTS = [
+  {id:"first_blood",     name:"First Blood",        icon:"🩸", desc:"Defeat your first named boss.",
+    check: s => Object.keys(s.bestiary||{}).length >= 1},
+  {id:"collector_5",     name:"Bestiary Collector", icon:"📖", desc:"Record 5 unique bosses in the Bestiary.",
+    check: s => Object.keys(s.bestiary||{}).length >= 5},
+  {id:"collector_10",    name:"Bestiary Master",    icon:"📚", desc:"Record 10 unique bosses in the Bestiary.",
+    check: s => Object.keys(s.bestiary||{}).length >= 10},
+  {id:"kundun_slayer",   name:"Kundun Slayer",      icon:"👑", desc:"Defeat KUNDUN, The Fallen God at least once.",
+    check: s => ((s.bestiary||{})["KUNDUN, The Fallen God"]||0) >= 1},
+  {id:"ancient_hunter",  name:"Ancient Hunter",     icon:"🜏", desc:"Defeat The Divine Demon at least once.",
+    check: s => ((s.bestiary||{})["The Divine Demon"]||0) >= 1},
+  {id:"level_10",        name:"Seasoned Wizard",    icon:"🔮", desc:"Reach Level 10.",
+    check: s => s.you.level >= 10},
+  {id:"level_20",        name:"Archmage",           icon:"⭐", desc:"Reach Level 20.",
+    check: s => s.you.level >= 20},
+  {id:"fully_enhanced",  name:"Fully Enchanted",    icon:"🪄", desc:"Enhance both staff and robe to +9.",
+    check: s => s.you.weaponEnh >= 9 && s.you.armorEnh >= 9},
+  {id:"hoarder",         name:"Hoarder",            icon:"🎒", desc:"Collect 10 or more total loot items.",
+    check: s => Object.values(s.inventory||{}).reduce((a,b)=>a+b,0) >= 10},
+  {id:"legendary_find",  name:"Legendary Find",     icon:"✨", desc:"Loot a Legendary-rarity item.",
+    check: s => Object.keys(s.inventory||{}).some(name => (LOOT_TABLE.find(i=>i.name===name)||{}).rarity === "Legendary")},
+];
+
+// Weekly Goals: bigger targets than the daily resets, tracked in state.weekly and
+// wiped whenever the current Monday-anchored week changes.
+const WEEKLY_GOALS = [
+  {id:"guild_devotion", name:"Guild Devotion", key:"guildBossWins", target:5,  reward:{zen:100}, desc:"Win 5 Guild BOSS fights this week."},
+  {id:"boss_hunter",    name:"Boss Hunter",    key:"bossKills",     target:20, reward:{zen:150}, desc:"Defeat 20 bosses this week (any Bestiary kill)."},
+  {id:"bounty_runner",  name:"Bounty Runner",  key:"bountiesTaken", target:15, reward:{zen:80},  desc:"Complete 15 Bounty Quests this week."},
+  {id:"gearing_up",     name:"Gearing Up",     key:"enhancements",  target:3,  reward:{zen:100}, desc:"Successfully enhance your gear 3 times this week."},
+];
+
+function rollLoot(){
+  const total = LOOT_TABLE.reduce((s, i) => s + i.weight, 0);
+  let r = Math.random() * total;
+  for(const item of LOOT_TABLE){ r -= item.weight; if(r <= 0) return item; }
+  return LOOT_TABLE[0];
+}
+
+const CHOICES = [
+  {key:"aggressive", label:"🔥 Meteor Strike", desc:"Channel everything into one devastating spell.", bonusMod:3, hpMult:1.6, xpMult:1.25, advantage:true, stat:"Higher reward, higher injury risk"},
+  {key:"tactical",   label:"⚡ Lightning Bolt", desc:"A precise arc of lightning, reliably placed.", bonusMod:1, hpMult:1.0, xpMult:1.0, stat:"Balanced risk and reward"},
+  {key:"cautious",   label:"❄ Ice Arrow",       desc:"A basic cantrip, cast safely from a distance.", guaranteed:true, stat:"No roll, no injury, modest reward"},
+];
+const MULTIHIT_STAT_TEXT = {
+  aggressive: "Same 1 round either way — bigger hit if it lands, worse backlash if it doesn't",
+  tactical: "Same 1 round either way — balanced hit chance and backlash risk",
+  cautious: "Always clears the round safely, zero backlash risk",
+};
+
+const WEEKDAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const GUILD_SCHEDULE = {
+  Monday:    [{time:"12:00", name:"Guild BOSS"}, {time:"20:30", name:"Square of Devil"}, {time:"19:45", name:"Lost Continent"}, {time:"Evening", name:"Treasure Convoy"}],
+  Tuesday:   [{time:"12:00", name:"Guild BOSS"}, {time:"20:30", name:"Battle of Gods"}, {time:"19:45", name:"Lost Continent"}],
+  Wednesday: [{time:"12:00", name:"Guild BOSS"}, {time:"20:00", name:"Conquest Battle"}, {time:"20:30", name:"Square of Devil"}, {time:"19:45", name:"Lost Continent"}, {time:"Evening", name:"Treasure Convoy"}],
+  Thursday:  [{time:"12:00", name:"Guild BOSS"}, {time:"20:30", name:"Demon Ruler Raid"}, {time:"19:45", name:"Lost Continent"}],
+  Friday:    [{time:"12:00", name:"Guild BOSS"}, {time:"20:30", name:"Square of Devil"}, {time:"19:45", name:"Lost Continent"}, {time:"Evening", name:"Treasure Convoy"}],
+  Saturday:  [{time:"12:00", name:"Guild BOSS"}, {time:"20:00", name:"Conquest Battle"}, {time:"19:45", name:"Lost Continent"}],
+  Sunday:    [{time:"12:00", name:"Guild BOSS"}, {time:"19:45", name:"Lost Continent"}, {time:"Evening", name:"Divine Demon Homefield"}],
+};
+const CALENDAR_EVENT_DEFS = {
+  "Guild BOSS":             {tier:"WorldBoss", zoneName:"Land of Demons — Guild Raid", boss:{name:"KUNDUN, The Fallen God", flavor:"An all-guild call. Five, six, sometimes more of Legends pile in alongside you — you lead the strike."}},
+  "Lost Continent":         {tier:"Boss",      zoneName:"Lost Continent — Faction Assembly", boss:{name:"Rival Corps Vanguard", flavor:"A faction-wide push — every guild in your faction shows up together. The loot still comes home to Legends."}},
+  "Square of Devil":        {tier:"Elite",     zoneName:"Square of Devil", boss:{name:"Devil's Honor Guard", flavor:"A closed arena test of raw guild strength."}},
+  "Conquest Battle":        {tier:"Boss",      zoneName:"Conquest Battlefield", boss:{name:"Enemy Guild Vanguard", flavor:"Territory's on the line. So is bragging rights."}},
+  "Demon Ruler Raid":       {tier:"Boss",      zoneName:"Demon Ruler's Domain", boss:{name:"The Demon Ruler", flavor:"He doesn't negotiate. He collects taxes in blood."}},
+  "Battle of Gods":         {tier:"Boss",      zoneName:"Battle of Gods Arena", boss:{name:"A Rival Champion", flavor:"Divinity's up for debate tonight."}},
+  "Treasure Convoy":        {tier:"Elite",     zoneName:"Treasure Convoy Route", boss:{name:"Convoy Guard Escort", flavor:"Less a boss fight, more a heist."}},
+  "Divine Demon Homefield": {tier:"Ancient",   zoneName:"Divine Demon Homefield", boss:{name:"The Divine Demon", flavor:"Sunday's reckoning. The whole realm is watching."}},
+};
+
+// Real Event-menu daily bosses — these get the multi-hit HP-bar fight treatment,
+// same as World Boss and Kalima (see resolveAttack / multiHit logic below).
+const DAILY_BOSS_DEFS = {
+  "Ancient Battlefield": {tier:"Boss", hpMult:1.4, rewardMult:1.3, dailyLimit:3, dailyKey:"ancient",
+    boss:{name:"Ancient Battlefield Guardian", flavor:"A relic warden from a war nobody remembers. Slow. Does not stop."}},
+  "Solo Boss": {tier:"Boss", hpMult:1.0, rewardMult:1.0, dailyLimit:2, dailyKey:"solo",
+    boss:{name:"Wandering Solo Boss", flavor:"No entourage, no mercy. Just you and it."}},
+};
+
+const UNITS = [
+  {key:"sip", label:"Sips"},
+  {key:"shot", label:"Shots"},
+  {key:"point", label:"Points (soft mode)"},
+];
+
+const RIELMANN_TIPS = [
+  "Fights go easier with a sharper staff — see Hans before diving into Kalima Rift.",
+  "Playing it safe is never wrong. If your HP's low, don't be too proud to cast Ice Arrow and walk away.",
+  "Land of Demons hits hardest but pays the best XP anywhere. Don't walk in wounded.",
+  "Meteor Strike doubles your risk, but the payoff matches it. Know your HP before you commit.",
+  "I've seen a few of the Legends limp back from Devias more than once. Ice fields aren't kind to the reckless.",
+  "Rest is free here. Use it. There's no prize for suffering through low HP.",
+  "Every level makes you tougher — and your spells hit harder too.",
+  "The Guild Calendar events pay the best Zen. Don't sleep on Guild BOSS at noon.",
+  "A robe doesn't stop hits, it just softens them. Get some enhancement in before Raklion.",
+  "Take a breath. This is supposed to help you unwind, not stress you out.",
+  "A cameo from a friendly face gives you a small bonus that round — worth waiting for if you're on the fence.",
+  "Treasure Convoy is low-risk. Good pick if you just want a quiet win.",
+  "Lightning Bolt won't win you glory, but it won't get you hurt either. There's no shame in reliable.",
+];
+
+const HANS_LINES = [
+  "Hold still. This might sting your wallet more than your mana.",
+  "Good wood, better hands. Let's see what we can do.",
+  "No shame in a swing and a miss. Gold's not going anywhere either way.",
+  "I don't destroy gear here — that's not the kind of shop I run.",
+];
+
+/* ===================== STATE ===================== */
+// Transient UI flag — deliberately NOT part of `state`, so it never gets saved/restored
+// and always starts false on a fresh page load.
+let autoFighting = false;
+
+let state = {
+  you: { name:"OLLAT", level:1, xp:0, hp:20, maxHp:20, zen:100, weaponEnh:0, armorEnh:0 },
+  npcCast: NPC_DEFAULT_CAST.slice(),
+  unit: "sip",
+  quest: null,
+  logEntries: [],
+  bounty: { remaining: 30, resetDate: null },
+  autoCombat: { lastCollect: Date.now(), upgradeLevel: 0 },
+  dailyBossAttempts: {
+    ancient: { remaining: 3, resetDate: null },
+    solo: { remaining: 2, resetDate: null },
+  },
+  inventory: {},
+  bestiary: {},
+  titlesSeen: [],
+  stats: {
+    fightsWon: 0, fightsLost: 0, totalXp: 0, totalZen: 0,
+    longestFight: 0, mostGuildmates: 0, bountiesTaken: 0,
+  },
+  weekly: {
+    weekStart: null, guildBossWins: 0, bossKills: 0, bountiesTaken: 0, enhancements: 0, claimed: [],
+  },
+};
+
+function xpToNext(level){ return level * 30; }
+
+function load(){
+  try{
+    const saved = JSON.parse(localStorage.getItem("darkEpochTavernV2"));
+    if(saved && saved.you){ state = Object.assign(state, saved); return; }
+  }catch(e){}
+}
+function save(){
+  localStorage.setItem("darkEpochTavernV2", JSON.stringify(state));
+}
+
+/* ===================== RENDER: PLAYER ===================== */
+function condition(){
+  const pct = state.you.hp / state.you.maxHp;
+  if(state.you.hp <= 0) return "Critical";
+  if(pct < 0.4) return "Wounded";
+  return "Healthy";
+}
+
+function renderPlayer(){
+  const y = state.you;
+  document.getElementById("player-badge").textContent = y.name.slice(0,2).toUpperCase();
+  document.getElementById("player-name").textContent = y.name;
+  document.getElementById("player-lvl").textContent = "LV " + y.level;
+
+  const cond = condition();
+  const condEl = document.getElementById("player-cond");
+  condEl.textContent = cond;
+  condEl.className = "cond-tag cond-" + cond;
+
+  const hpPct = Math.max(0, Math.round((y.hp / y.maxHp) * 100));
+  document.getElementById("hp-fill").style.width = hpPct + "%";
+  document.getElementById("hp-num").textContent = `${y.hp}/${y.maxHp}`;
+
+  const need = xpToNext(y.level);
+  const xpPct = Math.min(100, Math.round((y.xp / need) * 100));
+  document.getElementById("xp-fill").style.width = xpPct + "%";
+  document.getElementById("xp-num").textContent = `${y.xp}/${need}`;
+
+  document.getElementById("zen-num").textContent = y.zen;
+
+  document.getElementById("critical-banner").classList.toggle("show", y.hp <= 0);
+
+  renderZoneGrid();
+
+  renderEquipment();
+  checkNewTitles();
+  renderStats();
+  renderWeeklyGoals();
+}
+
+function grantXP(amount){
+  const y = state.you;
+  y.xp += amount;
+  state.stats = state.stats || {fightsWon:0,fightsLost:0,totalXp:0,totalZen:0,longestFight:0,mostGuildmates:0,bountiesTaken:0};
+  state.stats.totalXp += amount;
+  let leveled = false;
+  while(y.xp >= xpToNext(y.level)){
+    y.xp -= xpToNext(y.level);
+    y.level++;
+    y.maxHp += 4;
+    y.hp = y.maxHp; // level-up fully heals
+    leveled = true;
+  }
+  return leveled;
+}
+
+function grantZen(amount){
+  state.you.zen += amount;
+  state.stats = state.stats || {fightsWon:0,fightsLost:0,totalXp:0,totalZen:0,longestFight:0,mostGuildmates:0,bountiesTaken:0};
+  state.stats.totalZen += amount;
+}
+
+function restPlayer(){
+  state.you.hp = state.you.maxHp;
+  save();
+  renderPlayer();
+  log("🛌 You rest. Full HP restored.");
+}
+
+/* ===================== TABS ===================== */
+function switchTab(name){
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
+  document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+  document.getElementById("tab-" + name).classList.add("active");
+}
+
+/* ===================== ZONES ===================== */
+function isZoneLocked(z){
+  return !!z.levelReq && state.you.level < z.levelReq;
+}
+
+function renderZoneGrid(){
+  const grid = document.getElementById("zone-grid");
+  grid.innerHTML = "";
+  ZONES.forEach(z => {
+    const locked = isZoneLocked(z);
+    const card = document.createElement("div");
+    card.className = "zone-card" + (z.special ? " special" : "") + (locked ? " locked" : "");
+    card.onclick = () => enterZone(z.key);
+    card.innerHTML = locked
+      ? `
+      <div class="zone-card-name">🔒 ${z.name}</div>
+      <div class="zone-card-tier">Requires Level ${z.levelReq}</div>
+      <div class="zone-card-desc">${z.desc}</div>
+      `
+      : `
+      <div class="zone-card-name">⟟ ${z.name}</div>
+      <div class="zone-card-tier">${z.tierPool.join(" / ")}</div>
+      <div class="zone-card-desc">${z.desc}</div>
+      `;
+    grid.appendChild(card);
+  });
+}
+
+function randomFrom(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function roll1to20(){ return 1 + Math.floor(Math.random()*20); }
+
+function rollCameo(){
+  const r = Math.random();
+  if(!state.npcCast.length) return null;
+  if(r < 0.25) return {type:"ally", name: randomFrom(state.npcCast)};
+  if(r < 0.5) return {type:"rival", name: randomFrom(state.npcCast)};
+  return null;
+}
+
+// For boss fights: a random number of Legends guildmates show up and fight alongside you,
+// each chipping in their own damage every round regardless of your own rolls.
+function rollGuildJoin(){
+  if(!state.npcCast.length) return [];
+  const count = Math.floor(Math.random() * 4); // 0-3 guildmates
+  if(count === 0) return [];
+  const shuffled = state.npcCast.slice().sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, Math.min(count, shuffled.length));
+}
+
+function enterZone(key){
+  const zone = ZONES.find(z => z.key === key);
+  if(isZoneLocked(zone)){ alert(`${zone.name} is locked until Level ${zone.levelReq}. Land of Demons is always open if you want XP right now.`); return; }
+  if(state.quest && !state.quest.resolved){ alert("Finish or retreat from your current fight first."); document.getElementById("room").scrollIntoView({behavior:"smooth"}); return; }
+  if(state.you.hp <= 0){ alert("You're too hurt to venture out. Rest first."); return; }
+  startQuest({kind:"zone", zone});
+}
+
+function canExploreAgain(source){
+  // Bounty and daily-boss fights are one attempt = one fight. Repeats require spending
+  // another attempt from Daily Activities, not a free "Explore Again" loop.
+  return source.kind === "zone" || source.kind === "calendar";
+}
+
+function updateRoomActions(){
+  const q = state.quest;
+  document.getElementById("explore-again-btn").style.display = canExploreAgain(q.source) ? "inline-block" : "none";
+}
+
+function exploreAgain(){
+  if(state.you.hp <= 0){ alert("You're too hurt to keep exploring. Rest first."); return; }
+  const q = state.quest;
+  if(!q || !canExploreAgain(q.source)){ leaveZone(); return; }
+  startQuest(q.source);
+}
+
+function leaveZone(){
+  autoFighting = false;
+  document.getElementById("room").classList.remove("show");
+  document.getElementById("result-box").classList.remove("show");
+  document.getElementById("boss-hp-wrap").classList.remove("show");
+  document.getElementById("retreat-btn").style.display = "none";
+  document.getElementById("auto-fight-btn").style.display = "none";
+  state.quest = null;
+  save();
+}
+
+function retreatFight(){
+  const q = state.quest;
+  if(q) log(`🏳 ${state.you.name} retreats from ${q.boss.name}, no reward taken.`);
+  leaveZone();
+}
+
+function isMultiHit(source, tier){
+  // Every real boss — not trash mobs — gets the multi-hit round system, wherever it shows up:
+  // regular zones, the Guild Calendar, or the Daily Activities boss tiles.
+  if(tier === "Boss" || tier === "WorldBoss" || tier === "Ancient") return true;
+  if(source.kind === "zone" && source.zone.key === "kalima") return true; // Kalima's Elite pulls count too
+  if(source.kind === "dailyBoss") return true;
+  return false;
+}
+
+function startQuest(source){
+  let tier, boss, zoneName, guildMorale = false, rewardMult = 1, hpMult = 1;
+
+  if(source.kind === "zone"){
+    tier = randomFrom(source.zone.tierPool);
+    boss = randomFrom(BOSSES[tier]);
+    zoneName = source.zone.name;
+    rewardMult = source.zone.rewardMult || 1;
+  } else if(source.kind === "dailyBoss"){
+    const def = DAILY_BOSS_DEFS[source.name];
+    tier = def.tier; boss = def.boss; zoneName = source.name;
+    rewardMult = def.rewardMult; hpMult = def.hpMult;
+  } else if(source.kind === "bounty"){
+    tier = Math.random() < 0.5 ? "Elite" : "Boss";
+    boss = randomFrom(BOSSES[tier]);
+    zoneName = "Bounty Contract";
+  } else {
+    const def = CALENDAR_EVENT_DEFS[source.name];
+    tier = def.tier; boss = def.boss; zoneName = def.zoneName; guildMorale = true;
+  }
+
+  // Ancient-tier fights run longer by default (139 rounds), matching Ancient Battlefield's own scaling,
+  // unless a dailyBoss definition already set its own hpMult above.
+  if(hpMult === 1 && tier === "Ancient") hpMult = 1.4;
+
+  const cfg = TIER_CONFIG[tier];
+  const multiHit = isMultiHit(source, tier);
+  const cameo = multiHit ? null : rollCameo();
+  const joinedGuildmates = multiHit ? rollGuildJoin() : [];
+  const bossHpMax = multiHit ? Math.round(99 * hpMult) : 0;
+
+  state.quest = {
+    source, tier, boss, zoneName, cfg, guildMorale, cameo, rewardMult,
+    multiHit, bossHpMax, bossHp: bossHpMax, joinedGuildmates, resolved: false, milestonesFired: [],
+    attacksUsed: 0,
+  };
+  renderQuest();
+  document.getElementById("room").scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+function renderBossHp(){
+  const q = state.quest;
+  const wrap = document.getElementById("boss-hp-wrap");
+  if(!q.multiHit){ wrap.classList.remove("show"); document.getElementById("retreat-btn").style.display = "none"; return; }
+  wrap.classList.add("show");
+  const pct = Math.max(0, Math.round((q.bossHp / q.bossHpMax) * 100));
+  document.getElementById("boss-hp-fill").style.width = pct + "%";
+  document.getElementById("boss-hp-num").textContent = `${Math.max(q.bossHp,0)} / ${q.bossHpMax}`;
+  document.getElementById("retreat-btn").style.display = "block";
+}
+
+function renderChoiceButtons(handler){
+  const q = state.quest;
+  const row = document.getElementById("choice-row");
+  row.innerHTML = "";
+  CHOICES.forEach(c => {
+    const btn = document.createElement("button");
+    btn.className = "choice-btn";
+    btn.onclick = () => handler(c.key);
+    const stat = (q && q.multiHit) ? MULTIHIT_STAT_TEXT[c.key] : c.stat;
+    btn.innerHTML = `<div class="choice-label">${c.label}</div><div class="choice-desc">${c.desc}</div><div class="choice-stat">${stat}</div>`;
+    row.appendChild(btn);
+  });
+}
+
+function renderQuest(){
+  const q = state.quest;
+  document.getElementById("room-tier").textContent = q.tier === "WorldBoss" ? "World Boss" : q.tier;
+  document.getElementById("room-tier").className = "tier-tag tier-" + q.tier;
+  document.getElementById("room-zone").textContent = "⟟ " + q.zoneName.toUpperCase();
+  document.getElementById("room-boss").textContent = q.boss.name;
+  document.getElementById("room-flavor").textContent = q.boss.flavor;
+  document.getElementById("strike-line").textContent = "";
+  document.getElementById("strike-line").className = "strike-line";
+  document.getElementById("milestone-line").textContent = "";
+  document.getElementById("milestone-line").classList.remove("show");
+
+  autoFighting = false;
+  const autoBtn = document.getElementById("auto-fight-btn");
+  autoBtn.style.display = q.multiHit ? "block" : "none";
+  updateAutoFightButton();
+
+  const cameoEl = document.getElementById("room-cameo");
+  if(q.multiHit){
+    if(q.joinedGuildmates.length){
+      cameoEl.innerHTML = `<div class="cameo ally">🤝 ${q.joinedGuildmates.join(", ")} — ${q.joinedGuildmates.length === 1 ? "joins" : "join"} the fight, each landing their own hits every round.</div>`;
+    } else {
+      cameoEl.innerHTML = `<div class="cameo rival">👤 Nobody else made it this time — you're fighting this one alone.</div>`;
+    }
+  } else if(q.cameo){
+    cameoEl.innerHTML = q.cameo.type === "ally"
+      ? `<div class="cameo ally">🤝 ${q.cameo.name} fights alongside you this round (+2 bonus).</div>`
+      : `<div class="cameo rival">👀 ${q.cameo.name} is already here, hunting the same mark.</div>`;
+  } else {
+    cameoEl.innerHTML = "";
+  }
+
+  renderBossHp();
+  renderChoiceButtons(q.multiHit ? resolveAttack : resolveChoice);
+
+  document.getElementById("result-box").classList.remove("show");
+  document.getElementById("room").classList.add("show");
+}
+
+function resolveChoice(key){
+  const q = state.quest;
+  const choice = CHOICES.find(c => c.key === key);
+  const y = state.you;
+  const weaponBonus = Math.floor(y.weaponEnh / 2);
+  const armorMitigation = Math.floor(y.armorEnh / 2);
+  const levelBonus = Math.floor(y.level / 2);
+  const morale = q.guildMorale ? 2 : 0;
+  const allyBonus = (q.cameo && q.cameo.type === "ally") ? 2 : 0;
+
+  document.getElementById("choice-row").innerHTML = "";
+  const box = document.getElementById("result-box");
+  const pillWrap = document.getElementById("pill-wrap");
+  pillWrap.innerHTML = "";
+  box.classList.add("show");
+  q.resolved = true;
+  updateRoomActions();
+
+  if(choice.guaranteed){
+    const xp = Math.round(q.cfg.xp * 0.4 * q.rewardMult);
+    const zen = Math.round(q.cfg.zen * 0.4 * q.rewardMult);
+    const leveled = grantXP(xp);
+    grantZen(zen);
+    document.getElementById("roll-num").textContent = "—";
+    box.className = "result-box win show";
+    document.getElementById("result-verb").textContent = "Careful Success";
+    document.getElementById("result-detail").textContent =
+      `You keep your distance and pick ${q.boss.name} apart with ${choice.label}, walking away with ${xp} XP and ${zen} Zen. No risk taken.` + (leveled ? ` LEVEL UP → ${y.level}!` : "");
+    log(`❄ ${y.name} played it safe in ${q.zoneName} with ${choice.label} — +${xp} XP, +${zen} Zen.`);
+    save(); renderPlayer();
+    return;
+  }
+
+  const bonus = levelBonus + weaponBonus + choice.bonusMod + morale + allyBonus;
+  const d20 = choice.advantage ? Math.max(roll1to20(), roll1to20()) : roll1to20();
+  const total = d20 + bonus;
+  const success = total >= q.cfg.dc;
+
+  document.getElementById("roll-num").textContent = `${d20} + ${bonus} = ${total}`;
+
+  if(success){
+    const xp = Math.round(q.cfg.xp * (choice.xpMult || 1) * q.rewardMult);
+    const zen = Math.round(q.cfg.zen * (choice.xpMult || 1) * q.rewardMult);
+    const leveled = grantXP(xp);
+    grantZen(zen);
+    const firstKill = recordKill(q.boss.name);
+    state.stats.fightsWon++;
+    box.className = "result-box win show";
+    document.getElementById("result-verb").textContent = "Victory";
+    document.getElementById("result-detail").textContent =
+      `${total} vs DC ${q.cfg.dc} — ${choice.label} lands true and ${q.boss.name} falls. +${xp} XP, +${zen} Zen.` + (leveled ? ` LEVEL UP → ${y.level}!` : "") + (firstKill ? ` New Bestiary entry!` : "");
+    log(`✨ ${y.name} cast ${choice.label}, rolled ${total} vs DC ${q.cfg.dc} — victory over ${q.boss.name} (${q.zoneName}).`);
+    if(firstKill) log(`📖 Bestiary: ${q.boss.name} recorded for the first time.`);
+  } else {
+    state.stats.fightsLost++;
+    const hpLossBase = Math.round(q.cfg.hp * (choice.hpMult || 1));
+    const hpLoss = Math.max(hpLossBase - armorMitigation, 1);
+    y.hp = Math.max(y.hp - hpLoss, 0);
+    box.className = "result-box lose show";
+    document.getElementById("result-verb").textContent = "Injured";
+    document.getElementById("result-detail").textContent =
+      `${total} vs DC ${q.cfg.dc} — ${choice.label} fizzles and ${q.boss.name} gets the better of you.`;
+    pillWrap.innerHTML = `<div class="pill hp">🩸 −${hpLoss} HP</div><div class="pill toll">🍷 ${q.cfg.drink} ${unitLabel(q.cfg.drink)}</div>`;
+    log(`💥 ${y.name} cast ${choice.label}, rolled ${total} vs DC ${q.cfg.dc} — injured by ${q.boss.name}, −${hpLoss} HP.`);
+  }
+
+  save();
+  renderPlayer();
+  renderBestiary();
+}
+
+// Milestone beats: one-time narrative flourishes as a long boss fight progresses,
+// so a 99-round grind has texture instead of being a silent countdown.
+const MILESTONE_THRESHOLDS = [75, 50, 25, 10];
+function milestoneLine(threshold, bossName){
+  if(threshold <= 10) return `💀 ${bossName} is barely standing — this is almost over.`;
+  if(threshold <= 25) return `⚔ ${bossName} is reeling. The end is in sight.`;
+  if(threshold <= 50) return `🌀 ${bossName} staggers — you're past the halfway point.`;
+  return `🔥 ${bossName} is still standing strong, but it's felt that.`;
+}
+
+// Multi-hit boss fights: World Boss, Ancient Battlefield, Solo Boss, and Kalima.
+// Each attack chips the boss's HP bar instead of resolving the whole fight in one roll.
+// Damage per round scales with your level — low level, closer to 99 rounds; higher level, much faster.
+// Any guildmates who joined land their own hits every round, win or lose on your own roll.
+function resolveAttack(key){
+  const q = state.quest;
+  const choice = CHOICES.find(c => c.key === key);
+  const y = state.you;
+  const weaponBonus = Math.floor(y.weaponEnh / 2);
+  const armorMitigation = Math.floor(y.armorEnh / 2);
+  const levelBonus = Math.floor(y.level / 2);
+  const morale = q.guildMorale ? 2 : 0;
+  const levelDmg = 2 + Math.floor(y.level / 2);
+
+  const strikeEl = document.getElementById("strike-line");
+  let hit, dmg = 0, hpLoss = 0, strikeText;
+
+  if(choice.guaranteed){
+    dmg = Math.max(Math.round(levelDmg * 0.4), 1);
+    hit = true;
+    strikeText = `❄ ${choice.label} — a safe cast, ${dmg} damage.`;
+  } else {
+    const bonus = levelBonus + weaponBonus + choice.bonusMod + morale;
+    const d20 = choice.advantage ? Math.max(roll1to20(), roll1to20()) : roll1to20();
+    const total = d20 + bonus;
+    hit = total >= q.cfg.dc;
+    if(hit){
+      dmg = choice.key === "aggressive" ? Math.round(levelDmg * 1.5) : levelDmg;
+      strikeText = `${choice.label} lands — ${total} vs DC ${q.cfg.dc}, ${dmg} damage.`;
+    } else {
+      const hpLossBase = Math.round(q.cfg.hp * (choice.hpMult || 1));
+      hpLoss = Math.max(hpLossBase - armorMitigation, 1);
+      y.hp = Math.max(y.hp - hpLoss, 0);
+      strikeText = `${choice.label} fizzles — ${total} vs DC ${q.cfg.dc}. Backlash: −${hpLoss} HP.`;
+    }
+  }
+
+  // Fight always takes a fixed number of rounds — your damage doesn't skip rounds, it's flavor.
+  // Each guildmate who joined also takes their own swing this round, clearing an extra round each time.
+  const roundsThisTurn = 1 + q.joinedGuildmates.length;
+  q.bossHp = Math.max(q.bossHp - roundsThisTurn, 0);
+  q.attacksUsed = (q.attacksUsed || 0) + 1;
+  if(q.joinedGuildmates.length > 0) strikeText += ` ${q.joinedGuildmates.length} guildmate${q.joinedGuildmates.length===1?"":"s"} also swing this round.`;
+
+  const pctLeft = Math.round((q.bossHp / q.bossHpMax) * 100);
+  let milestoneText = "";
+  MILESTONE_THRESHOLDS.forEach(threshold => {
+    if(pctLeft <= threshold && !q.milestonesFired.includes(threshold)){
+      q.milestonesFired.push(threshold);
+      milestoneText = milestoneLine(threshold, q.boss.name);
+    }
+  });
+
+  strikeEl.textContent = strikeText;
+  strikeEl.className = "strike-line " + (hit ? "hit" : "miss");
+  renderBossHp();
+
+  if(milestoneText){
+    const milestoneEl = document.getElementById("milestone-line");
+    milestoneEl.textContent = milestoneText;
+    milestoneEl.classList.add("show");
+    log(milestoneText);
+  }
+
+  if(q.bossHp <= 0){
+    q.resolved = true;
+    state.stats.fightsWon++;
+    state.stats.longestFight = Math.max(state.stats.longestFight, q.attacksUsed);
+    state.stats.mostGuildmates = Math.max(state.stats.mostGuildmates, q.joinedGuildmates.length);
+    if(q.source.kind === "calendar" && q.source.name === "Guild BOSS"){
+      ensureWeeklyReset();
+      state.weekly.guildBossWins++;
+    }
+    const xp = Math.round(q.cfg.xp * q.rewardMult);
+    const zen = Math.round(q.cfg.zen * q.rewardMult);
+    const leveled = grantXP(xp);
+    grantZen(zen);
+    const firstKill = recordKill(q.boss.name);
+
+    let lootText = "";
+    if(Math.random() < LOOT_DROP_CHANCE){
+      const item = rollLoot();
+      state.inventory[item.name] = (state.inventory[item.name] || 0) + 1;
+      lootText = ` ${q.boss.name} also drops a ${item.rarity.toLowerCase()} item: ${item.name}.`;
+      log(`🎁 Loot: ${item.name} (${item.rarity}) from ${q.boss.name}.`);
+    }
+
+    document.getElementById("choice-row").innerHTML = "";
+    document.getElementById("retreat-btn").style.display = "none";
+    document.getElementById("auto-fight-btn").style.display = "none";
+    const box = document.getElementById("result-box");
+    box.className = "result-box win show";
+    document.getElementById("roll-num").textContent = "—";
+    document.getElementById("result-verb").textContent = "Boss Down";
+    document.getElementById("result-detail").textContent =
+      `${q.boss.name} finally falls after a drawn-out fight. +${xp} XP, +${zen} Zen.${lootText}` + (leveled ? ` LEVEL UP → ${y.level}!` : "") + (firstKill ? ` New Bestiary entry!` : "");
+    document.getElementById("pill-wrap").innerHTML = "";
+    log(`✨ ${y.name} downed ${q.boss.name} in ${q.zoneName} — +${xp} XP, +${zen} Zen.`);
+    if(firstKill) log(`📖 Bestiary: ${q.boss.name} recorded for the first time.`);
+    renderInventory();
+    renderBestiary();
+    updateRoomActions();
+  } else if(y.hp <= 0){
+    q.resolved = true;
+    state.stats.fightsLost++;
+    state.stats.mostGuildmates = Math.max(state.stats.mostGuildmates, q.joinedGuildmates.length);
+    document.getElementById("choice-row").innerHTML = "";
+    document.getElementById("retreat-btn").style.display = "none";
+    document.getElementById("auto-fight-btn").style.display = "none";
+    const box = document.getElementById("result-box");
+    box.className = "result-box lose show";
+    document.getElementById("roll-num").textContent = "—";
+    document.getElementById("result-verb").textContent = "Forced Retreat";
+    const roundsLeft = Math.max(q.bossHp, 0);
+    document.getElementById("result-detail").textContent =
+      `You're too hurt to continue. ${q.boss.name} still has ${roundsLeft} rounds left in it — no reward this time.`;
+    document.getElementById("pill-wrap").innerHTML = "";
+    log(`💀 ${y.name} was forced to retreat from ${q.boss.name} with ${roundsLeft} rounds still to go.`);
+    updateRoomActions();
+  }
+  // else: fight continues, choice buttons stay as-is for the next attack
+
+  save();
+  renderPlayer();
+}
+
+// Auto Fight: plays rounds automatically instead of tapping a choice up to 99 times.
+// Simple HP-based strategy — aggressive while healthy, backs off to cautious when hurt,
+// so it won't blindly grind you down to 0 HP unattended.
+function toggleAutoFight(){
+  const q = state.quest;
+  if(!q || !q.multiHit || q.resolved) return;
+  autoFighting = !autoFighting;
+  updateAutoFightButton();
+  if(autoFighting) autoFightStep();
+}
+
+function updateAutoFightButton(){
+  const btn = document.getElementById("auto-fight-btn");
+  const row = document.getElementById("choice-row");
+  if(!btn || !row) return;
+  btn.textContent = autoFighting ? "⏹ Stop Auto Fight" : "⚡ Auto Fight";
+  btn.className = "btn-auto-fight" + (autoFighting ? " running" : "");
+  row.classList.toggle("auto-running", autoFighting);
+}
+
+function autoFightStep(){
+  if(!autoFighting) return;
+  const q = state.quest;
+  if(!q || q.resolved){ autoFighting = false; updateAutoFightButton(); return; }
+
+  const hpPct = state.you.hp / state.you.maxHp;
+  const key = hpPct > 0.5 ? "aggressive" : hpPct > 0.2 ? "tactical" : "cautious";
+  resolveAttack(key);
+
+  const q2 = state.quest;
+  if(autoFighting && q2 && !q2.resolved){
+    setTimeout(autoFightStep, 220);
+  } else {
+    autoFighting = false;
+    updateAutoFightButton();
+  }
+}
+
+function startDailyBoss(name){
+  if(state.quest && !state.quest.resolved){ alert("Finish or retreat from your current fight first."); document.getElementById("room").scrollIntoView({behavior:"smooth"}); return; }
+  if(state.you.hp <= 0){ alert("You're too hurt to venture out. Rest first."); return; }
+  const def = DAILY_BOSS_DEFS[name];
+  const track = state.dailyBossAttempts[def.dailyKey];
+  ensureDailyReset(track, def.dailyLimit);
+  if(track.remaining <= 0){ alert(`${name} is out of attempts today. Resets tomorrow.`); return; }
+  track.remaining--;
+  save();
+  renderDailyBossTiles();
+  switchTab("zones");
+  startQuest({kind:"dailyBoss", name});
+}
+
+function unitLabel(n){
+  const map = {sip:"sip", shot:"shot", point:"point"};
+  const base = map[state.unit] || "sip";
+  return (n===1) ? base : base + "s";
+}
+
+/* ===================== GUILD CALENDAR ===================== */
+function todayName(){ return WEEKDAYS[new Date().getDay()]; }
+
+function renderCalendar(){
+  const today = todayName();
+  document.getElementById("calendar-today-label").textContent = today;
+
+  const list = document.getElementById("calendar-today-list");
+  list.innerHTML = "";
+  (GUILD_SCHEDULE[today] || []).forEach(ev => {
+    const row = document.createElement("div");
+    row.className = "cal-row";
+    row.innerHTML = `<span class="cal-time">${ev.time}</span><span class="cal-name">${ev.name}</span><button class="cal-join" onclick="joinGuildEvent('${ev.name}')">Join</button>`;
+    list.appendChild(row);
+  });
+
+  const week = document.getElementById("calendar-week");
+  week.innerHTML = "";
+  ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"].forEach(day => {
+    const block = document.createElement("div");
+    block.className = "cal-day-block" + (day === today ? " cal-day-today" : "");
+    const evs = (GUILD_SCHEDULE[day] || []).map(e => `${e.time} ${e.name}`).join(" · ");
+    block.innerHTML = `<div class="cal-day-name">${day}</div><div class="cal-day-evs">${evs}</div>`;
+    week.appendChild(block);
+  });
+}
+
+function toggleWeek(){
+  document.getElementById("calendar-week").classList.toggle("show");
+}
+
+function joinGuildEvent(name){
+  if(state.quest && !state.quest.resolved){ alert("Finish or retreat from your current fight first."); document.getElementById("room").scrollIntoView({behavior:"smooth"}); return; }
+  if(state.you.hp <= 0){ alert("You're too hurt to venture out. Rest first."); return; }
+  switchTab("zones");
+  startQuest({kind:"calendar", name});
+}
+
+/* ===================== TAVERN / HANS ===================== */
+function talkToRielmann(){
+  const el = document.getElementById("rielmann-speech");
+  el.textContent = "\u201C" + randomFrom(RIELMANN_TIPS) + "\u201D";
+  el.classList.add("show");
+}
+
+function hansSpeak(){
+  const el = document.getElementById("hans-speech");
+  el.textContent = "\u201C" + randomFrom(HANS_LINES) + "\u201D";
+  el.classList.add("show");
+}
+
+const WEAPON_NAMES = ["Apprentice Wand","Runed Staff","Arcane Staff","Ancient Staff"];
+const ARMOR_NAMES = ["Traveler's Robe","Enchanted Robe","Arcane Vestments","Ancient Vestments"];
+const MAX_ENH = 9;
+
+function tierName(names, enh){
+  const idx = enh < 3 ? 0 : enh < 6 ? 1 : enh < 9 ? 2 : 3;
+  return names[idx];
+}
+function enhanceCost(level){ return (level + 1) * 40; }
+function enhanceChance(level){ return Math.max(0.85 - level * 0.07, 0.2); }
+
+function renderEquipment(){
+  const y = state.you;
+  ["weapon","armor"].forEach(kind => {
+    const names = kind === "weapon" ? WEAPON_NAMES : ARMOR_NAMES;
+    const enh = kind === "weapon" ? y.weaponEnh : y.armorEnh;
+    document.getElementById(kind + "-name").textContent = tierName(names, enh);
+    document.getElementById(kind + "-plus").textContent = "+" + enh;
+    document.getElementById(kind + "-bar").style.width = Math.round((enh / MAX_ENH) * 100) + "%";
+    const btn = document.getElementById(kind + "-btn");
+    if(enh >= MAX_ENH){
+      document.getElementById(kind + "-cost").textContent = "Maxed out";
+      document.getElementById(kind + "-chance").textContent = "";
+      btn.disabled = true;
+      btn.textContent = "Fully Enhanced";
+    } else {
+      const cost = enhanceCost(enh);
+      document.getElementById(kind + "-cost").textContent = `Cost: ${cost} Zen`;
+      document.getElementById(kind + "-chance").textContent = `Success: ${Math.round(enhanceChance(enh)*100)}%`;
+      btn.disabled = y.zen < cost;
+      btn.textContent = "Enhance " + (kind === "weapon" ? "Weapon" : "Armor");
+    }
+  });
+}
+
+function enhance(kind){
+  const y = state.you;
+  const enh = kind === "weapon" ? y.weaponEnh : y.armorEnh;
+  const label = kind === "weapon" ? "staff" : "robe";
+  if(enh >= MAX_ENH) return;
+  const cost = enhanceCost(enh);
+  if(y.zen < cost) return;
+  y.zen -= cost;
+  const success = Math.random() < enhanceChance(enh);
+  if(success){
+    if(kind === "weapon") y.weaponEnh++; else y.armorEnh++;
+    ensureWeeklyReset();
+    state.weekly.enhancements++;
+    hansSpeak();
+    log(`🔨 Hans enhances your ${label} to +${kind === "weapon" ? y.weaponEnh : y.armorEnh}.`);
+  } else {
+    hansSpeak();
+    log(`🔨 The ${label} enhancement fails. Your gear is untouched — Hans doesn't break things here.`);
+  }
+  save();
+  renderPlayer();
+  renderWeeklyGoals();
+}
+
+/* ===================== BOUNTY QUEST (real Event menu feature) ===================== */
+function todayStr(){
+  const d = new Date();
+  return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+}
+
+function ensureDailyReset(track, defaultRemaining){
+  if(track.resetDate !== todayStr()){
+    track.remaining = defaultRemaining;
+    track.resetDate = todayStr();
+  }
+}
+
+function ensureBountyReset(){ ensureDailyReset(state.bounty, 30); }
+
+function renderBounty(){
+  ensureBountyReset();
+  document.getElementById("bounty-remaining").textContent = "Remaining: " + state.bounty.remaining;
+  document.getElementById("bounty-btn").disabled = state.bounty.remaining <= 0;
+  document.getElementById("bounty-btn").textContent = state.bounty.remaining > 0 ? "Take Bounty" : "Board Empty — Back Tomorrow";
+}
+
+const BOUNTY_ITEMS = [
+  "Garnet Shard", "Torn Bounty Ledger", "Sealed Coin Pouch", "Elemental Fragment",
+  "Ancient Insignia", "Chipped Rune Stone", "Contract Wax Seal", "Traveler's Whetstone",
+];
+
+function takeBounty(){
+  ensureBountyReset();
+  if(state.bounty.remaining <= 0) return;
+  if(state.quest && !state.quest.resolved){ alert("Finish or retreat from your current fight first."); document.getElementById("room").scrollIntoView({behavior:"smooth"}); return; }
+  if(state.you.hp <= 0){ alert("You're too hurt to venture out. Rest first."); return; }
+
+  state.bounty.remaining--;
+  state.stats.bountiesTaken++;
+  ensureWeeklyReset();
+  state.weekly.bountiesTaken++;
+  save();
+  renderBounty();
+
+  if(Math.random() < 0.5){
+    // Bounty turns into a real Elite or Boss contract fight
+    switchTab("zones");
+    startQuest({kind:"bounty"});
+  } else {
+    // Bounty turns up a quest item instead of a fight
+    const item = randomFrom(BOUNTY_ITEMS);
+    const xp = 10, zen = 20;
+    const leveled = grantXP(xp);
+    grantZen(zen);
+    log(`📜 Bounty turned in — found a ${item}. +${xp} XP, +${zen} Zen.` + (leveled ? " LEVEL UP!" : ""));
+    save();
+    renderPlayer();
+    alert(`Bounty complete: you turn up a ${item}. +${xp} XP, +${zen} Zen.`);
+  }
+}
+
+function renderDailyBossTiles(){
+  Object.entries(DAILY_BOSS_DEFS).forEach(([name, def]) => {
+    const track = state.dailyBossAttempts[def.dailyKey];
+    ensureDailyReset(track, def.dailyLimit);
+    const el = document.getElementById(def.dailyKey + "-remaining");
+    const btn = document.getElementById(def.dailyKey + "-btn");
+    el.textContent = "Remaining: " + track.remaining;
+    btn.disabled = track.remaining <= 0;
+    btn.textContent = track.remaining > 0 ? "Fight" : "No Attempts — Back Tomorrow";
+  });
+}
+
+/* ===================== AUTO-COMBAT (real AFK leveling feature) ===================== */
+const AUTOCOMBAT_XP_PER_MIN = 0.5;
+const AUTOCOMBAT_ZEN_PER_MIN = 0.4;
+const AUTOCOMBAT_UPGRADE_MAX = 5;
+
+function autoCombatLevel(){ return state.autoCombat.upgradeLevel || 0; }
+function autoCombatCapMs(){ return (4 + autoCombatLevel()) * 60 * 60 * 1000; } // 4h base, +1h per level
+function autoCombatRateMult(){ return 1 + autoCombatLevel() * 0.2; } // +20% per level
+function autoCombatUpgradeCost(){ return (autoCombatLevel() + 1) * 100; }
+
+function renderAutoCombat(){
+  const capMs = autoCombatCapMs();
+  const elapsed = Math.min(Date.now() - state.autoCombat.lastCollect, capMs);
+  const mins = Math.floor(elapsed / 60000);
+  const h = Math.floor(mins / 60), m = mins % 60;
+  document.getElementById("autocombat-elapsed").textContent = (h > 0 ? `${h}h ${m}m` : `${m}m`) + " idle";
+  document.getElementById("autocombat-btn").disabled = mins < 1;
+
+  const level = autoCombatLevel();
+  const capHours = 4 + level;
+  const upgradeBtn = document.getElementById("autocombat-upgrade-btn");
+  const upgradeLabel = document.getElementById("autocombat-upgrade-label");
+  if(level >= AUTOCOMBAT_UPGRADE_MAX){
+    upgradeLabel.textContent = `Maxed — ${capHours}h cap, ${Math.round(autoCombatRateMult()*100)}% rate`;
+    upgradeBtn.disabled = true;
+    upgradeBtn.textContent = "Maxed Out";
+  } else {
+    const cost = autoCombatUpgradeCost();
+    upgradeLabel.textContent = `Lv ${level} — ${capHours}h cap, ${Math.round(autoCombatRateMult()*100)}% rate`;
+    upgradeBtn.disabled = state.you.zen < cost;
+    upgradeBtn.textContent = `Upgrade (${cost} Zen)`;
+  }
+}
+
+function upgradeAutoCombat(){
+  const level = autoCombatLevel();
+  if(level >= AUTOCOMBAT_UPGRADE_MAX) return;
+  const cost = autoCombatUpgradeCost();
+  if(state.you.zen < cost) return;
+  state.you.zen -= cost;
+  state.autoCombat.upgradeLevel = level + 1;
+  log(`⚙ Auto-Combat upgraded to Lv ${state.autoCombat.upgradeLevel} — ${4 + state.autoCombat.upgradeLevel}h cap, ${Math.round(autoCombatRateMult()*100)}% rate.`);
+  save();
+  renderPlayer();
+  renderAutoCombat();
+}
+
+function collectAutoCombat(){
+  const capMs = autoCombatCapMs();
+  const elapsed = Math.min(Date.now() - state.autoCombat.lastCollect, capMs);
+  const mins = Math.floor(elapsed / 60000);
+  if(mins < 1) return;
+  const rate = autoCombatRateMult();
+  const xp = Math.round(mins * AUTOCOMBAT_XP_PER_MIN * rate);
+  const zen = Math.round(mins * AUTOCOMBAT_ZEN_PER_MIN * rate);
+  const leveled = grantXP(xp);
+  grantZen(zen);
+  state.autoCombat.lastCollect = Date.now();
+  log(`⚙ Auto-Combat collected — +${xp} XP, +${zen} Zen from ${mins}m idle.` + (leveled ? " LEVEL UP!" : ""));
+  save();
+  renderPlayer();
+  renderAutoCombat();
+}
+
+/* ===================== SETTINGS ===================== */
+function renderUnits(){
+  const grid = document.getElementById("unit-grid");
+  grid.innerHTML = "";
+  UNITS.forEach(u => {
+    const b = document.createElement("button");
+    b.className = "unit-btn" + (state.unit === u.key ? " active" : "");
+    b.textContent = u.label;
+    b.onclick = () => { state.unit = u.key; save(); renderUnits(); };
+    grid.appendChild(b);
+  });
+}
+
+function renderCast(){
+  const wrap = document.getElementById("cast-tags");
+  wrap.innerHTML = "";
+  state.npcCast.forEach((name, i) => {
+    const tag = document.createElement("div");
+    tag.className = "cast-tag";
+    tag.innerHTML = `${name} <button onclick="removeCast(${i})">×</button>`;
+    wrap.appendChild(tag);
+  });
+}
+
+function addCast(){
+  const input = document.getElementById("cast-input");
+  const name = input.value.trim().toUpperCase();
+  if(!name || state.npcCast.includes(name)) { input.value = ""; return; }
+  state.npcCast.push(name);
+  input.value = "";
+  save();
+  renderCast();
+}
+
+function removeCast(i){
+  state.npcCast.splice(i, 1);
+  save();
+  renderCast();
+}
+
+/* ===================== SNAPSHOT ===================== */
+function exportSnapshot(){
+  const data = JSON.stringify(state, null, 2);
+  const blob = new Blob([data], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  const stamp = new Date().toISOString().slice(0,10);
+  a.href = url;
+  a.download = `dark-epoch-tavern-save-${stamp}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  log("⬇ Snapshot exported.");
+}
+
+function importSnapshot(file){
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try{
+      const data = JSON.parse(e.target.result);
+      if(!data.you) throw new Error("missing player data");
+      state = Object.assign({}, state, data);
+      save();
+      renderAll();
+      log("⬆ Snapshot imported.");
+      alert("Snapshot loaded.");
+    }catch(err){
+      alert("That doesn't look like a valid snapshot file.");
+    }
+  };
+  reader.readAsText(file);
+  document.getElementById("import-file").value = "";
+}
+
+/* ===================== LOG ===================== */
+function log(msg){
+  state.logEntries = state.logEntries || [];
+  state.logEntries.unshift(msg);
+  state.logEntries = state.logEntries.slice(0, 40);
+  save();
+  renderLog();
+}
+function renderLog(){
+  const el = document.getElementById("log");
+  el.innerHTML = "";
+  (state.logEntries || []).forEach(msg => {
+    const div = document.createElement("div");
+    div.textContent = msg;
+    el.appendChild(div);
+  });
+}
+
+/* ===================== LOOT / INVENTORY ===================== */
+const RARITY_ORDER = { Legendary:0, Epic:1, Rare:2, Common:3 };
+
+function renderInventory(){
+  const inv = state.inventory || {};
+  const names = Object.keys(inv);
+  document.getElementById("loot-count").textContent = names.reduce((s,n)=>s+inv[n],0) + " items";
+
+  const list = document.getElementById("loot-list");
+  const empty = document.getElementById("loot-empty");
+  list.innerHTML = "";
+
+  if(!names.length){
+    empty.classList.add("show");
+    return;
+  }
+  empty.classList.remove("show");
+
+  const items = names.map(name => {
+    const def = LOOT_TABLE.find(i => i.name === name);
+    return { name, count: inv[name], rarity: def ? def.rarity : "Common" };
+  }).sort((a,b) => (RARITY_ORDER[a.rarity]-RARITY_ORDER[b.rarity]) || a.name.localeCompare(b.name));
+
+  items.forEach(item => {
+    const row = document.createElement("div");
+    row.className = "loot-row";
+    const color = RARITY_COLORS[item.rarity] || "#a89a86";
+    row.innerHTML = `
+      <span class="loot-dot" style="background:${color}"></span>
+      <span class="loot-name">${item.name}</span>
+      <span class="loot-rarity" style="color:${color}">${item.rarity}</span>
+      <span class="loot-count">×${item.count}</span>
+    `;
+    list.appendChild(row);
+  });
+}
+
+// Records a genuine boss kill (not a "played it safe" outcome). Returns true if this
+// is the very first time this named boss has been recorded.
+function recordKill(bossName){
+  state.bestiary = state.bestiary || {};
+  const isFirst = !state.bestiary[bossName];
+  state.bestiary[bossName] = (state.bestiary[bossName] || 0) + 1;
+  ensureWeeklyReset();
+  state.weekly.bossKills++;
+  save();
+  return isFirst;
+}
+
+function renderBestiary(){
+  const b = state.bestiary || {};
+  const names = Object.keys(b);
+  document.getElementById("bestiary-count").textContent = names.length + " recorded";
+
+  const list = document.getElementById("bestiary-list");
+  const empty = document.getElementById("bestiary-empty");
+  list.innerHTML = "";
+
+  if(!names.length){
+    empty.classList.add("show");
+    return;
+  }
+  empty.classList.remove("show");
+
+  names
+    .sort((a, c) => b[c] - b[a] || a.localeCompare(c))
+    .forEach(name => {
+      const row = document.createElement("div");
+      row.className = "bestiary-row";
+      row.innerHTML = `<span class="bestiary-name">${name}</span><span class="bestiary-kills">×${b[name]}</span>`;
+      list.appendChild(row);
+    });
+}
+
+// Checks every achievement against current state and announces any newly-earned ones.
+// Titles are computed live from existing progress — nothing extra to track except which
+// ones have already been announced, so this is safe to call after any stat-changing action.
+function checkNewTitles(){
+  state.titlesSeen = state.titlesSeen || [];
+  let changed = false;
+  ACHIEVEMENTS.forEach(a => {
+    if(a.check(state) && !state.titlesSeen.includes(a.id)){
+      state.titlesSeen.push(a.id);
+      log(`🏆 Title unlocked: ${a.name} — ${a.desc}`);
+      changed = true;
+    }
+  });
+  if(changed) save();
+  renderTitles();
+}
+
+function renderTitles(){
+  const unlocked = ACHIEVEMENTS.filter(a => a.check(state));
+  document.getElementById("titles-count").textContent = `${unlocked.length} / ${ACHIEVEMENTS.length}`;
+
+  const list = document.getElementById("titles-list");
+  list.innerHTML = "";
+  ACHIEVEMENTS.forEach(a => {
+    const isUnlocked = a.check(state);
+    const row = document.createElement("div");
+    row.className = "title-row" + (isUnlocked ? "" : " locked");
+    row.innerHTML = `
+      <span class="title-icon">${a.icon}</span>
+      <span class="title-main">
+        <span class="title-name">${a.name}</span>
+        <div class="title-desc">${a.desc}</div>
+      </span>
+      <span class="title-check">${isUnlocked ? "✓" : ""}</span>
+    `;
+    list.appendChild(row);
+  });
+}
+
+function renderStats(){
+  const s = state.stats || {fightsWon:0,fightsLost:0,totalXp:0,totalZen:0,longestFight:0,mostGuildmates:0,bountiesTaken:0};
+  const totalFights = s.fightsWon + s.fightsLost;
+  const winRate = totalFights ? Math.round((s.fightsWon / totalFights) * 100) : 0;
+  const uniqueBosses = Object.keys(state.bestiary || {}).length;
+  const totalKills = Object.values(state.bestiary || {}).reduce((a,b)=>a+b, 0);
+  const totalLoot = Object.values(state.inventory || {}).reduce((a,b)=>a+b, 0);
+  const titlesUnlocked = ACHIEVEMENTS.filter(a => a.check(state)).length;
+
+  const cards = [
+    {num: state.you.level, label: "Level"},
+    {num: s.fightsWon, label: "Fights Won"},
+    {num: s.fightsLost, label: "Fights Lost"},
+    {num: winRate + "%", label: "Win Rate"},
+    {num: s.totalXp, label: "Total XP Earned"},
+    {num: s.totalZen, label: "Total Zen Earned"},
+    {num: s.longestFight, label: "Longest Fight (rounds)"},
+    {num: s.mostGuildmates, label: "Most Guildmates Joined"},
+    {num: s.bountiesTaken, label: "Bounties Taken"},
+    {num: uniqueBosses, label: "Unique Bosses (Bestiary)"},
+    {num: totalKills, label: "Total Boss Kills"},
+    {num: totalLoot, label: "Total Loot Items"},
+    {num: titlesUnlocked + " / " + ACHIEVEMENTS.length, label: "Titles Unlocked"},
+  ];
+
+  const grid = document.getElementById("stats-grid");
+  grid.innerHTML = "";
+  cards.forEach(c => {
+    const card = document.createElement("div");
+    card.className = "stat-card";
+    card.innerHTML = `<div class="stat-num">${c.num}</div><div class="stat-label">${c.label}</div>`;
+    grid.appendChild(card);
+  });
+}
+
+/* ===================== WEEKLY GOALS ===================== */
+// Week is anchored to Monday, matching the Guild Calendar's own week layout.
+function weekStr(){
+  const d = new Date();
+  const day = d.getDay(); // 0=Sun..6=Sat
+  const diffToMonday = (day === 0 ? -6 : 1) - day;
+  const monday = new Date(d);
+  monday.setDate(d.getDate() + diffToMonday);
+  return `${monday.getFullYear()}-${monday.getMonth()+1}-${monday.getDate()}`;
+}
+
+function ensureWeeklyReset(){
+  state.weekly = state.weekly || {weekStart:null,guildBossWins:0,bossKills:0,bountiesTaken:0,enhancements:0,claimed:[]};
+  const w = weekStr();
+  if(state.weekly.weekStart !== w){
+    state.weekly = {weekStart:w, guildBossWins:0, bossKills:0, bountiesTaken:0, enhancements:0, claimed:[]};
+  }
+}
+
+function renderWeeklyGoals(){
+  ensureWeeklyReset();
+  const wk = state.weekly;
+  const list = document.getElementById("weekly-goals-list");
+  list.innerHTML = "";
+
+  WEEKLY_GOALS.forEach(g => {
+    const progress = Math.min(wk[g.key] || 0, g.target);
+    const pct = Math.round((progress / g.target) * 100);
+    const isDone = progress >= g.target;
+    const isClaimed = wk.claimed.includes(g.id);
+    const rewardText = Object.entries(g.reward).map(([k,v]) => `+${v} ${k === "zen" ? "Zen" : "XP"}`).join(", ");
+
+    const card = document.createElement("div");
+    card.className = "weekly-card" + (isDone ? " done" : "");
+    card.innerHTML = `
+      <div class="weekly-head">
+        <span class="weekly-name">${g.name}</span>
+        <span class="weekly-progress-num">${progress} / ${g.target}</span>
+      </div>
+      <div class="weekly-desc">${g.desc} Reward: ${rewardText}.</div>
+      <div class="weekly-bar-track"><div class="weekly-bar-fill" style="width:${pct}%"></div></div>
+      <button class="btn-claim ${isClaimed ? "claimed" : ""}" ${(!isDone || isClaimed) ? "disabled" : ""} onclick="claimWeeklyGoal('${g.id}')">
+        ${isClaimed ? "✓ Claimed" : isDone ? "Claim Reward" : "In Progress"}
+      </button>
+    `;
+    list.appendChild(card);
+  });
+}
+
+function claimWeeklyGoal(id){
+  ensureWeeklyReset();
+  const g = WEEKLY_GOALS.find(x => x.id === id);
+  if(!g) return;
+  const wk = state.weekly;
+  if(wk.claimed.includes(id)) return;
+  if((wk[g.key] || 0) < g.target) return;
+
+  wk.claimed.push(id);
+  if(g.reward.zen) grantZen(g.reward.zen);
+  if(g.reward.xp) grantXP(g.reward.xp);
+  log(`🗓 Weekly Goal complete: ${g.name} — ${Object.entries(g.reward).map(([k,v]) => `+${v} ${k === "zen" ? "Zen" : "XP"}`).join(", ")}.`);
+  save();
+  renderPlayer();
+  renderWeeklyGoals();
+}
+
+/* ===================== RESET ===================== */
+function resetGame(){
+  if(!confirm("Reset the entire campaign? All levels, gear, Zen, loot, Bestiary, Titles, and Stats will be lost.")) return;
+  localStorage.removeItem("darkEpochTavernV2");
+  state = {
+    you: { name:"OLLAT", level:1, xp:0, hp:20, maxHp:20, zen:100, weaponEnh:0, armorEnh:0 },
+    npcCast: NPC_DEFAULT_CAST.slice(),
+    unit: "sip",
+    quest: null,
+    logEntries: [],
+    bounty: { remaining: 30, resetDate: null },
+    autoCombat: { lastCollect: Date.now(), upgradeLevel: 0 },
+    dailyBossAttempts: {
+      ancient: { remaining: 3, resetDate: null },
+      solo: { remaining: 2, resetDate: null },
+    },
+    inventory: {},
+    bestiary: {},
+    titlesSeen: [],
+    stats: {
+      fightsWon: 0, fightsLost: 0, totalXp: 0, totalZen: 0,
+      longestFight: 0, mostGuildmates: 0, bountiesTaken: 0,
+    },
+    weekly: {
+      weekStart: null, guildBossWins: 0, bossKills: 0, bountiesTaken: 0, enhancements: 0, claimed: [],
+    },
+  };
+  save();
+  renderAll();
+  log("🌑 A new campaign begins in the Rift Tavern.");
+}
+
+/* ===================== INIT ===================== */
+function renderAll(){
+  renderPlayer();
+  renderZoneGrid();
+  renderCalendar();
+  renderUnits();
+  renderCast();
+  renderLog();
+  renderBounty();
+  renderDailyBossTiles();
+  renderAutoCombat();
+  renderInventory();
+  renderBestiary();
+  renderStats();
+  document.getElementById("room").classList.remove("show");
+  if(state.quest){
+    document.getElementById("room").classList.add("show");
+    renderQuest();
+  }
+}
+
+load();
+renderAll();
+document.getElementById("cast-input").addEventListener("keydown", e => { if(e.key === "Enter") addCast(); });
+setInterval(renderAutoCombat, 30000);
+</script>
+</body>
+</html>
